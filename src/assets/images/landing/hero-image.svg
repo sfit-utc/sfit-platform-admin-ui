@@ -1,0 +1,149 @@
+<svg width="600" height="400" viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="600" height="400" fill="url(#hero-gradient)"/>
+  
+  <!-- Floating Elements -->
+  <circle cx="550" cy="80" r="30" fill="#22c55e" opacity="0.1"/>
+  <circle cx="50" cy="120" r="20" fill="#3b82f6" opacity="0.1"/>
+  <polygon points="520,300 540,280 560,300 540,320" fill="#f59e0b" opacity="0.1"/>
+  
+  <!-- Main Central Scene -->
+  <!-- Computer/Laptop -->
+  <rect x="250" y="220" width="120" height="80" rx="8" fill="#374151"/>
+  <rect x="258" y="228" width="104" height="60" rx="4" fill="#1f2937"/>
+  <rect x="265" y="235" width="90" height="50" fill="#22c55e"/>
+  
+  <!-- Screen Content -->
+  <!-- Header Bar -->
+  <rect x="270" y="240" width="80" height="6" rx="3" fill="white" opacity="0.9"/>
+  
+  <!-- Profile Cards -->
+  <rect x="275" y="250" width="15" height="12" rx="2" fill="white" opacity="0.8"/>
+  <rect x="295" y="250" width="20" height="4" rx="1" fill="white" opacity="0.7"/>
+  <rect x="295" y="256" width="15" height="3" rx="1" fill="white" opacity="0.6"/>
+  
+  <rect x="275" y="265" width="15" height="12" rx="2" fill="white" opacity="0.8"/>
+  <rect x="295" y="265" width="20" height="4" rx="1" fill="white" opacity="0.7"/>
+  <rect x="295" y="271" width="15" height="3" rx="1" fill="white" opacity="0.6"/>
+  
+  <!-- Students Around Computer -->
+  <!-- Student 1 (Left) -->
+  <g transform="translate(150, 180)">
+    <circle cx="0" cy="0" r="25" fill="#fbbf24"/>
+    <path d="M-20 -15 Q0 -30 20 -15 Q15 -25 0 -25 Q-15 -25 -20 -15" fill="#92400e"/>
+    <ellipse cx="0" cy="40" rx="18" ry="25" fill="#3b82f6"/>
+    <ellipse cx="-15" cy="35" rx="8" ry="18" fill="#fbbf24" transform="rotate(-20)"/>
+    <ellipse cx="15" cy="35" rx="8" ry="18" fill="#fbbf24" transform="rotate(20)"/>
+    <!-- Book -->
+    <rect x="-10" y="15" width="20" height="15" fill="#ef4444"/>
+    <rect x="-8" y="17" width="16" height="11" fill="white"/>
+  </g>
+  
+  <!-- Student 2 (Right) -->
+  <g transform="translate(450, 185)">
+    <circle cx="0" cy="0" r="25" fill="#f472b6"/>
+    <path d="M-18 -10 Q0 -25 18 -10" fill="#92400e"/>
+    <ellipse cx="0" cy="40" rx="18" ry="25" fill="#22c55e"/>
+    <ellipse cx="-15" cy="35" rx="8" ry="18" fill="#f472b6" transform="rotate(-15)"/>
+    <ellipse cx="15" cy="35" rx="8" ry="18" fill="#f472b6" transform="rotate(15)"/>
+    <!-- Tablet -->
+    <rect x="-12" y="20" width="24" height="18" rx="3" fill="#374151"/>
+    <rect x="-10" y="22" width="20" height="14" fill="#22c55e"/>
+  </g>
+  
+  <!-- Student 3 (Behind) -->
+  <g transform="translate(310, 160)">
+    <circle cx="0" cy="0" r="22" fill="#a78bfa"/>
+    <ellipse cx="0" cy="35" rx="16" ry="22" fill="#f59e0b"/>
+    <ellipse cx="-13" cy="30" rx="7" ry="16" fill="#a78bfa" transform="rotate(-10)"/>
+    <ellipse cx="13" cy="30" rx="7" ry="16" fill="#a78bfa" transform="rotate(10)"/>
+    <!-- Notebook -->
+    <rect x="-8" y="15" width="16" height="12" fill="white" stroke="#e5e7eb" stroke-width="1"/>
+  </g>
+  
+  <!-- Knowledge/Learning Elements -->
+  <!-- Books Stack -->
+  <g transform="translate(80, 280)">
+    <rect x="0" y="10" width="40" height="8" fill="#3b82f6"/>
+    <rect x="5" y="2" width="35" height="8" fill="#ef4444"/>
+    <rect x="10" y="-6" width="30" height="8" fill="#f59e0b"/>
+  </g>
+  
+  <!-- Graduation Cap -->
+  <g transform="translate(500, 120)">
+    <rect x="0" y="10" width="40" height="4" fill="#1f2937"/>
+    <rect x="15" y="0" width="10" height="14" fill="#1f2937"/>
+    <polygon points="5,14 35,14 30,25 10,25" fill="#22c55e"/>
+    <line x1="35" y1="19" x2="45" y2="15" stroke="#1f2937" stroke-width="2"/>
+  </g>
+  
+  <!-- Certificate -->
+  <g transform="translate(100, 120)">
+    <rect x="0" y="0" width="35" height="25" fill="white" stroke="#22c55e" stroke-width="2"/>
+    <circle cx="17.5" cy="12.5" r="5" fill="#22c55e" opacity="0.3"/>
+    <line x1="7" y1="20" x2="28" y2="20" stroke="#22c55e" stroke-width="1"/>
+    <line x1="10" y1="5" x2="25" y2="5" stroke="#22c55e" stroke-width="1"/>
+  </g>
+  
+  <!-- Connecting Lines/Network -->
+  <path d="M175 205 Q215 190 250 205" stroke="#22c55e" stroke-width="3" fill="none" opacity="0.6" stroke-dasharray="8,4"/>
+  <path d="M370 210 Q410 195 450 210" stroke="#22c55e" stroke-width="3" fill="none" opacity="0.6" stroke-dasharray="8,4"/>
+  <path d="M310 182 Q310 200 310 220" stroke="#22c55e" stroke-width="3" fill="none" opacity="0.6" stroke-dasharray="8,4"/>
+  
+  <!-- Ideas/Innovation Bulbs -->
+  <g transform="translate(200, 100)">
+    <circle cx="0" cy="0" r="12" fill="#fef3c7"/>
+    <rect x="-3" y="8" width="6" height="8" rx="3" fill="#f59e0b"/>
+    <line x1="-2" y1="10" x2="2" y2="10" stroke="#d97706" stroke-width="1"/>
+    <line x1="-2" y1="12" x2="2" y2="12" stroke="#d97706" stroke-width="1"/>
+    <!-- Light rays -->
+    <path d="M-15 -8 L-12 -5 M-8 -15 L-5 -12 M8 -15 L5 -12 M15 -8 L12 -5" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  
+  <g transform="translate(400, 90)">
+    <circle cx="0" cy="0" r="10" fill="#fef3c7"/>
+    <rect x="-2" y="6" width="4" height="6" rx="2" fill="#f59e0b"/>
+    <path d="M-12 -6 L-10 -4 M-6 -12 L-4 -10 M6 -12 L4 -10 M12 -6 L10 -4" stroke="#f59e0b" stroke-width="1.5"/>
+  </g>
+  
+  <!-- Progress Indicators -->
+  <g transform="translate(150, 320)">
+    <circle cx="0" cy="0" r="15" fill="#22c55e"/>
+    <path d="M-5 0 L-2 3 L5 -4" stroke="white" stroke-width="2" fill="none"/>
+  </g>
+  
+  <g transform="translate(300, 340)">
+    <circle cx="0" cy="0" r="15" fill="#3b82f6"/>
+    <text x="0" y="4" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="12" font-weight="bold">A+</text>
+  </g>
+  
+  <g transform="translate(450, 320)">
+    <circle cx="0" cy="0" r="15" fill="#f59e0b"/>
+    <polygon points="-6,-3 0,-8 6,-3 3,5 -3,5" fill="white"/>
+  </g>
+  
+  <!-- Cloud Learning -->
+  <g transform="translate(350, 60)">
+    <ellipse cx="0" cy="0" rx="25" ry="15" fill="white" opacity="0.8"/>
+    <ellipse cx="-15" cy="-5" rx="18" ry="12" fill="white" opacity="0.8"/>
+    <ellipse cx="15" cy="-5" rx="18" ry="12" fill="white" opacity="0.8"/>
+    <text x="0" y="3" text-anchor="middle" fill="#22c55e" font-family="Arial, sans-serif" font-size="10" font-weight="bold">CLOUD</text>
+  </g>
+  
+  <!-- Data Visualization -->
+  <g transform="translate(450, 280)">
+    <rect x="0" y="20" width="8" height="15" fill="#3b82f6"/>
+    <rect x="12" y="10" width="8" height="25" fill="#22c55e"/>
+    <rect x="24" y="15" width="8" height="20" fill="#f59e0b"/>
+    <rect x="36" y="5" width="8" height="30" fill="#ef4444"/>
+  </g>
+  
+  <!-- Definitions -->
+  <defs>
+    <linearGradient id="hero-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0fdf4"/>
+      <stop offset="50%" style="stop-color:#dcfce7"/>
+      <stop offset="100%" style="stop-color:#bbf7d0"/>
+    </linearGradient>
+  </defs>
+</svg>

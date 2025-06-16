@@ -1,0 +1,104 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bg-gradient)"/>
+  
+  <!-- Floating Geometric Shapes -->
+  <polygon points="50,50 70,30 90,50 70,70" fill="#22c55e" opacity="0.1"/>
+  <circle cx="350" cy="60" r="18" fill="#3b82f6" opacity="0.1"/>
+  <rect x="320" y="220" width="25" height="25" rx="5" fill="#f59e0b" opacity="0.15"/>
+  
+  <!-- Main Scene -->
+  <!-- Platform/Stage -->
+  <ellipse cx="200" cy="260" rx="150" ry="20" fill="#e5e7eb" opacity="0.5"/>
+  
+  <!-- Multiple People Joining -->
+  <!-- Person 1 -->
+  <g transform="translate(120, 120)">
+    <circle cx="0" cy="0" r="20" fill="#fbbf24"/>
+    <ellipse cx="0" cy="35" rx="15" ry="20" fill="#3b82f6"/>
+    <ellipse cx="-12" cy="30" rx="6" ry="15" fill="#fbbf24" transform="rotate(-15)"/>
+    <ellipse cx="12" cy="30" rx="6" ry="15" fill="#fbbf24" transform="rotate(15)"/>
+    <!-- Welcome gesture -->
+    <path d="M-5 -15 Q0 -20 5 -15" stroke="#92400e" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Person 2 -->
+  <g transform="translate(200, 130)">
+    <circle cx="0" cy="0" r="20" fill="#f472b6"/>
+    <ellipse cx="0" cy="35" rx="15" ry="20" fill="#22c55e"/>
+    <ellipse cx="-12" cy="30" rx="6" ry="15" fill="#f472b6" transform="rotate(-10)"/>
+    <ellipse cx="12" cy="30" rx="6" ry="15" fill="#f472b6" transform="rotate(10)"/>
+    <!-- Hair -->
+    <path d="M-15 -10 Q0 -25 15 -10" fill="#92400e"/>
+  </g>
+  
+  <!-- Person 3 -->
+  <g transform="translate(280, 125)">
+    <circle cx="0" cy="0" r="20" fill="#a78bfa"/>
+    <ellipse cx="0" cy="35" rx="15" ry="20" fill="#ef4444"/>
+    <ellipse cx="-12" cy="30" rx="6" ry="15" fill="#a78bfa" transform="rotate(-20)"/>
+    <ellipse cx="12" cy="30" rx="6" ry="15" fill="#a78bfa" transform="rotate(20)"/>
+  </g>
+  
+  <!-- Registration Form Representation -->
+  <rect x="60" y="180" width="80" height="60" rx="8" fill="white" stroke="#e5e7eb" stroke-width="2"/>
+  
+  <!-- Form Fields -->
+  <rect x="70" y="190" width="60" height="8" rx="2" fill="#f3f4f6"/>
+  <rect x="70" y="202" width="45" height="8" rx="2" fill="#f3f4f6"/>
+  <rect x="70" y="214" width="55" height="8" rx="2" fill="#f3f4f6"/>
+  <rect x="70" y="226" width="35" height="6" rx="3" fill="#22c55e"/>
+  
+  <!-- Checkmark -->
+  <path d="M75 229 L78 231 L85 225" stroke="white" stroke-width="1.5" fill="none"/>
+  
+  <!-- Welcome Banner -->
+  <rect x="150" y="80" width="120" height="30" rx="15" fill="#22c55e"/>
+  <text x="210" y="100" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="12" font-weight="bold">CHÀO MỪNG!</text>
+  
+  <!-- Confetti -->
+  <rect x="100" y="50" width="3" height="8" fill="#f59e0b" transform="rotate(45 100 50)"/>
+  <rect x="180" y="45" width="3" height="8" fill="#ef4444" transform="rotate(-30 180 45)"/>
+  <rect x="260" y="55" width="3" height="8" fill="#3b82f6" transform="rotate(60 260 55)"/>
+  <rect x="320" y="40" width="3" height="8" fill="#22c55e" transform="rotate(-45 320 40)"/>
+  
+  <!-- Learning Icons -->
+  <!-- Book -->
+  <g transform="translate(320, 120)">
+    <rect x="0" y="0" width="20" height="25" fill="#3b82f6"/>
+    <rect x="2" y="2" width="16" height="21" fill="white"/>
+    <line x1="5" y1="8" x2="15" y2="8" stroke="#9ca3af" stroke-width="1"/>
+    <line x1="5" y1="12" x2="13" y2="12" stroke="#9ca3af" stroke-width="1"/>
+    <line x1="5" y1="16" x2="15" y2="16" stroke="#9ca3af" stroke-width="1"/>
+  </g>
+  
+  <!-- Trophy -->
+  <g transform="translate(50, 100)">
+    <rect x="8" y="15" width="4" height="8" fill="#f59e0b"/>
+    <rect x="6" y="23" width="8" height="3" fill="#f59e0b"/>
+    <path d="M5 5 Q10 0 15 5 L15 15 L5 15 Z" fill="#fbbf24"/>
+    <circle cx="10" cy="10" r="2" fill="#f59e0b"/>
+  </g>
+  
+  <!-- Connected Lines -->
+  <path d="M140 150 Q170 140 200 150" stroke="#22c55e" stroke-width="2" fill="none" opacity="0.6" stroke-dasharray="5,5"/>
+  <path d="M220 150 Q250 140 280 145" stroke="#22c55e" stroke-width="2" fill="none" opacity="0.6" stroke-dasharray="5,5"/>
+  
+  <!-- Progress Indicators -->
+  <circle cx="160" cy="50" r="8" fill="#22c55e"/>
+  <text x="160" y="55" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="10" font-weight="bold">1</text>
+  
+  <circle cx="200" cy="40" r="8" fill="#22c55e"/>
+  <text x="200" y="45" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="10" font-weight="bold">2</text>
+  
+  <circle cx="240" cy="50" r="8" fill="#22c55e"/>
+  <text x="240" y="55" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="10" font-weight="bold">3</text>
+  
+  <!-- Definitions -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0fdf4"/>
+      <stop offset="100%" style="stop-color:#dcfce7"/>
+    </linearGradient>
+  </defs>
+</svg>

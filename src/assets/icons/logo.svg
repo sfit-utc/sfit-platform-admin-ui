@@ -1,0 +1,29 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="60" cy="60" r="60" fill="url(#gradient)" />
+  
+  <!-- Main Icon -->
+  <path d="M62.364 25.08a6 6 0 00-4.728 0l-21 9a6 6 0 000 11.04L48.75 50.151a5.999 5.999 0 01.356-.257l12-5.714a6 6 0 114.728 11.038L45.667 62.088l5.94 2.531a6 6 0 004.728 0l21-9a6 6 0 000-11.038l-21-9z" fill="white" opacity="0.9"/>
+  
+  <path d="M19.86 56.397L30 61.12v12.102a26.969 26.969 0 00-3.15-.524 6 6 0 01-5.34-5.34 33.115 33.115 0 01.75-11.286z" fill="white" opacity="0.7"/>
+  
+  <path d="M55.8 95.573A27.078 27.078 0 0042 86.935v-11.957l5.454 2.34a18 18 0 007.092 0l16.524-7.083a33.078 33.078 0 01.75 11.286 6 6 0 01-5.34 5.34 26.904 26.904 0 00-16.05 7.572 6 6 0 01-8.4 0z" fill="white" opacity="0.8"/>
+  
+  <path d="M36 104a6 6 0 006-6v-6.195a26.805 26.805 0 00-6-2.136V98a6 6 0 006 6z" fill="white" opacity="0.6"/>
+  
+  <!-- SFIT Text -->
+  <text x="60" y="45" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">SFIT</text>
+  
+  <!-- Decorative Elements -->
+  <circle cx="85" cy="35" r="3" fill="white" opacity="0.3"/>
+  <circle cx="95" cy="50" r="2" fill="white" opacity="0.4"/>
+  <circle cx="25" cy="85" r="2.5" fill="white" opacity="0.3"/>
+  
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22c55e"/>
+      <stop offset="100%" style="stop-color:#16a34a"/>
+    </linearGradient>
+  </defs>
+</svg>
