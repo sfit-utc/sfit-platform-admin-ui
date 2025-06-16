@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+## Đóng góp dự án
 
-First, run the development server:
+### 📋 Quy trình đóng góp
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. **Clone** fork về máy local:
+   ```bash
+   git clone <url>
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Tạo branch mới** cho feature/bugfix:
+   ```bash
+   git checkout -b feat/ten-feature-moi
+   # hoặc
+   git checkout -b fix/ten-bug-fix
+   # hoặc theo bài viết đã gửi
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Cài đặt dependencies**:
+   ```bash
+   npm install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. **Thực hiện thay đổi** và test thoroughly
 
-## Learn More
+5. **Commit** với message rõ ràng:
+   ```bash
+   git add .
+   git commit -m "feat: thêm component Button mới"
+     # hoặc theo bài viết đã gửi
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+6. **Merge** nhánh main vào nhánh hiện tại 
+- lưu ý pull code mới nhất nhánh main ở remote về local rồi mới tiến hành merge để đảm bảo là phiên bản mới nhất
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+6. **Push** lên fork của bạn:
+   ```bash
+   git push origin feature/ten-feature-moi
+   ```
+7. **Tạo Pull Request** từ GitHub interface
+- Nếu xảy ra xung đột thì giải quyết liên hệ với người liên quan để tránh xóa code của nhau
