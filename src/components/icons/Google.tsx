@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import googleSVG from "@/assets/icons/google.svg";
 
 type GoogleProps = {
   width: number;
@@ -11,7 +12,7 @@ type GoogleProps = {
 export default function Google({ width, height, className }: GoogleProps) {
   return (
     <Image
-      src="/google.svg"
+      src={googleSVG}
       alt="tim"
       height={height}
       width={width}

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import facebookSVG from "@/assets/icons/facebook.svg";
 
 type FacebookProps = {
   width: number;
@@ -11,7 +12,7 @@ type FacebookProps = {
 export default function Facebook({ width, height, className }: FacebookProps) {
   return (
     <Image
-      src="/facebook.svg"
+      src={facebookSVG}
       alt="tim"
       height={height}
       width={width}
