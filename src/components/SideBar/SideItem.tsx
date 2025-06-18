@@ -44,7 +44,7 @@ export default function SideItem({ name, icon, nav, isActive, onClick }: item) {
         />
         <div
           className={`ml-4 text-center  font-['Anton'] tracking-widest ${
-            isActive ? "text-green-800 text-xl" : "text-white text-md"
+            isActive ? "text-green-800 text-base" : "text-white text-sm"
           }`}
         >
           {name}
