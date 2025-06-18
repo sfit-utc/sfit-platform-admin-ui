@@ -1,15 +1,15 @@
-import type { Metadata } from 'next'
-import Image from 'next/image'
+import type { Metadata } from "next";
+import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: 'Authentication - SFIT Platform',
-  description: 'Login or register to access SFIT Platform',
-}
+  title: "Authentication - SFIT Platform",
+  description: "Login or register to access SFIT Platform",
+};
 
 export default function AuthLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <div className="min-h-screen bg-gray-50">
@@ -26,7 +26,7 @@ export default function AuthLayout({
               className="w-full h-full object-contain"
             />
           </div>
-          
+
           <div className="text-center text-white z-10 relative">
             <div className="flex items-center justify-center mb-8">
               <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center mr-4">
@@ -35,10 +35,11 @@ export default function AuthLayout({
               <h1 className="text-4xl font-bold">SFIT</h1>
             </div>
             <p className="text-xl text-green-100 mb-8 leading-relaxed">
-              Nền tảng học tập thông minh<br />
+              Nền tảng học tập thông minh
+              <br />
               Trải nghiệm học tập hiện đại với công nghệ AI
             </p>
-            
+
             {/* Statistics */}
             <div className="grid grid-cols-3 gap-6 mt-12">
               <div className="text-center">
@@ -55,7 +56,7 @@ export default function AuthLayout({
               </div>
             </div>
           </div>
-          
+
           {/* Decorative circles */}
           <div className="absolute top-20 right-20 w-32 h-32 bg-white bg-opacity-10 rounded-full"></div>
           <div className="absolute bottom-20 left-20 w-24 h-24 bg-white bg-opacity-10 rounded-full"></div>
@@ -64,11 +65,10 @@ export default function AuthLayout({
         </div>
 
         {/* Right side - Auth forms */}
-        <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
-          <div className="w-full max-w-md">
-            {children}
-          </div>
+        <div className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-sfit-primary-light">
+          <div className="w-full max-w-md">{children}</div>
         </div>
       </div>
-    </div>  )
+    </div>
+  );
 }
