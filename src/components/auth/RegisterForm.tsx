@@ -93,157 +93,178 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="w-11/12 m-auto flex flex-col justify-center items-center gap-6">
-      <div className="flex flex-col justify-center items-center text-center">
-        <h2 className="text-sfit-primary font-semibold text-5xl">SFIT</h2>
-        <h3 className="text-2xl font-semibold text-black m-2">UTC'S IT CLUB</h3>
-        <p className="text-gray-600">
-          Đăng ký tài khoản SFIT CLASSROOM ngay hôm nay
-        </p>
-      </div>
-      <form
-        onSubmit={handleSubmit}
-        className="text-black flex flex-col items-center gap-4 w-full"
-      >
-        <div className="w-full grid grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="lastName" className="text-gray-700">
-              Họ
-            </label>
-            <br />
-            <input
-              type="text"
-              name="lastName"
-              id="lastName"
-              className="w-full bg-white border border-gray-400 rounded-lg p-2"
-              onChange={handleChange}
-              value={formData.lastName}
-              placeholder="Nguyễn Văn"
-            />
+    <div className="w-full">
+      <div className="w-full text-black flex items-center justify-center px-8 py-12 md:px-12 order-2">
+        <div className="mx-auto w-full max-w-sm space-y-6">
+          <div className="space-y-2 text-center">
+            <h1 className="text-4xl font-bold tracking-tighter text-green-600">
+              SFIT
+            </h1>
+            <h2 className="text-xl font-semibold tracking-tight">
+              UTC&apos;S IT CLUB
+            </h2>
+            <p className="text-sm text-gray-500">
+              Đăng nhập vào tài khoản của bạn
+            </p>
           </div>
-          <div>
-            <label htmlFor="firstName" className="text-gray-700">
-              Tên
-            </label>
-            <br />
-            <input
-              type="text"
-              name="firstName"
-              id="firstName"
-              className="w-full bg-white border border-gray-400 rounded-lg p-2"
-              onChange={handleChange}
-              value={formData.firstName}
-              placeholder="A"
-            />
-          </div>
-        </div>
-        <div className="w-full">
-          <label htmlFor="email" className="text-gray-700">
-            Email
-          </label>
-          <br />
-          <input
-            type="email"
-            name="email"
-            id="email"
-            className="w-full bg-white border border-gray-400 rounded-lg p-2"
-            onChange={handleChange}
-            value={formData.email}
-            placeholder="example@gmail.com"
-          />
-        </div>
-        <div className="w-full">
-          <label htmlFor="password" className="text-gray-700">
-            Mật khẩu
-          </label>
-          <br />
-          <input
-            type="password"
-            name="password"
-            id="password"
-            className="w-full bg-white border border-gray-400 rounded-lg p-2"
-            placeholder="Tạo mật khẩu mạnh"
-            onChange={handleChange}
-            value={formData.password}
-          />
-          <p className="text-xs text-gray-500">
-            Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường và số
-          </p>
-        </div>
-        <div className="w-full">
-          <label htmlFor="confirmPassword" className="text-gray-700">
-            Xác nhận mật khẩu
-          </label>
-          <br />
-          <input
-            type="confirmPassword"
-            name="confirmPassword"
-            id="confirmPassword"
-            className="w-full bg-white border border-gray-400 rounded-lg p-2"
-            placeholder="Nhập lại mật khẩu"
-            onChange={handleChange}
-            value={formData.confirmPassword}
-          />
-        </div>
-        <div className="w-full text-sm">
-          <label htmlFor="agreeToTerms">
-            <input
-              type="checkbox"
-              name="agreeToTerms"
-              id="agreeToTerms"
-              onChange={handleChange}
-              checked={formData.agreeToTerms}
-              className="mr-1"
-            />
-            Tôi đồng ý với{" "}
-            <Link href="/terms" className="text-sfit-primary">
-              Điều khoản sử dụng
-            </Link>{" "}
-            và{" "}
-            <Link href="privacy" className="text-sfit-primary">
-              Chính sách bảo mật
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="w-full text-black grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label
+                  htmlFor="lastName"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Họ
+                </label>
+                <input
+                  id="lastName"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  className="bg-white mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 py-2 px-3 h-10"
+                  placeholder="Nguyễn Văn"
+                  required
+                  type="text"
+                />
+              </div>
+              <div className="space-y-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Tên
+                </label>
+                <input
+                  id="firstName"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  className="bg-white mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 py-2 px-3 h-10"
+                  placeholder="A"
+                  required
+                  type="text"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="bg-white mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 py-2 px-3 h-10"
+                placeholder="example@gmail.com"
+                required
+                type="email"
+              />
+            </div>
+            <div className="w-full text-black grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Mật khẩu
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="bg-white mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 py-2 px-3 h-10"
+                  required
+                  placeholder="Tạo mật khẩu mạnh"
+                  type="password"
+                />
+              </div>
+              <div className="space-y-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Nhập lại mật khẩu
+                </label>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="bg-white mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 py-2 px-3 h-10"
+                  required
+                  placeholder="Nhập lại mật khẩu"
+                  type="password"
+                />
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <input
+                  id="agreeToTerms"
+                  name="agreeToTerms"
+                  type="checkbox"
+                  checked={formData.agreeToTerms}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                />
+                <label
+                  htmlFor="agreeToTerms"
+                  className="ml-2 block text-sm text-gray-900"
+                >
+                  Tôi đồng ý với{" "}
+                  <Link
+                    href="/terms"
+                    className="text-green-600 hover:text-green-500 transition-colors font-medium"
+                  >
+                    Điều khoản sử dụng
+                  </Link>{" "}
+                  và{" "}
+                  <Link
+                    href="/privacy"
+                    className="text-green-600 hover:text-green-500 transition-colors font-medium"
+                  >
+                    Chính sách bảo mật
+                  </Link>
+                </label>
+              </div>
+            </div>
+            <button
+              className={`w-full flex justify-center items-center gap-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 ${
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <LoaderCircle className="animate-spin" />
+                  Đang đăng ký...
+                </>
+              ) : (
+                "Đăng ký"
+              )}
+            </button>
+          </form>
+          <div className="text-center text-sm text-gray-500">
+            Chưa có tài khoản?{" "}
+            <Link href="/login" className="text-green-600 hover:underline">
+              Đăng nhập
             </Link>
-          </label>
-        </div>
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full flex items-center justify-center gap-2 p-2 bg-sfit-primary rounded-lg text-white cursor-pointer hover:bg-sfit-primary-dark"
-        >
-          {isLoading ? (
-            <>
-              <LoaderCircle className="animate-spin" />
-              Đang đăng ký
-            </>
-          ) : (
-            "Đăng ký"
-          )}
-        </button>
-      </form>
-      <div className="text-gray-600 text-center">
-        Đã có tài khoản?
-        <Link href="/login" className="text-sfit-primary">
-          Đăng nhập
-        </Link>
-      </div>
-      <div className="relative w-full">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200" />
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-4 bg-sfit-primary-light text-gray-500 font-medium">
-            Hoặc đăng ký với
-          </span>
-        </div>
-      </div>
-      <div className="w-full text-black grid grid-cols-2 gap-4">
-        <div className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-200 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200">
-          <Google width={20} height={20} className="mr-2" />
-          Google
-        </div>
-        <div className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-200 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200">
-          <Facebook width={20} height={20} className="mr-2" />
-          Facebook
+          </div>
+          <div className="w-full text-black grid grid-cols-2 gap-4">
+            <div className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-200 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200">
+              <Google width={20} height={20} className="mr-2" />
+              Google
+            </div>
+            <div className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-200 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200">
+              <Facebook width={20} height={20} className="mr-2" />
+              Facebook
+            </div>
+          </div>
         </div>
       </div>
     </div>
