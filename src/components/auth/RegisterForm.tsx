@@ -5,6 +5,8 @@ import Link from "next/link";
 import { LoaderCircle } from "lucide-react";
 import Google from "../icons/Google";
 import Facebook from "../icons/Facebook";
+import { authService } from "@/services/authService";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -17,6 +19,7 @@ export default function RegisterForm() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -81,7 +84,9 @@ export default function RegisterForm() {
 
     try {
       // TODO: Implement actual registration logic
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+      const response = await authService.login(formData);
+      console.log("register success");
+      router.push("/");
       console.log("Registration attempt:", formData);
       // Redirect to email verification or login page
     } catch (error) {

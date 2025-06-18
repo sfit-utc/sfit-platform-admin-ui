@@ -5,6 +5,8 @@ import Link from "next/link";
 import Facebook from "@/components/icons/Facebook";
 import Google from "@/components/icons/Google";
 import { LoaderCircle } from "lucide-react";
+import { authService } from "@/services/authService";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({
@@ -14,6 +16,7 @@ export default function LoginForm() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -57,9 +60,11 @@ export default function LoginForm() {
 
     try {
       // TODO: Implement actual login logic
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+      // Simulate API call
+      const response = await authService.login(formData);
+      console.log("login success");
+      router.push("/");
       console.log("Login attempt:", formData);
-      // Redirect to dashboard or home page
     } catch (error) {
       console.error("Login error:", error);
       setErrors({ general: "Đăng nhập thất bại. Vui lòng thử lại." });
@@ -122,8 +127,8 @@ export default function LoginForm() {
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input
-                  id="remember-me"
-                  name="remember-me"
+                  id="rememberMe"
+                  name="rememberMe"
                   type="checkbox"
                   onChange={handleChange}
                   checked={formData.rememberMe}
