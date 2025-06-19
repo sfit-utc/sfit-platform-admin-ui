@@ -17,10 +17,10 @@ export default function SideBar() {
   };
 
   return (
-    <div className="pl-4 w-60 min-h-screen bg-green-800 rounded-[3px] flex flex-col">
+    <div className="pl-4 w-72 min-h-screen bg-green-800 rounded-[3px] flex flex-col">
       <div className="flex items-center p-5">
         <img src={logo.src} alt="logo" className="w-10 h-10" />
-        <div className="ml-4 text-center text-white text-3xl font-['Anton'] tracking-widest">
+        <div className="ml-4 text-center text-white text-3xl font-bold font-['Oswald']">
           SFIT
         </div>
       </div>

@@ -1,3 +1,4 @@
+import NavBar from "@/components/NavBar/NavBar";
 import SideBar from "@/components/SideBar/SideBar";
 import type { Metadata } from "next";
 
@@ -14,7 +15,10 @@ export default function HomeLayout({
   return (
     <div className="flex">
       <SideBar />
-      {children}
+      <div className="px-8 flex-col w-full">
+        <NavBar />
+        {children}
+      </div>
     </div>
   );
 }

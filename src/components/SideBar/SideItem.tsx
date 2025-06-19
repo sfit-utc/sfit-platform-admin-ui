@@ -1,9 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
-
-interface item {
+interface sideItem {
   name: string;
   icon: string;
   nav: string;
@@ -11,7 +7,13 @@ interface item {
   onClick: () => void;
 }
 
-export default function SideItem({ name, icon, nav, isActive, onClick }: item) {
+export default function SideItem({
+  name,
+  icon,
+  nav,
+  isActive,
+  onClick,
+}: sideItem) {
   return (
     <div className="relative flex flex-col items-start">
       <div
@@ -43,8 +45,8 @@ export default function SideItem({ name, icon, nav, isActive, onClick }: item) {
           className={` ${isActive ? "brightness-0  w-8 h-8" : "w-6 h-6"}`}
         />
         <div
-          className={`ml-4 text-center  font-['Anton'] tracking-widest ${
-            isActive ? "text-green-800 text-xl" : "text-white text-md"
+          className={`ml-4 text-center font-bold font-['Oswald'] ${
+            isActive ? "text-green-800 text-base" : "text-white text-sm"
           }`}
         >
           {name}
