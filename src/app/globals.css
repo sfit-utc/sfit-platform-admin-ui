@@ -1,9 +1,10 @@
 
-@import "tailwindcss";
-
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Oswald:wght@200..700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Oswald:wght@200..700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@200..700&display=swap');
+
+@import "tailwindcss";
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -18,6 +19,7 @@
   --sfit-gray-200: #e5e7eb;
   --sfit-gray-800: #1f2937;
   --sfit-gray-900: #111827;
+  --sfit--primary-light-50: #f7fef9;
 }
 
 @theme inline {
@@ -57,6 +59,10 @@ body {
   font-family: 'Oswald', sans-serif;
 }
 
+.bg-sfit-primary-50 {
+  background-color: var(--sfit--primary-light-50);
+}
+
 .bg-sfit-primary {
   background-color: var(--sfit-primary);
 }
@@ -82,11 +88,16 @@ body {
 }
 
 .gradient-bg {
-  background: linear-gradient(135deg, var(--sfit-primary) 0%, var(--sfit-primary-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--sfit-primary) 0%,
+    var(--sfit-primary-dark) 100%
+  );
 }
 
 .card-shadow {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .card-hover-shadow {
@@ -94,7 +105,8 @@ body {
 }
 
 .card-hover-shadow:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
   transform: translateY(-2px);
 }
 
