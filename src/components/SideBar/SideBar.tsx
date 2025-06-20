@@ -9,11 +9,28 @@ import classIcon from "@/assets/icons/class.png";
 import taskIcon from "@/assets/icons/task.png";
 import { useState } from "react";
 
-export default function SideBar() {
+interface SideBarProps {
+  onActiveItemChange?: (itemName: string) => void;
+}
+
+export default function SideBar({ onActiveItemChange }: SideBarProps) {
   const [activeItem, setActiveItem] = useState("home");
+
+  const navDisplayNames: { [key: string]: string } = {
+    home: "Trang chủ",
+    account: "Quản lí thành viên",
+    team: "Quản lí ban",
+    event: "Quản lí sự kiện",
+    class: "Quản lí lớp học",
+    task: "Quản lí nhiệm vụ",
+  };
 
   const handleItemClick = (nav: string) => {
     setActiveItem(nav);
+
+    if (onActiveItemChange) {
+      onActiveItemChange(navDisplayNames[nav] || nav);
+    }
   };
 
   return (

@@ -1,22 +1,24 @@
+"use client";
 import NavBar from "@/components/NavBar/NavBar";
 import SideBar from "@/components/SideBar/SideBar";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Homepage",
-  description: "Homepage of SFIT",
-};
+import { useState } from "react";
 
 export default function HomeLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [activeTitle, setActiveTitle] = useState("Trang chủ");
+
+  const handleActiveItemChange = (itemName: string) => {
+    setActiveTitle(itemName);
+  };
+
   return (
     <div className="flex">
-      <SideBar />
+      <SideBar onActiveItemChange={handleActiveItemChange} />
       <div className="px-8 flex-col w-full">
-        <NavBar />
+        <NavBar activeTitle={activeTitle} />
         {children}
       </div>
     </div>
