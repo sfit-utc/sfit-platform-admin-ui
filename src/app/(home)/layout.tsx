@@ -17,7 +17,7 @@ export default function HomeLayout({
   return (
     <div className="flex">
       <SideBar onActiveItemChange={handleActiveItemChange} />
-      <div className="px-8 flex-col w-full">
+      <div className="px-8 flex-col w-full bg-white">
         <NavBar activeTitle={activeTitle} />
         {children}
       </div>

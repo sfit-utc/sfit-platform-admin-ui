@@ -66,7 +66,7 @@ export default function Home() {
   useEffect(() => {}, []);
 
   return (
-    <div className="bg-white min-h-screen p-5">
+    <div className="bg-white w-full p-5">
       <div className="grid grid-cols-4 gap-5">
         {dashboardActions.map(
           ({ icon, children, textColor, bgColor, href }) => (
