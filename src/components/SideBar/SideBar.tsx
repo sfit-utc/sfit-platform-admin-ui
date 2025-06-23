@@ -1,12 +1,12 @@
 "use client";
-import logo from "@/assets/icons/sfit-logo.png";
+import logo from "@/assets/icons/sfit-logo.svg";
 import SideItem from "./SideItem";
-import homeIcon from "@/assets/icons/home.png";
-import accountIcon from "@/assets/icons/account.png";
-import teamIcon from "@/assets/icons/team.png";
-import eventIcon from "@/assets/icons/event.png";
-import classIcon from "@/assets/icons/class.png";
-import taskIcon from "@/assets/icons/task.png";
+import HomeIcon from "@/assets/icons/home.svg";
+import AccountIcon from "@/assets/icons/account.svg";
+import TeamIcon from "@/assets/icons/team.svg";
+import EventIcon from "@/assets/icons/event.svg";
+import ClassIcon from "@/assets/icons/class.svg";
+import TaskIcon from "@/assets/icons/task.svg";
 import { useState } from "react";
 
 interface SideBarProps {
@@ -44,42 +44,42 @@ export default function SideBar({ onActiveItemChange }: SideBarProps) {
       <div className="flex-1">
         <SideItem
           name={"TRANG CHỦ"}
-          icon={homeIcon.src}
+          icon={HomeIcon.src}
           nav={"home"}
           isActive={activeItem === "home"}
           onClick={() => handleItemClick("home")}
         />
         <SideItem
           name={"THÀNH VIÊN"}
-          icon={accountIcon.src}
+          icon={AccountIcon.src}
           nav={"account"}
           isActive={activeItem === "account"}
           onClick={() => handleItemClick("account")}
         />
         <SideItem
           name={"BAN"}
-          icon={teamIcon.src}
+          icon={TeamIcon.src}
           nav={"team"}
           isActive={activeItem === "team"}
           onClick={() => handleItemClick("team")}
         />
         <SideItem
           name={"SỰ KIỆN"}
-          icon={eventIcon.src}
+          icon={EventIcon.src}
           nav={"event"}
           isActive={activeItem === "event"}
           onClick={() => handleItemClick("event")}
         />
         <SideItem
           name={"LỚP HỌC"}
-          icon={classIcon.src}
+          icon={ClassIcon.src}
           nav={"class"}
           isActive={activeItem === "class"}
           onClick={() => handleItemClick("class")}
         />
         <SideItem
           name={"NHIỆM VỤ"}
-          icon={taskIcon.src}
+          icon={TaskIcon.src}
           nav={"task"}
           isActive={activeItem === "task"}
           onClick={() => handleItemClick("task")}
