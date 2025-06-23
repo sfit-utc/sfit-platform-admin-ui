@@ -44,6 +44,7 @@ export default function SideItem({
           alt="logo"
           className={` ${isActive ? "brightness-0  w-8 h-8" : "w-6 h-6"}`}
         />
+
         <div
           className={`ml-4 text-center font-bold font-['Oswald'] ${
             isActive ? "text-green-800 text-lg" : "text-white text-base"
