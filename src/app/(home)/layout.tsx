@@ -1,7 +1,6 @@
 "use client";
 import NavBar from "@/components/NavBar/NavBar";
 import SideBar from "@/components/SideBar/SideBar";
-import Line from "@/components/Line";
 import { useState } from "react";
 
 export default function HomeLayout({
@@ -20,7 +19,6 @@ export default function HomeLayout({
       <SideBar onActiveItemChange={handleActiveItemChange} />
       <div className="px-8 flex-col w-full bg-white">
         <NavBar activeTitle={activeTitle} />
-        <Line />
         {children}
       </div>
     </div>
