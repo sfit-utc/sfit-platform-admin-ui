@@ -506,7 +506,7 @@ export default function AccountList() {
           </div>
         </div>
       </div>
-      <table className="flex flex-col w-full">
+      <div className="flex flex-col w-full">
         <div className="flex justify-between items-center p-4  my-2 font-bold text-black">
           <div className="flex-2 text-center">STT</div>
           <div className="flex-5 text-center">HỌ VÀ TÊN</div>
@@ -522,7 +522,7 @@ export default function AccountList() {
           : currentPageData.map((account) => (
               <AccountItem key={account.id} account={account} />
             ))}
-      </table>
+      </div>
     </div>
   );
 }
