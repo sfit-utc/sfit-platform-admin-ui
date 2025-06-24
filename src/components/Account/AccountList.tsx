@@ -1,148 +1,37 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Account } from "@/types/account";
+import { AccountListItem, AccountFilters } from "@/types/account";
+import { useAccounts } from "@/hooks/useAccountService";
 import AccountItem from "./AccountItem";
-
-// Mock data
-const mockAccounts: Account[] = [
-  {
-    id: 1,
-    name: "Nguyễn Văn A",
-    teams: ["Ban Công nghệ", "Ban Sự kiện"],
-    role: "Thành viên",
-    class: "CNTT-K66",
-  },
-  {
-    id: 2,
-    name: "Trần Thị B",
-    teams: ["Ban Công nghệ"],
-    role: "Trưởng ban",
-    class: "CNTT-K65",
-  },
-  {
-    id: 3,
-    name: "Lê Văn Canh Tan Ma Van Giang",
-    teams: ["Ban Sự kiện", "Ban Truyền thông"],
-    role: "Thành viên",
-    class: "CNTT-K66",
-  },
-  {
-    id: 4,
-    name: "Phạm Thị D",
-    teams: ["Ban Truyền thông"],
-    role: "Thành viên",
-    class: "CNTT-K67",
-  },
-  {
-    id: 5,
-    name: "Hoàng Văn E",
-    teams: ["Ban Học tập", "Ban Công nghệ"],
-    role: "Thành viên",
-    class: "CNTT-K68",
-  },
-  {
-    id: 6,
-    name: "Vũ Thị F",
-    teams: ["Ban Công nghệ", "Ban Sự kiện", "Ban Truyền thông"],
-    role: "Thành viên",
-    class: "CNTT-K66",
-  },
-  {
-    id: 7,
-    name: "Đặng Văn G",
-    teams: ["Ban Sự kiện"],
-    role: "Phó ban",
-    class: "CNTT-K65",
-  },
-  {
-    id: 8,
-    name: "Bùi Thị H",
-    teams: ["Ban Truyền thông", "Ban Học tập"],
-    role: "Thành viên",
-    class: "CNTT-K67",
-  },
-  {
-    id: 9,
-    name: "Ngô Văn I",
-    teams: ["Ban Học tập"],
-    role: "Thành viên",
-    class: "CNTT-K66",
-  },
-  {
-    id: 10,
-    name: "Lý Thị K",
-    teams: ["Ban Công nghệ", "Ban Học tập"],
-    role: "Thành viên",
-    class: "CNTT-K68",
-  },
-  {
-    id: 11,
-    name: "Hồ Văn L",
-    teams: ["Ban Sự kiện"],
-    role: "Thành viên",
-    class: "CNTT-K67",
-  },
-  {
-    id: 12,
-    name: "Đỗ Thị M",
-    teams: ["Ban Truyền thông", "Ban Công nghệ"],
-    role: "Thành viên",
-    class: "CNTT-K66",
-  },
-  {
-    id: 13,
-    name: "Tô Văn N",
-    teams: ["Ban Học tập", "Ban Sự kiện"],
-    role: "Phó ban",
-    class: "CNTT-K65",
-  },
-  {
-    id: 14,
-    name: "Dương Thị O",
-    teams: ["Ban Công nghệ"],
-    role: "Thành viên",
-    class: "CNTT-K67",
-  },
-  {
-    id: 15,
-    name: "Mai Văn P",
-    teams: ["Ban Sự kiện", "Ban Truyền thông", "Ban Học tập"],
-    role: "Thành viên",
-    class: "CNTT-K68",
-  },
-];
+import Loading from "../ui/loading";
 
 export default function AccountList() {
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [accountsPerPage, setAccountsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState("all");
   const [filterTeam, setFilterTeam] = useState("all");
-  const [totalItems, setTotalItems] = useState(15);
   const [activeStyle, setActiveStyle] = useState("line");
 
+  // Create filters object for the hook
+  const filters: AccountFilters = {
+    search: searchTerm || undefined,
+    role: filterRole !== "all" ? filterRole : undefined,
+    team: filterTeam !== "all" ? filterTeam : undefined,
+  };
+
+  // Use the hook to get accounts
+  const { data: accounts, loading, error } = useAccounts(filters);
+
+  const totalItems = accounts.length;
   const totalPages = Math.ceil(totalItems / accountsPerPage);
   const startIdx = (currentPage - 1) * accountsPerPage;
   const endIdx = startIdx + accountsPerPage;
   const currentPageData = accounts.slice(startIdx, endIdx);
 
+  // Reset to first page when filters change
   useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setAccounts(mockAccounts);
-      setTotalItems(mockAccounts.length);
-      setLoading(false);
-    }, 500);
-  }, []);
-
-  useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      handleFilter();
-    }, 300);
-
-    return () => clearTimeout(debounceTimer);
+    setCurrentPage(1);
   }, [searchTerm, filterRole, filterTeam]);
 
   function handlePreviousPage() {
@@ -161,47 +50,6 @@ export default function AccountList() {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
     }
-  }
-
-  function handleFilter() {
-    setLoading(true);
-    setTimeout(() => {
-      setCurrentPage(1);
-
-      // Filter accounts based on search term and role
-      let filteredAccounts = mockAccounts;
-
-      // Apply search filter
-      if (searchTerm.trim()) {
-        filteredAccounts = filteredAccounts.filter(
-          (account) =>
-            account.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            account.teams.some((team) =>
-              team.toLowerCase().includes(searchTerm.toLowerCase())
-            ) ||
-            account.class.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
-
-      // Apply role filter
-      if (filterRole !== "all") {
-        filteredAccounts = filteredAccounts.filter(
-          (account) => account.role === filterRole
-        );
-      }
-
-      // Apply team filter
-      if (filterTeam !== "all") {
-        filteredAccounts = filteredAccounts.filter((account) =>
-          account.teams.includes(filterTeam)
-        );
-      }
-
-      // Update accounts and total items
-      setAccounts(filteredAccounts);
-      setTotalItems(filteredAccounts.length);
-      setLoading(false);
-    }, 500);
   }
 
   // Handle search input change
@@ -233,6 +81,10 @@ export default function AccountList() {
       <div className="h-6 w-1/12 bg-gray-300 rounded ml-4"></div>
     </div>
   );
+
+  if (error) {
+    return <div className="text-red-500">Error: {error.message}</div>;
+  }
 
   return (
     <div className="">
