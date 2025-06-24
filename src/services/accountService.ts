@@ -38,7 +38,7 @@ class AccountService {
       {
         id: 1,
         name: "Nguyễn Văn A",
-        role: "Thành viên",
+        role: "Phó CN",
         class: "CNTT-K65",
         teams: ["Web", "IOT"],
         avatar: "/avatars/user1.jpg",
@@ -47,7 +47,7 @@ class AccountService {
       {
         id: 2,
         name: "Trần Thị B",
-        role: "Lãnh đạo",
+        role: "Chủ nhiệm",
         class: "CNTT-K64",
         teams: ["Chuyên môn"],
         avatar: "/avatars/user2.jpg",
@@ -56,7 +56,7 @@ class AccountService {
       {
         id: 3,
         name: "Lê Văn Canh Tan Ma Van Giang",
-        role: "Thành viên",
+        role: "Trưởng ban",
         class: "CNTT-K66",
         teams: ["Ban Sự kiện", "Ban Truyền thông"],
         avatar: "/avatars/user3.jpg",
@@ -193,10 +193,20 @@ class AccountService {
         );
       }
       if (filters.search) {
-        filteredAccounts = filteredAccounts.filter(account => 
-          account.name.toLowerCase().includes(filters.search!.toLowerCase()) ||
-          account.role.toLowerCase().includes(filters.search!.toLowerCase())
-        );
+        const normalizedSearch = normalizeText(filters.search);
+        filteredAccounts = filteredAccounts.filter(account => {
+          const normalizedName = normalizeText(account.name);
+          const normalizedRole = normalizeText(account.role);
+          const normalizedTeams = account.teams.map(team => normalizeText(team));
+          const normalizedClass = normalizeText(account.class);
+          
+          return (
+            normalizedName.includes(normalizedSearch) ||
+            normalizedRole.includes(normalizedSearch) ||
+            normalizedTeams.some(team => team.includes(normalizedSearch)) ||
+            normalizedClass.includes(normalizedSearch)
+          );
+        });
       }
     }
 
@@ -305,6 +315,13 @@ class AccountService {
       throw error;
     }
   }
+}
+
+function normalizeText(text: string): string {
+  return text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .toLowerCase();
 }
 
 export const accountService = new AccountService();

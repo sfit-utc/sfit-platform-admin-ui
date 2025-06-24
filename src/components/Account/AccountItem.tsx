@@ -11,6 +11,10 @@ export default function AccountItem({ account }: AccountItemProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const getRoleStyle = (role: string) => {
     switch (role) {
+      case "Chủ nhiệm":
+        return "text-purple-600 font-bold bg-purple-100";
+      case "Phó CN":
+        return "text-pink-500 font-semibold bg-pink-100";
       case "Trưởng ban":
         return "text-red-600 font-bold bg-red-100";
       case "Phó ban":

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { AccountListItem, AccountFilters } from "@/types/account";
 import { useAccounts } from "@/hooks/useAccountService";
 import AccountItem from "./AccountItem";
@@ -13,12 +13,15 @@ export default function AccountList() {
   const [filterTeam, setFilterTeam] = useState("all");
   const [activeStyle, setActiveStyle] = useState("line");
 
-  // Create filters object for the hook
-  const filters: AccountFilters = {
-    search: searchTerm || undefined,
-    role: filterRole !== "all" ? filterRole : undefined,
-    team: filterTeam !== "all" ? filterTeam : undefined,
-  };
+  // Memoize filters to prevent unnecessary re-renders
+  const filters: AccountFilters = useMemo(
+    () => ({
+      search: searchTerm || undefined,
+      role: filterRole !== "all" ? filterRole : undefined,
+      team: filterTeam !== "all" ? filterTeam : undefined,
+    }),
+    [searchTerm, filterRole, filterTeam]
+  );
 
   // Use the hook to get accounts
   const { data: accounts, loading, error } = useAccounts(filters);
@@ -32,44 +35,37 @@ export default function AccountList() {
   // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, filterRole, filterTeam]);
+  }, [filters]);
 
-  function handlePreviousPage() {
+  const handlePreviousPage = useCallback(() => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
-  }
+  }, [currentPage]);
 
-  function handleNextPage() {
+  const handleNextPage = useCallback(() => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
-  }
+  }, [currentPage, totalPages]);
 
-  function handlePageChange(pageNumber: number) {
-    if (pageNumber >= 1 && pageNumber <= totalPages) {
-      setCurrentPage(pageNumber);
-    }
-  }
+  const handlePageChange = useCallback(
+    (pageNumber: number) => {
+      if (pageNumber >= 1 && pageNumber <= totalPages) {
+        setCurrentPage(pageNumber);
+      }
+    },
+    [totalPages]
+  );
 
   // Handle search input change
-  function handleSearchChange(value: string) {
+  const handleSearchChange = useCallback((value: string) => {
     setSearchTerm(value);
-  }
+  }, []);
 
-  // Handle role filter change
-  function handleRoleFilterChange(role: string) {
-    setFilterRole(role);
-  }
-
-  // Handle team filter change
-  function handleTeamFilterChange(team: string) {
-    setFilterTeam(team);
-  }
-
-  function handleClick(val: string) {
+  const handleClick = useCallback((val: string) => {
     setActiveStyle(val);
-  }
+  }, []);
 
   const AccountItemSkeleton = () => (
     <div className="flex justify-between items-center p-4 border-2 my-2 animate-pulse">
