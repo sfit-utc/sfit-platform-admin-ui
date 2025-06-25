@@ -33,9 +33,9 @@ export default function SideItem({
         </svg>
       </div>
       <Link
-        href={" "}
-        className={`flex w-full items-center pl-5 py-2 
-          ${isActive ? "bg-white rounded-l-full p-10" : ""} 
+        href={nav}
+        className={`flex w-full items-center px-6 py-2 
+          ${isActive ? "bg-white rounded-l-full p-10" : " "} 
           transition-all duration-500 ease-in`}
         onClick={onClick}
       >
@@ -47,7 +47,7 @@ export default function SideItem({
 
         <div
           className={`ml-4 text-center font-bold font-['Oswald'] ${
-            isActive ? "text-green-800 text-base" : "text-white text-sm"
+            isActive ? "text-green-800 text-lg" : "text-white text-base"
           }`}
         >
           {name}
