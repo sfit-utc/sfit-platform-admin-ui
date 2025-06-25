@@ -1,7 +1,7 @@
 "use client";
 
 import Box from "@/components/ui/box";
-import Status, { StatusColorKey } from "@/components/ui/status";
+import HighlightBox, { StatusColorKey } from "@/components/ui/highlightBox";
 
 interface EventItemProp {
   eventTitle: string;
@@ -34,9 +34,9 @@ export default function EventItem({
       <div className="lg:flex justify-between">
         <div>{eventTitle}</div>
         {statusObj && (
-          <Status className="w-fit" color={statusObj.color}>
+          <HighlightBox className="w-fit" color={statusObj.color}>
             {statusObj.status}
-          </Status>
+          </HighlightBox>
         )}
       </div>
       <p className="text-sfit-red-500 text-xs">thời gian diễn ra: {when}</p>

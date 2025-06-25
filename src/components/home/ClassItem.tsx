@@ -1,7 +1,7 @@
 "use client";
 
 import Box from "@/components/ui/box";
-import Status, { StatusColorKey } from "@/components/ui/status";
+import HighlightBox, { StatusColorKey } from "@/components/ui/highlightBox";
 
 interface ClassItemProp {
   name: string;
@@ -35,9 +35,9 @@ export default function ClassItem({
       <p>{when}</p>
       <p>Giảng viên: {teacher}</p>
       {statusObj && (
-        <Status className="mt-3 w-fit" color={statusObj.color}>
+        <HighlightBox className="mt-3 w-fit" color={statusObj.color}>
           {statusObj.status}
-        </Status>
+        </HighlightBox>
       )}
     </Box>
   );

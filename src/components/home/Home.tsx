@@ -2,10 +2,10 @@
 
 import ClassItem from "@/components/home/ClassItem";
 import EventItem from "@/components/home/EventItem";
-import TaskItem from "@/components/home/TaskItem";
+import TaskItem from "@/components/ui/TaskItem";
 import Card from "@/components/ui/card";
 import DashboardAction from "@/components/ui/dashboard-action";
-import Status from "@/components/ui/status";
+import HighlightBox from "@/components/ui/highlightBox";
 import {
   useClass,
   useNearTask,
@@ -129,9 +129,9 @@ export default function Home() {
           title={
             <div className="flex justify-between">
               Các lớp học trong tuần
-              <Status className="text-xs font-medium" color={"blue"}>
+              <HighlightBox className="text-xs font-medium" color={"blue"}>
                 {timeline}
-              </Status>
+              </HighlightBox>
             </div>
           }
         >
