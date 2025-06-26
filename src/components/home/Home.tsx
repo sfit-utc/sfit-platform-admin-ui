@@ -12,7 +12,7 @@ import {
   useStartedEvent,
   useUpcomingEvents,
   useWeekClasses,
-} from "@/hooks/useHomeService";
+} from "@/hooks/use-home-service";
 import {
   CalendarCheck,
   ClipboardList,

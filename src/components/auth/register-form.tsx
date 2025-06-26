@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { LoaderCircle } from "lucide-react";
-import Google from "../icons/google";
-import Facebook from "../icons/facebook";
+import Google from "@/components/icons/google";
+import Facebook from "@/components/icons/facebook";
 import { authService } from "@/services/auth-service";
 import { useRouter } from "next/navigation";
 

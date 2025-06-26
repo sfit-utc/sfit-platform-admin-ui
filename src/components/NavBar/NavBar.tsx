@@ -1,6 +1,6 @@
 "use client";
 import { useCallback } from "react";
-import SearchBar from "../ui/search-bar";
+import SearchBar from "@/components/ui/search-bar";
 
 interface NavBarProps {
   activeTitle?: string;
