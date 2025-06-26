@@ -1,6 +1,6 @@
 "use client";
-import NavBar from "@/components/navbar/NavBar";
-import SideBar from "@/components/sidebar/SideBar";
+import NavBar from "@/components/navbar/navbar";
+import SideBar from "@/components/sidebar/sidebar";
 import Line from "@/components/ui/line";
 import { useState } from "react";
 

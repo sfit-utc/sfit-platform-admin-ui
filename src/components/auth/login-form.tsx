@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Facebook from "@/components/icons/Facebook";
-import Google from "@/components/icons/Google";
+import Facebook from "@/components/icons/facebook";
+import Google from "@/components/icons/google";
 import { LoaderCircle } from "lucide-react";
-import { authService } from "@/services/authService";
+import { authService } from "@/services/auth-service";
 import { useRouter } from "next/navigation";
 
 export default function LoginForm() {

@@ -5,7 +5,6 @@ const API_BASE_URL =
 
 class AccountService {
   async getAccountStats(): Promise<AccountStats> {
-    // Mock data for now
     return {
       totalMembers: 99,
       activeMembers: 70,
@@ -172,7 +171,6 @@ class AccountService {
       },
     ];
 
-    // Apply filters if provided
     let filteredAccounts = mockAccounts;
     if (filters) {
       if (filters.role) {
@@ -240,7 +238,6 @@ class AccountService {
   }
 
   async getAccountById(id: number): Promise<Account> {
-    // Mock data for now
     const mockAccount: Account = {
       id: id,
       name: "Nguyễn Văn A",

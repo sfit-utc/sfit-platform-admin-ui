@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import SearchBar from "../ui/search-bar";
-import EventList from "./EventList";
-import CreateEventForm from "./CreateEventForm";
+import SearchBar from "@/components/ui/search-bar";
+import EventList from "@/components/event/event-list";
+import CreateEventForm from "@/components/event/create-event-form";
 
 export default function Event() {
   const [activeTab, setActiveTab] = useState<"ongoing" | "upcoming" | "past">(

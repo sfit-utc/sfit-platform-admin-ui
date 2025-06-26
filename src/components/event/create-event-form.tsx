@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import { useEventService } from "@/hooks/useEventService";
-import Line from "../ui/line";
+import { useEventService } from "@/hooks/use-event-service";
+import Line from "@/components/ui/line";
 
 interface CreateEventFormProps {
   onCancel: () => void;

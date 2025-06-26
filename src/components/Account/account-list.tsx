@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { AccountListItem, AccountFilters } from "@/types/account";
-import { useAccounts } from "@/hooks/useAccountService";
-import AccountItem from "./AccountItem";
+import { useAccounts } from "@/hooks/use-account-service";
+import AccountItem from "./account-item";
 import Loading from "../ui/loading";
 import SearchBar from "../ui/search-bar";
 

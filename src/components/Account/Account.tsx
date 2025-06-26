@@ -1,6 +1,6 @@
-import AccountList from "./AccountList";
+import AccountList from "./account-list";
 import DashboardAction from "../ui/dashboard-action";
-import { useAccountStats } from "@/hooks/useAccountService";
+import { useAccountStats } from "@/hooks/use-account-service";
 import Loading from "../ui/loading";
 
 export default function Account() {

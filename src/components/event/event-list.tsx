@@ -1,6 +1,6 @@
-import { useEventService } from "@/hooks/useEventService";
-import EventItem from "./EventItem";
-import Loading from "../ui/loading";
+import { useEventService } from "@/hooks/use-event-service";
+import EventItem from "@/components/event/event-item";
+import Loading from "@/components/ui/loading";
 
 interface EventListProps {
   status?: "ongoing" | "upcoming" | "past";

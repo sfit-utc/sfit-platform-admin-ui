@@ -1,8 +1,8 @@
 "use client";
 
-import ClassItem from "@/components/home/ClassItem";
-import EventItem from "@/components/home/EventItem";
-import TaskItem from "@/components/home/TaskItem";
+import ClassItem from "@/components/home/class-item";
+import EventItem from "@/components/home/event-item";
+import TaskItem from "@/components/home/task-item";
 import Card from "@/components/ui/card";
 import DashboardAction from "@/components/ui/dashboard-action";
 import Status from "@/components/ui/status";
