@@ -48,7 +48,7 @@ export default function Account() {
           return (
             <DashboardAction
               key={children}
-              className={`${textColor} ${bgColor} px-2 py-4`}
+              className={`${textColor} ${bgColor} py-4`}
               number={number}
             >
               {children}
