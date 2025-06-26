@@ -4,7 +4,6 @@ export interface CommitteeInfo {
   headOfCommittee: string;
   description: string;
   numberOfMember: number;
-  href: string;
 }
 
 export interface CommitteeDetail {

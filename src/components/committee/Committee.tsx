@@ -69,11 +69,10 @@ export default function Committee() {
               headOfCommittee,
               description,
               numberOfMember,
-              href,
             }) => (
               <CommitteeItem
                 key={id}
-                href={href}
+                id={id}
                 committeeName={committeeName}
                 headOfCommittee={headOfCommittee}
                 description={description}

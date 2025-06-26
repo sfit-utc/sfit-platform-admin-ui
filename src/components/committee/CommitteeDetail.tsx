@@ -3,13 +3,15 @@
 import HighlightBox from "@/components/ui/highlightBox";
 import Panel from "@/components/ui/panel";
 import { ArrowLeft, Check, Pen, Plus } from "lucide-react";
-import TaskItem from "../ui/TaskItem";
+import TaskItem from "@/components/ui/TaskItem";
 import {
   useCommitteeDetail,
   useCommitteeTarget,
   useListMembersOfCommittee,
   useTasksOfCommittee,
 } from "@/hooks/useCommitteeDetailService";
+import AccountItem from "../Account/AccountItem";
+import Loading from "../ui/loading";
 
 interface CommitteeDetailProp {
   id: number;
@@ -76,6 +78,7 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
         ))}
       </Panel>
       <Panel
+        className="mt-2.5"
         title={
           <div className="flex items-center">
             <div>Mục tiêu</div>
@@ -144,7 +147,15 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
           </table>
         </div>
       </Panel>
-      <Panel title="Thành viên">thông tin</Panel>
+      <Panel title="Thành viên" className="mt-2.5">
+        {loadMembers ? (
+          <Loading className="m-auto w-fit" size={48} />
+        ) : (
+          member.map((account) => (
+            <AccountItem key={account.id} account={account} />
+          ))
+        )}
+      </Panel>
     </div>
   );
 }

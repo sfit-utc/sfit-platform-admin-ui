@@ -1,23 +1,23 @@
 import Link from "next/link";
 
 interface CommitteeItemProp {
+  id: number
   committeeName: string;
   headOfCommittee: string;
   description: string;
   numberOfMember: number;
-  href: string;
 }
 
 export default function CommitteeItem({
+  id,
   committeeName,
   headOfCommittee,
   description,
   numberOfMember,
-  href,
 }: CommitteeItemProp) {
   return (
     <Link
-      href={href}
+      href={`/team?id=${id}`}
       className="text-black text-center shadow rounded-b-md px-11 py-5 flex flex-col items-center"
     >
       <h2 className="text-2xl font-extrabold">{committeeName}</h2>

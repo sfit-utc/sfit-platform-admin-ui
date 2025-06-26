@@ -1,6 +1,7 @@
 "use client";
-import NavBar from "@/components/navbar/NavBar";
-import SideBar from "@/components/sidebar/SideBar";
+
+import NavBar from "@/components/NavBar/NavBar";
+import SideBar from "@/components/SideBar/SideBar";
 import { useState } from "react";
 
 export default function HomeLayout({
