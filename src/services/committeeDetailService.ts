@@ -308,6 +308,10 @@ class CommitteeDetailService {
       throw error;
     }
   }
+
+  async getPeriod(id: number): Promise<string> {
+    return "30/01/2025 - 01/06/2025";
+  }
 }
 
 export const committeeDetailService = new CommitteeDetailService();

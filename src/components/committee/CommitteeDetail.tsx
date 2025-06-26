@@ -8,17 +8,18 @@ import {
   useCommitteeDetail,
   useCommitteeTarget,
   useListMembersOfCommittee,
+  usePeriod,
   useTasksOfCommittee,
 } from "@/hooks/useCommitteeDetailService";
 import AccountItem from "../Account/AccountItem";
-import Loading from "../ui/loading";
+import Loading from "@/components/ui/loading";
 
 interface CommitteeDetailProp {
   id: number;
 }
 
 export default function CommitteeDetail({ id }: CommitteeDetailProp) {
-  const period = "30/01/2025 - 01/06/2025";
+  const { data: period } = usePeriod(id);
   const { data: committeeInfor } = useCommitteeDetail(id);
   const { data: targets } = useCommitteeTarget(id);
   const { data: taskItems } = useTasksOfCommittee(id);

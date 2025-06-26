@@ -67,6 +67,22 @@ export function useTasksOfCommittee(
   return { data, loading, error };
 }
 
+export function usePeriod(id: number): UseCommitteeServiceType<string> {
+  const [data, setData] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    committeeDetailService
+      .getPeriod(id)
+      .then(setData)
+      .catch(setError)
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  return { data, loading, error };
+}
+
 export function useCommitteeTarget(
   id: number
 ): UseCommitteeServiceType<Target[]> {
