@@ -1,9 +1,8 @@
-"use client";
-import Account from "@/components/Account/Account";
+import Class from "@/components/class/class";
 export default function page() {
   return (
     <div className="mt-4">
-      <Account />
+      <Class />
     </div>
   );
 }

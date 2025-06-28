@@ -20,7 +20,7 @@ export default function DashboardAction({
 }: DashboardActionProp) {
   const content = (
     <>
-      <div className="mt-2">{children}</div>
+      <p className="mt-2">{children}</p>
     </>
   );
 
@@ -29,9 +29,9 @@ export default function DashboardAction({
       <div
         className={`${className} text-center rounded-2xl shadow cursor-pointer text-xl`}
       >
-        <div className="flex justify-center text-3xl font-bold -mb-2">
+        <span className="flex justify-center text-3xl font-bold -mb-2">
           {number}
-        </div>
+        </span>
         {content}
       </div>
     );

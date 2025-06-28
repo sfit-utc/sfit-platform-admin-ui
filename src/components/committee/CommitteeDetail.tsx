@@ -3,7 +3,7 @@
 import HighlightBox from "@/components/ui/highlightBox";
 import Panel from "@/components/ui/panel";
 import { ArrowLeft, Check, Pen, Plus } from "lucide-react";
-import TaskItem from "@/components/ui/TaskItem";
+import TaskItem from "@/components/ui/task-item";
 import {
   useCommitteeDetail,
   useCommitteeTarget,
@@ -11,8 +11,8 @@ import {
   usePeriod,
   useTasksOfCommittee,
 } from "@/hooks/useCommitteeDetailService";
-import AccountItem from "../Account/AccountItem";
 import Loading from "@/components/ui/loading";
+import AccountItem from "../Account/account-item";
 
 interface CommitteeDetailProp {
   id: number;
