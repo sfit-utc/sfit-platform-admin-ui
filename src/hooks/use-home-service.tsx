@@ -1,4 +1,4 @@
-import { homeService } from "@/services/homeService";
+import { homeService } from "@/services/home-service";
 import { Class, Event, Task } from "@/types/home";
 import { useEffect, useState } from "react";
 

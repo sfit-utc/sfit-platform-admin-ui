@@ -1,9 +1,8 @@
-"use client";
-import Account from "@/components/account/account";
+import Event from "@/components/event/event";
 export default function page() {
   return (
     <div className="mt-4">
-      <Account />
+      <Event />
     </div>
   );
 }

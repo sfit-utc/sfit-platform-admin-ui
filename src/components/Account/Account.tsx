@@ -1,7 +1,7 @@
-import AccountList from "./AccountList";
-import DashboardAction from "../ui/dashboard-action";
-import { useAccountStats } from "@/hooks/useAccountService";
-import Loading from "../ui/loading";
+import AccountList from "@/components/account/account-list";
+import DashboardAction from "@/components/ui/dashboard-action";
+import { useAccountStats } from "@/hooks/use-account-service";
+import Loading from "@/components/ui/loading";
 
 export default function Account() {
   const { data: stats, loading, error } = useAccountStats();
@@ -48,7 +48,7 @@ export default function Account() {
           return (
             <DashboardAction
               key={children}
-              className={`${textColor} ${bgColor} px-2 py-4`}
+              className={`${textColor} ${bgColor} py-4`}
               number={number}
             >
               {children}
