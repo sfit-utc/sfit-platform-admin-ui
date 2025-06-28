@@ -106,6 +106,7 @@ export default function CreateEventForm({
         <div className="flex py-5 *:m-2">
           <div className="flex-2 bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] p-4">
             <form
+              id="create-event-form"
               onSubmit={handleSubmit}
               className="space-y-6 *:text-gray-800 [&_label]:text-xl"
             >
@@ -289,6 +290,7 @@ export default function CreateEventForm({
               </button>
               <button
                 type="submit"
+                form="create-event-form"
                 disabled={loading}
                 className="text-sm px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >

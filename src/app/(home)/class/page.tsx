@@ -1,8 +1,8 @@
-import Event from "@/components/event/event";
+import Class from "@/components/class/class";
 export default function page() {
   return (
     <div className="mt-4">
-      <Event />
+      <Class />
     </div>
   );
 }

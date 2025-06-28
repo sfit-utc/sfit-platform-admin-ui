@@ -2,9 +2,9 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { AccountListItem, AccountFilters } from "@/types/account";
 import { useAccounts } from "@/hooks/use-account-service";
-import AccountItem from "./account-item";
-import Loading from "../ui/loading";
-import SearchBar from "../ui/search-bar";
+import AccountItem from "@/components/account/account-item";
+import Loading from "@/components/ui/loading";
+import SearchBar from "@/components/ui/search-bar";
 
 export default function AccountList() {
   const [currentPage, setCurrentPage] = useState(1);

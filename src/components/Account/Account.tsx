@@ -1,7 +1,7 @@
-import AccountList from "./account-list";
-import DashboardAction from "../ui/dashboard-action";
+import AccountList from "@/components/account/account-list";
+import DashboardAction from "@/components/ui/dashboard-action";
 import { useAccountStats } from "@/hooks/use-account-service";
-import Loading from "../ui/loading";
+import Loading from "@/components/ui/loading";
 
 export default function Account() {
   const { data: stats, loading, error } = useAccountStats();

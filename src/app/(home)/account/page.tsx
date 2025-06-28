@@ -2,7 +2,7 @@
 import Account from "@/components/account/account";
 export default function page() {
   return (
-    <div className="">
+    <div className="mt-4">
       <Account />
     </div>
   );
