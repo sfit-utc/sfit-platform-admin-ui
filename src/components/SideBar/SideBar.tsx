@@ -1,19 +1,21 @@
 "use client";
 import logo from "@/assets/icons/sfit-logo.svg";
-import SideItem from "./SideItem";
+import SideItem from "@/components/sidebar/side-item";
 import HomeIcon from "@/assets/icons/home.svg";
 import AccountIcon from "@/assets/icons/account.svg";
 import TeamIcon from "@/assets/icons/team.svg";
 import EventIcon from "@/assets/icons/event.svg";
 import ClassIcon from "@/assets/icons/class.svg";
 import TaskIcon from "@/assets/icons/task.svg";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 interface SideBarProps {
   onActiveItemChange?: (itemName: string) => void;
 }
 
 export default function SideBar({ onActiveItemChange }: SideBarProps) {
+  const pathname = usePathname();
   const [activeItem, setActiveItem] = useState("home");
 
   const navDisplayNames: { [key: string]: string } = {
@@ -24,6 +26,16 @@ export default function SideBar({ onActiveItemChange }: SideBarProps) {
     class: "Quản lí lớp học",
     task: "Quản lí nhiệm vụ",
   };
+
+  // Sync active item with current route
+  useEffect(() => {
+    const currentPath = pathname.split("/")[1] || "home"; // Get the first segment of the path
+    setActiveItem(currentPath);
+
+    if (onActiveItemChange) {
+      onActiveItemChange(navDisplayNames[currentPath] || navDisplayNames.home);
+    }
+  }, [pathname, onActiveItemChange]);
 
   const handleItemClick = (nav: string) => {
     setActiveItem(nav);
