@@ -1,9 +1,9 @@
-import SideBar from "@/components/SideBar/SideBar";
-import NavBar from "@/components/NavBar/NavBar";
+import Home from "@/components/home/home";
+
 export default function page() {
   return (
-    <div className="flex">
-      <p>Nội dung trang chủ</p>
+    <div className="flex mt-4">
+      <Home />
     </div>
   );
 }
