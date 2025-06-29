@@ -1,4 +1,4 @@
-import { committeeService } from "@/services/committeeService";
+import { committeeService } from "@/services/committee-service";
 import { CommitteeInfo } from "@/types/committee";
 import { useEffect, useState } from "react";
 

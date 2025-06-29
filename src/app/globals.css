@@ -4,7 +4,6 @@
 
 @import "tailwindcss";
 
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -71,21 +70,8 @@ body {
   font-family: "Oswald", sans-serif;
 }
 
-/* Font family utilities */
-.font-montserrat {
-  font-family: 'Montserrat', sans-serif;
-}
-
-.font-inter {
-  font-family: 'Inter', sans-serif;
-}
-
-.font-anton {
-  font-family: 'Anton', sans-serif;
-}
-
-.font-oswald {
-  font-family: 'Oswald', sans-serif;
+.bg-sfit-primary-50 {
+  background-color: var(--sfit--primary-light-50);
 }
 
 .bg-sfit-primary {

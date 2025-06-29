@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Avatar from "@/assets/icons/user.svg";
 interface AccountItemProps {
   account: Account;
-  style: string;
+  style?: string;
 }
 
 export default function AccountItem({ account, style }: AccountItemProps) {
