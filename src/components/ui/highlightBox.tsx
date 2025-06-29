@@ -9,6 +9,7 @@ interface StatusProp {
 }
 
 const statusColor = {
+  red: "bg-sfit-red-light text-sfit-red",
   yellow: "bg-sfit-yellow-light text-sfit-yellow",
   green: "bg-sfit-green-light text-sfit-green",
   blue: "bg-sfit-blue-light text-sfit-blue",
@@ -16,7 +17,7 @@ const statusColor = {
 
 export type StatusColorKey = keyof typeof statusColor;
 
-export default function Status({ children, color, className }: StatusProp) {
+export default function HighlightBox({ children, color, className }: StatusProp) {
   const colorClass = color ? statusColor[color] : "";
 
   return (

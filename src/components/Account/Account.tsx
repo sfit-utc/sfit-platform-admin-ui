@@ -1,4 +1,4 @@
-import AccountList from "@/components/account/account-list";
+import AccountList from "@/components/Account/account-list";
 import DashboardAction from "@/components/ui/dashboard-action";
 import { useAccountStats } from "@/hooks/use-account-service";
 import Loading from "@/components/ui/loading";

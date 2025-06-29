@@ -1,4 +1,4 @@
-import Event from "@/components/event/event";
+import Event from "@/components/event/Event";
 export default function page() {
   return (
     <div className="mt-4">
