@@ -5,7 +5,7 @@ import EventItem from "@/components/home/event-item";
 import TaskItem from "@/components/ui/task-item";
 import Card from "@/components/ui/card";
 import DashboardAction from "@/components/ui/dashboard-action";
-import HighlightBox from "@/components/ui/highlightBox";
+import HighlightBox from "@/components/ui/highlight-box";
 import {
   useClass,
   useNearTask,

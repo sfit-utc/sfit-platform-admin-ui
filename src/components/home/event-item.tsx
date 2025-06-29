@@ -1,7 +1,7 @@
 "use client";
 
 import Box from "@/components/ui/box";
-import HighlightBox, { StatusColorKey } from "@/components/ui/highlightBox";
+import HighlightBox, { StatusColorKey } from "@/components/ui/highlight-box";
 
 interface EventItemProp {
   eventTitle: string;

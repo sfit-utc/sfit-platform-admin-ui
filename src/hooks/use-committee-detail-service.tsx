@@ -1,4 +1,4 @@
-import { committeeDetailService } from "@/services/committeeDetailService";
+import { committeeDetailService } from "@/services/committee-detail-service";
 import {
   CommitteeDetail,
   MemberOfCommittee,

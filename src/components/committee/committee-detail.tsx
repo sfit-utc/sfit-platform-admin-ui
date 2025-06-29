@@ -1,6 +1,6 @@
 "use client";
 
-import HighlightBox from "@/components/ui/highlightBox";
+import HighlightBox from "@/components/ui/highlight-box";
 import Panel from "@/components/ui/panel";
 import { ArrowLeft, Check, Pen, Plus } from "lucide-react";
 import TaskItem from "@/components/ui/task-item";
@@ -10,7 +10,7 @@ import {
   useListMembersOfCommittee,
   usePeriod,
   useTasksOfCommittee,
-} from "@/hooks/useCommitteeDetailService";
+} from "@/hooks/use-committee-detail-service";
 import Loading from "@/components/ui/loading";
 import AccountItem from "../Account/account-item";
 

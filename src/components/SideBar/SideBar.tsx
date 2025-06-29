@@ -1,6 +1,6 @@
 "use client";
 import logo from "@/assets/icons/sfit-logo.svg";
-import SideItem from "@/components/SideBar/side-item";
+import SideItem from "@/components/sidebar/side-item";
 import HomeIcon from "@/assets/icons/home.svg";
 import AccountIcon from "@/assets/icons/account.svg";
 import TeamIcon from "@/assets/icons/team.svg";

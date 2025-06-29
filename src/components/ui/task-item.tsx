@@ -2,7 +2,7 @@
 
 import Box from "@/components/ui/box";
 import ProgressBar from "@/components/ui/progress";
-import HighlightBox from "@/components/ui/highlightBox";
+import HighlightBox from "@/components/ui/highlight-box";
 
 interface TaskItemProp {
   className?: string;

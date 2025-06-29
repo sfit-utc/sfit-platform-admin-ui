@@ -1,7 +1,7 @@
 "use client";
 
-import Committee from "@/components/committee/Committee";
-import CommitteeDetail from "@/components/committee/CommitteeDetail";
+import Committee from "@/components/committee/committee";
+import CommitteeDetail from "@/components/committee/committee-detail";
 import { useSearchParams } from "next/navigation";
 
 export default function CommitteePage() {
