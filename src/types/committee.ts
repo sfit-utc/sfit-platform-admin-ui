@@ -15,6 +15,7 @@ export interface CommitteeDetail {
 }
 
 export interface Target {
+  id: number;
   title: string;
   expired: string;
   headDo: boolean;

@@ -9,7 +9,7 @@ export default function CommitteePage() {
   const id = searchParams.get("id");
 
   return (
-    <div className="flex">
+    <div className="mt-4">
       {id ? <CommitteeDetail id={Number.parseInt(id)} /> : <Committee />}
     </div>
   );

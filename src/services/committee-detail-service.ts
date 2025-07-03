@@ -87,37 +87,43 @@ class CommitteeDetailService {
   async getCommitteeTarget(id: number): Promise<Target[]> {
     return [
       {
+        id: 1,
         title: "Hoàn thành abc xyz",
         expired: "01/06/2025",
         headDo: false,
         secretaryDo: false,
       },
       {
+        id: 2,
         title: "Hoàn thành abc xyz",
         expired: "01/06/2025",
         headDo: true,
         secretaryDo: true,
       },
       {
+        id: 3,
         title: "Hoàn thành abc xyz",
         expired: "01/06/2025",
         headDo: true,
         secretaryDo: true,
       },
       {
+        id: 4,
         title: "Hoàn thành abc xyz",
         expired: "01/06/2025",
         headDo: true,
         secretaryDo: true,
       },
       {
+        id: 5,
         title: "Hoàn thành abc xyz",
         expired: "01/06/2025",
         headDo: true,
         secretaryDo: true,
       },
       {
-        title: "Hoàn thành abc xyz",
+        id: 6,
+        title: "Hoàn thành abc xyzzzzzzzzzzzzzzzzzzzzzz",
         expired: "01/06/2025",
         headDo: true,
         secretaryDo: true,
@@ -311,6 +317,10 @@ class CommitteeDetailService {
 
   async getPeriod(id: number): Promise<string> {
     return "30/01/2025 - 01/06/2025";
+  }
+
+  async deleteTarget(items: number[]): Promise<unknown> {
+    return console.log(items);
   }
 }
 
