@@ -22,15 +22,15 @@ export default function TabBar({
   className = "",
 }: TabBarProps) {
   return (
-    <div className={`flex border-black bg-white ${className}`}>
+    <div className={`flex bg-white ${className}`}>
       {tabs.map((tab) => (
         <button
           key={tab.value}
-          className={`flex items-center px-4 py-2 font-semibold text-base border-b-2 transition-all
+          className={`flex items-center px-4 py-2 font-semibold text-base
             ${
               activeValue === tab.value
-                ? "border-green-600 text-green-700"
-                : "border-transparent text-gray-700 hover:text-green-600"
+                ? "border-l-[1.5px] border-r-[1.5px] border-t-[1.5px] border-black text-green-700"
+                : "border-b-[1.5px] border-black text-gray-700 hover:text-green-600"
             }
           `}
           style={{
