@@ -1,11 +1,11 @@
 "use client";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { AccountListItem, AccountFilters } from "@/types/account";
 import { useAccounts } from "@/hooks/use-account-service";
 import AccountItem from "@/components/account/account-item";
 import Loading from "@/components/ui/loading";
 import SearchBar from "@/components/ui/search-bar";
-
+import AddAccount from "@/components/account/add-account";
 export default function AccountList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [accountsPerPage, setAccountsPerPage] = useState(10);
@@ -13,6 +13,9 @@ export default function AccountList() {
   const [filterRole, setFilterRole] = useState("all");
   const [filterTeam, setFilterTeam] = useState("all");
   const [activeStyle, setActiveStyle] = useState("line");
+  const [addAccount, setAddAccount] = useState(false);
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const filterDropdownRef = useRef<HTMLDivElement>(null);
 
   // Memoize filters to prevent unnecessary re-renders
   const filters: AccountFilters = useMemo(
@@ -33,10 +36,28 @@ export default function AccountList() {
   const endIdx = startIdx + accountsPerPage;
   const currentPageData = accounts.slice(startIdx, endIdx);
 
-  // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [filters]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        filterDropdownRef.current &&
+        !filterDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowFilterDropdown(false);
+      }
+    }
+    if (showFilterDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showFilterDropdown]);
 
   const handlePreviousPage = useCallback(() => {
     if (currentPage > 1) {
@@ -98,7 +119,10 @@ export default function AccountList() {
       <div className="my-5 py-2 flex justify-between">
         <div className="flex *:mx-2">
           <div className="cursor-pointer w-52 h-9 bg-green-700 rounded-[20px] flex justify-center items-center">
-            <div className="w-36 h-5 justify-center text-white text-base font-bold font-inter">
+            <div
+              className="w-36 h-5 justify-center text-white text-base font-bold font-inter"
+              onClick={() => setAddAccount(true)}
+            >
               + Thêm thành viên
             </div>
           </div>
@@ -169,7 +193,7 @@ export default function AccountList() {
             </div>
           </div>
 
-          <div className="cursor-pointer w-52 h-9 bg-green-700 rounded-[20px] flex justify-center items-center">
+          <div className="cursor-pointer w-52 h-9 bg-green-700 rounded-[20px] flex justify-center items-center relative">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -198,7 +222,10 @@ export default function AccountList() {
               </defs>
             </svg>
 
-            <div className="w-36 h-5 justify-center ml-2 text-white text-base font-bold font-inter">
+            <div
+              className="w-36 h-5 justify-center ml-2 text-white text-base font-bold font-inter"
+              onClick={() => setShowFilterDropdown((prev) => !prev)}
+            >
               Lựa chọn
             </div>
 
@@ -214,6 +241,62 @@ export default function AccountList() {
                 fill="white"
               />
             </svg>
+
+            {/* Filter Dropdown */}
+            {showFilterDropdown && (
+              <div
+                ref={filterDropdownRef}
+                className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-4"
+              >
+                <div className="mb-3">
+                  <label className="block text-sm font-semibold mb-1 text-green-700">
+                    Chức vụ
+                  </label>
+                  <select
+                    value={filterRole}
+                    onChange={(e) => {
+                      setFilterRole(e.target.value);
+                      setShowFilterDropdown(false);
+                    }}
+                    className="border p-1 rounded w-full text-black"
+                  >
+                    <option value="all">Tất cả chức vụ</option>
+                    <option value="Thành viên">Thành viên</option>
+                    <option value="Phó ban">Phó ban</option>
+                    <option value="Trưởng ban">Trưởng ban</option>
+                    <option value="Phó CN">Phó CN</option>
+                    <option value="Chủ nhiệm">Chủ nhiệm</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1 text-green-700">
+                    Ban
+                  </label>
+                  <select
+                    value={filterTeam}
+                    onChange={(e) => {
+                      setFilterTeam(e.target.value);
+                      setShowFilterDropdown(false);
+                    }}
+                    className="border p-1 rounded w-full text-black"
+                  >
+                    <option value="all">Tất cả ban</option>
+                    <option value="Học tập">Học tập</option>
+                    <option value="Hậu cần">Hậu cần</option>
+                    <option value="Đối ngoại">Đối ngoại</option>
+                    <option value="Truyền thông">Truyền thông</option>
+                    <option value="Kỹ thuật">Kỹ thuật</option>
+                    <option value="Data & AI">Data & AI</option>
+                    <option value="IOT">IOT</option>
+                    <option value="Game">Game</option>
+                    <option value="Web">Web</option>
+                    <option value="Chuyên môn">Chuyên môn</option>
+                    <option value="Cán sự">Cán sự</option>
+                    <option value="Chủ nhiệm">Chủ nhiệm</option>
+                  </select>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <div className="flex">
@@ -362,6 +445,8 @@ export default function AccountList() {
               ))}
         </div>
       )}
+
+      <AddAccount state={addAccount} funcClickToBack={setAddAccount} />
     </div>
   );
 }
