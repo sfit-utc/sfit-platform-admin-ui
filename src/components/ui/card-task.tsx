@@ -7,7 +7,7 @@ interface TaskCardProps {
   startDate: string;
   deadline: string;
   assignee: string;
-  progress: number;
+  percentComplete: number;
 }
 
 export default function TaskCard({
@@ -17,7 +17,7 @@ export default function TaskCard({
   startDate,
   deadline,
   assignee,
-  progress,
+  percentComplete,
 }: TaskCardProps) {
   return (
     <div className="bg-white rounded-xl shadow border border-gray-200 p-6 mt-2">
@@ -96,7 +96,11 @@ export default function TaskCard({
         {tags.map((tag, index) => (
           <span
             key={index}
-            className={`px-2 py-0.5 text-xs rounded-xl ${tag.color} ${tag.textColor}`}
+            className="px-2 py-0.5 text-xs rounded-xl"
+            style={{
+              backgroundColor: tag.color,
+              color: tag.textColor,
+            }}
           >
             {tag.label}
           </span>
@@ -189,12 +193,12 @@ export default function TaskCard({
       <div className="mb-2">
         <div className="flex items-center justify-between mb-1">
           <span className="text-sm font-semibold text-gray-700">Tiến độ</span>
-          <span className="text-sm font-semibold text-gray-700">{progress}%</span>
+          <span className="text-sm font-semibold text-gray-700">{percentComplete}%</span>
         </div>
         <div className="w-full h-2 bg-gray-200 rounded">
           <div
             className="h-2 bg-blue-500 rounded"
-            style={{ width: `${progress}%` }}
+            style={{ width: `${percentComplete}%` }}
           ></div>
         </div>
       </div>
