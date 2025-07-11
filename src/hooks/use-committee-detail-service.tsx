@@ -13,6 +13,13 @@ interface UseCommitteeServiceType<T> {
   error: Error | null;
 }
 
+interface UseCommitteeServiceTypeRefreshAble<T> {
+  data: T;
+  loading: boolean;
+  error: Error | null;
+  fetchData: () => void;
+}
+
 export function useCommitteeDetail(
   id: number
 ): UseCommitteeServiceType<CommitteeDetail | undefined> {
@@ -85,18 +92,23 @@ export function usePeriod(id: number): UseCommitteeServiceType<string> {
 
 export function useCommitteeTarget(
   id: number
-): UseCommitteeServiceType<Target[]> {
+): UseCommitteeServiceTypeRefreshAble<Target[]> {
   const [data, setData] = useState<Target[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
+  const fetchData = () => {
+    setLoading(true);
     committeeDetailService
       .getCommitteeTarget(id)
       .then(setData)
       .catch(setError)
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchData()
   }, [id]);
 
-  return { data, loading, error };
+  return { data, loading, error, fetchData: fetchData };
 }
