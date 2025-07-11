@@ -27,29 +27,29 @@ const dashboardActions = [
   {
     icon: <CalendarCheck />,
     children: "Điểm danh sự kiện",
-    textColor: "text-sfit-blue",
-    bgColor: "bg-sfit-blue-light ",
+    textColor: "sfit-blue",
+    bgColor: "sfit-blue-light",
     href: "/roll-up",
   },
   {
     icon: <GraduationCap />,
     children: "Tạo lớp học",
-    textColor: "text-sfit-green",
-    bgColor: "bg-sfit-green-light ",
+    textColor: "sfit-green",
+    bgColor: "sfit-green-light",
     href: "/create-class",
   },
   {
     icon: <ClipboardList />,
     children: "Giao nhiệm vụ",
-    textColor: "text-sfit-purple",
-    bgColor: "bg-sfit-purple-light ",
+    textColor: "sfit-purple",
+    bgColor: "sfit-purple-light",
     href: "/add-task",
   },
   {
     icon: <UsersRound />,
     children: "Thêm thành viên",
-    textColor: "text-sfit-yellow",
-    bgColor: "bg-sfit-yellow-light ",
+    textColor: "sfit-yellow",
+    bgColor: "sfit-yellow-light",
     href: "/add-member",
   },
 ];
@@ -66,15 +66,25 @@ export default function Home() {
   useEffect(() => {}, []);
 
   return (
-    <div className="bg-white w-full p-5">
+    <div
+      className="w-full p-5"
+      style={{
+        backgroundColor: "var(--background)",
+        color: "var(--foreground)",
+      }}
+    >
       <div className="grid grid-cols-4 gap-5">
         {dashboardActions.map(
           ({ icon, children, textColor, bgColor, href }) => (
             <DashboardAction
               key={children}
               href={href}
-              className={`${textColor} ${bgColor} px-2 py-4`}
+              className="px-2 py-4"
               icon={icon}
+              style={{
+                color: `var(--${textColor})`,
+                backgroundColor: `var(--${bgColor})`,
+              }}
             >
               {children}
             </DashboardAction>
@@ -97,7 +107,12 @@ export default function Home() {
               />
             ))}
           </div>
-          <div className="absolute left-1/2 top-1/2 -translate-1/2">
+          <div
+            className="absolute left-1/2 top-1/2 -translate-1/2"
+            style={{
+              color: "var(--foreground)",
+            }}
+          >
             Đang phát triển...
           </div>
         </Card>

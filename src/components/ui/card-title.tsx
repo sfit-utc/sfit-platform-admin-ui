@@ -10,7 +10,11 @@ interface CardTitleProp {
 export default function CardTitle({ className, children }: CardTitleProp) {
   return (
     <h2
-      className={`${className} border-b border-black/20 text-2xl font-bold pb-1 mb-4`}
+      className={`${className} text-2xl font-bold pb-1 mb-4`}
+      style={{
+        borderBottom: "1px solid var(--card-title-border)",
+        color: "var(--foreground)",
+      }}
     >
       {children}
     </h2>

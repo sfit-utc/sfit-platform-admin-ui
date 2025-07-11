@@ -17,26 +17,26 @@ export default function Account() {
   const accountInfo = [
     {
       children: "Tổng thành viên",
-      textColor: "text-sfit-blue",
-      bgColor: "bg-sfit-blue-light",
+      textColor: "sfit-blue",
+      bgColor: "sfit-blue-light",
       number: stats.totalMembers,
     },
     {
       children: "Thành viên",
-      textColor: "text-sfit-green",
-      bgColor: "bg-sfit-green-light",
+      textColor: "sfit-green",
+      bgColor: "sfit-green-light",
       number: stats.activeMembers,
     },
     {
       children: "Lãnh đạo",
-      textColor: "text-sfit-purple",
-      bgColor: "bg-sfit-purple-light",
+      textColor: "sfit-purple",
+      bgColor: "sfit-purple-light",
       number: stats.leaders,
     },
     {
       children: "Thành viên mới",
-      textColor: "text-sfit-yellow",
-      bgColor: "bg-sfit-yellow-light",
+      textColor: "sfit-yellow",
+      bgColor: "sfit-yellow-light",
       number: stats.newMembers,
     },
   ];
@@ -48,8 +48,12 @@ export default function Account() {
           return (
             <DashboardAction
               key={children}
-              className={`${textColor} ${bgColor} py-4`}
+              className="py-4"
               number={number}
+              style={{
+                color: `var(--${textColor})`,
+                backgroundColor: `var(--${bgColor})`,
+              }}
             >
               {children}
             </DashboardAction>

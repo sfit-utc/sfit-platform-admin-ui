@@ -31,6 +31,11 @@
   --sfit-box-bg: #f5f8ff;
   --sfit-red-50: #ffd3d3;
   --sfit-red-500: #ff0000;
+  --sidebar-bg: #166534;
+  --sidebar-text: #ffffff;
+  --sidebar-icon: #1e8f02;
+  --line: #e5e7eb;
+  --card-title-border: rgba(0,0,0,0.2);
 }
 
 @theme inline {
@@ -41,9 +46,37 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root.dark {
+    --background: #1b1a19;
+    --foreground: #f3f4f6;
+    --sfit-primary: #22c55e;
+    --sfit-primary-dark: #16a34a;
+    --sfit-primary-light: #1a3a23; /* for sidebar background */
+    --sfit-secondary: #3b82f6;
+    --sfit-accent: #fbbf24;
+    --sfit-purple: #a78bfa;
+    --sfit-gray-50: #23272f; /* card background */
+    --sfit-gray-100: #181a20; /* card background alt */
+    --sfit-gray-200: #23272f;
+    --sfit-gray-700: #a1a1aa;
+    --sfit-gray-800: #27272a;
+    --sfit-gray-900: #18181b;
+    --sfit--primary-light-50: #181a20;
+    --sfit-blue-light: #1e293b;
+    --sfit-blue: #60a5fa;
+    --sfit-green-light: #134e2f;
+    --sfit-green: #22c55e;
+    --sfit-purple-light: #312e81;
+    --sfit-yellow-light: #3b2f0b;
+    --sfit-yellow: #fde68a;
+    --sfit-box-bg: #23272f;
+    --sfit-red-50: #7f1d1d;
+    --sfit-red-500: #ef4444;
+    --sidebar-bg: #1a3a23;
+    --sidebar-icon: #1e8f02;
+    --sidebar-text: #ededed;
+    --line: #23272f;
+    --card-title-border: #23272f;
   }
 }
 
@@ -124,6 +157,7 @@ body {
 input[type="search"]::-webkit-search-cancel-button {
   display: none;
 }
+
 .bg-sfit-red-500 {
   background-color: var(--sfit-red-500);
 }
@@ -212,4 +246,22 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 .text-sfit-red-light {
   color: var(--sfit-red-50);
+}
+
+/* Custom Scrollbar */
+/* Light */
+::-webkit-scrollbar {
+  width: 8px;
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 4px;
+}
+/* Dark */
+:root.dark ::-webkit-scrollbar {
+  background: var(--background);
+}
+:root.dark ::-webkit-scrollbar-thumb {
+  background: #23272f;
 }

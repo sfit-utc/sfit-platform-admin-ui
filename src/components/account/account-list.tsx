@@ -420,7 +420,12 @@ export default function AccountList() {
       </div>
       {activeStyle === "line" ? (
         <div className="flex flex-col w-full">
-          <div className="flex justify-between items-center py-4  my-2 font-bold text-black">
+          <div
+            className="flex justify-between items-center py-4  my-2 font-bold"
+            style={{
+              color: "var(--foreground)",
+            }}
+          >
             <div className="flex-2 text-center">STT</div>
             <div className="flex-5 text-center">HỌ VÀ TÊN</div>
             <div className="flex-3 text-center">BAN</div>

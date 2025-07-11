@@ -29,26 +29,36 @@ export default function SideItem({
           height="24"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path fill="#ffffff" d="M5 5 L1 5 Q4.2 4.2 5 1 Z" />
+          <path
+            fill={isActive ? "var(--background)" : "#ffffff"}
+            d="M5 5 L1 5 Q4.2 4.2 5 1 Z"
+          />
         </svg>
       </div>
       <Link
         href={nav}
         className={`flex w-full items-center px-6 py-2 
-          ${isActive ? "bg-white rounded-l-full p-10" : " "} 
+          ${isActive ? "rounded-l-full p-10" : ""} 
           transition-all duration-500 ease-in`}
         onClick={onClick}
+        style={isActive ? { backgroundColor: "var(--background)" } : {}}
       >
         <img
           src={icon}
           alt="logo"
-          className={` ${isActive ? "brightness-0  w-8 h-8" : "w-6 h-6"}`}
+          className={`w-6 h-6 ${isActive ? "w-8 h-8" : ""}`}
+          style={{
+            filter: isActive ? "brightness(0)" : undefined,
+            color: isActive ? "var(--sidebar-icon)" : undefined,
+          }}
         />
 
         <div
-          className={`ml-4 text-center font-bold font-['Oswald'] ${
-            isActive ? "text-green-800 text-lg" : "text-white text-base"
-          }`}
+          className="ml-4 text-center font-bold font-['Oswald']"
+          style={{
+            color: isActive ? "var(--sidebar-icon)" : "var(--sidebar-text)",
+            fontSize: isActive ? "1.125rem" : "1rem",
+          }}
         >
           {name}
         </div>
@@ -66,7 +76,10 @@ export default function SideItem({
           height="24"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path fill="#ffffff" d="M5 5 L1 5 Q4.2 4.2 5 1 Z" />
+          <path
+            fill={isActive ? "var(--background)" : "#ffffff"}
+            d="M5 5 L1 5 Q4.2 4.2 5 1 Z"
+          />
         </svg>
       </div>
     </div>

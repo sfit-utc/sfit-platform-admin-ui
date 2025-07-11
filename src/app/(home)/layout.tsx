@@ -17,9 +17,15 @@ export default function HomeLayout({
   };
 
   return (
-    <div className="flex overflow-x-scroll">
+    <div className="flex relative">
       <SideBar onActiveItemChange={handleActiveItemChange} />
-      <div className="px-8 pb-10 flex-col w-full bg-white">
+      <div
+        className="px-8 pb-10 flex-col w-full min-h-full bg-white absolute top-0 z-50 right-0 max-w-5/6"
+        style={{
+          backgroundColor: "var(--background)",
+          color: "var(--foreground)",
+        }}
+      >
         <NavBar activeTitle={activeTitle} />
         <Line />
         {children}
