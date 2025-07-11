@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useEventService } from "@/hooks/use-event-service";
 import { taskService } from "@/services/task-service";
 import Loading from "../ui/loading";
@@ -6,13 +6,58 @@ import TaskCard from "../ui/card-task";
 
 interface TaskEventListProps {
     status?: "all" | "ongoing" | "upcoming" | "done";
+    onTaskChanged?: () => void;
 }
 
-export default function TaskEventList({ status = "all" }: TaskEventListProps) {
-    const { events, loading: loadingEvents, error: errorEvents } = useEventService();
+export default function TaskEventList({ status = "all", onTaskChanged }: TaskEventListProps) {
+    const {
+        events,
+        loading: loadingEvents,
+        error: errorEvents,
+        updateEvent,
+        deleteEvent,
+    } = useEventService();
     const [tasks, setTasks] = useState<any[]>([]);
     const [loadingTasks, setLoadingTasks] = useState(false);
     const [errorTasks, setErrorTasks] = useState<string | null>(null);
+
+    const [editingEventId, setEditingEventId] = useState<number | null>(null);
+    const [editingTitle, setEditingTitle] = useState<string>("");
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    const handleStartEdit = (eventId: number, currentTitle: string) => {
+        setEditingEventId(eventId);
+        setEditingTitle(currentTitle);
+        setTimeout(() => inputRef.current?.focus(), 100);
+    };
+    const deleteTasksByEventId = async (eventId: number) => {
+        const allTasks = await taskService.getTasksWithStatus();
+        const tasksToDelete = allTasks.filter(task => task.eventId === eventId);
+        for (const task of tasksToDelete) {
+            await taskService.deleteTask(task.id);
+        }
+    };
+    const reloadTasks = () => {
+        setLoadingTasks(true);
+        setErrorTasks(null);
+        taskService
+            .getTasksWithStatus()
+            .then(setTasks)
+            .catch((err) => setErrorTasks(err.message || "Lỗi khi tải tasks"))
+            .finally(() => setLoadingTasks(false));
+    };
+
+    useEffect(() => {
+        reloadTasks();
+    }, []);
+    const handleSaveEdit = async (eventId: number) => {
+        try {
+            await updateEvent(eventId, { title: editingTitle });
+        } catch (e) {
+            // handle error if needed
+        }
+        setEditingEventId(null);
+    };
 
     useEffect(() => {
         setLoadingTasks(true);
@@ -40,7 +85,12 @@ export default function TaskEventList({ status = "all" }: TaskEventListProps) {
         })
         .filter((item): item is { event: typeof events[number]; tasks: any[] } => item !== null);
 
-    if (eventTasks.length === 0) return <div>Không có công việc phù hợp.</div>;
+    if (eventTasks.length === 0)
+        return (
+            <div className="text-center py-12 text-xl font-semibold text-sfit-red-500 bg-red-50 rounded-lg shadow border border-red-200">
+                Không có công việc nào.
+            </div>
+        );
 
     return (
         <div>
@@ -48,9 +98,43 @@ export default function TaskEventList({ status = "all" }: TaskEventListProps) {
                 <div key={event.id} className="bg-white rounded-xl shadow border border-gray-200 p-6 mt-2 mb-8">
                     <div className="title">
                         <h1 className="text-2xl font-bold mb-2 text-black border-black border-b-[1.5px] p-2 flex justify-between items-center">
-                            {event.title}
+                            {editingEventId === event.id ? (
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        ref={inputRef}
+                                        className="border rounded px-2 py-1 text-black"
+                                        value={editingTitle}
+                                        onChange={e => setEditingTitle(e.target.value)}
+                                        onKeyDown={e => {
+                                            if (e.key === "Enter" && typeof event.id === "number") handleSaveEdit(event.id);
+                                            if (e.key === "Escape") setEditingEventId(null);
+                                        }}
+                                    />
+                                    <button
+                                        className="px-2 py-1 bg-blue-500 text-white rounded"
+                                        onClick={() => {
+                                            if (typeof event.id === "number") handleSaveEdit(event.id);
+                                        }}
+                                    >
+                                        Lưu
+                                    </button>
+                                    <button
+                                        className="px-2 py-1 bg-gray-300 rounded"
+                                        onClick={() => setEditingEventId(null)}
+                                    >
+                                        Hủy
+                                    </button>
+                                </div>
+                            ) : (
+                                event.title
+                            )}
                             <div className="flex">
-                                <div className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full">
+                                <div
+                                    className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full cursor-pointer"
+                                    onClick={() => {
+                                        if (typeof event.id === "number") handleStartEdit(event.id, event.title);
+                                    }}
+                                >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -79,7 +163,23 @@ export default function TaskEventList({ status = "all" }: TaskEventListProps) {
                                         </defs>
                                     </svg>
                                 </div>
-                                <div className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full">
+                                <div
+                                    className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full cursor-pointer"
+                                    onClick={async () => {
+                                        if (window.confirm("Bạn có chắc muốn xóa sự kiện này?")) {
+                                            if (typeof event.id === "number") {
+                                                try {
+                                                    await deleteEvent(event.id);
+                                                    await deleteTasksByEventId(event.id); 
+                                                    reloadTasks();
+                                                    onTaskChanged?.();
+                                                } catch (e) {
+                                                    alert("Xóa sự kiện thất bại!");
+                                                }
+                                            }
+                                        }
+                                    }}
+                                >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -115,12 +215,12 @@ export default function TaskEventList({ status = "all" }: TaskEventListProps) {
                                 </div>
                             </div>
                         </h1>
-
                     </div>
                     <p className="font-[570] mb-2 text-black text-xl p-2">Danh sách nhiệm vụ</p>
                     <div className="space-y-4">
                         {tasks.map((task) => (
                             <TaskCard
+                                id={task.id}
                                 key={task.id}
                                 title={task.title}
                                 tags={task.tags}
@@ -129,6 +229,10 @@ export default function TaskEventList({ status = "all" }: TaskEventListProps) {
                                 deadline={task.deadline}
                                 assignee={task.assignee}
                                 percentComplete={task.percentComplete}
+                                onUpdated={() => {
+                                    reloadTasks();
+                                    onTaskChanged?.();
+                                }}
                             />
                         ))}
                     </div>
@@ -136,4 +240,5 @@ export default function TaskEventList({ status = "all" }: TaskEventListProps) {
             ))}
         </div>
     );
+
 }
