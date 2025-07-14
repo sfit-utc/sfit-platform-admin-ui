@@ -44,14 +44,14 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
 
   function handleDeleteDone() {
     committeeDetailService.deleteTarget(binTarget).then(() => {
-      setTargetEditing(false);      
+      setTargetEditing(false);
       setBinTarget([]);
       refetchTargets();
     });
   }
 
   return (
-    <div className="w-full text-black">
+    <div className="w-full" style={{ color: "var(--foreground)" }}>
       <Link href="/team" className="flex items-center gap-2.5 font-semibold">
         <ArrowLeft />
         Ban
@@ -59,15 +59,20 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
       <div className="mt-2.5 border-b mb-2.5">
         <h2 className="flex justify-between text-3xl">
           {committeeInfor && committeeInfor.committeeName}
-          <div className="flex ml-auto gap-2 text-gray-500">
+          <div
+            className="flex ml-auto gap-2"
+            style={{ color: "var(--sfit-gray-200)" }}
+          >
             <div
-              className="flex cursor-pointer justify-center items-center w-7 h-7 p-1 border border-gray-500 rounded-md"
+              className="flex cursor-pointer justify-center items-center w-7 h-7 p-1 border rounded-md"
+              style={{ borderColor: "var(--sfit-gray-200)" }}
               onClick={() => setTeamEditing(true)}
             >
               <Pen />
             </div>
             <div
-              className="flex cursor-pointer justify-center items-center w-7 h-7 p-1 border border-gray-500 rounded-md"
+              className="flex cursor-pointer justify-center items-center w-7 h-7 p-1 border rounded-md"
+              style={{ borderColor: "var(--sfit-gray-200)" }}
               onClick={() => setAddingMember(true)}
             >
               <UsersRound />
@@ -98,7 +103,11 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
             <div>Nhiệm vụ</div>
             <Link
               href="/add-task"
-              className="flex gap-2 items-center text-white text-sm bg-sfit-primary-dark px-3 py-1.5 rounded-2xl"
+              className="flex gap-2 items-center text-sm px-3 py-1.5 rounded-2xl"
+              style={{
+                backgroundColor: "var(--sfit-primary-dark)",
+                color: "var(--background)",
+              }}
             >
               <Plus size={18} />
               Tạo nhiệm vụ mới
@@ -128,7 +137,10 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
             <HighlightBox className="w-fit text-sm ml-5" color="blue">
               {period}
             </HighlightBox>
-            <div className="flex ml-auto gap-2 text-gray-500">
+            <div
+              className="flex ml-auto gap-2"
+              style={{ color: "var(--sfit-gray-200)" }}
+            >
               <div className="flex cursor-pointer justify-center items-center w-7 h-7 p-1 border border-gray-500 rounded-md">
                 {targetEditing ? (
                   <Check onClick={() => handleDeleteDone()} />
@@ -137,10 +149,17 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
                 )}
               </div>
               <div
-                className="flex cursor-pointer justify-center items-center w-7 h-7 p-2 border border-gray-500 rounded-md"
+                className="flex cursor-pointer justify-center items-center w-7 h-7 p-2 border rounded-md"
+                style={{ borderColor: "var(--sfit-gray-200)" }}
                 onClick={() => setAddTarget(true)}
               >
-                <div className="bg-sfit-primary-dark rounded-full text-white p-1">
+                <div
+                  className="rounded-full p-1"
+                  style={{
+                    backgroundColor: "var(--sfit-primary-dark)",
+                    color: "var(--background)",
+                  }}
+                >
                   <Plus size={14} />
                 </div>
               </div>
@@ -170,12 +189,15 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
                   </td>
                   <td className="text-center">
                     <div
-                      className={`w-fit m-auto border rounded-md ${
-                        headDo && "border-green-500"
-                      }`}
+                      className={`w-fit m-auto border rounded-md`}
+                      style={{
+                        borderColor: headDo
+                          ? "var(--sfit-green)"
+                          : "var(--sfit-gray-200)",
+                      }}
                     >
                       {headDo ? (
-                        <Check className="text-green-500" />
+                        <Check style={{ color: "var(--sfit-green)" }} />
                       ) : (
                         <div className="p-3"></div>
                       )}
@@ -183,12 +205,15 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
                   </td>
                   <td className="text-center">
                     <div
-                      className={`w-fit m-auto border rounded-md ${
-                        secretaryDo && "border-green-500"
-                      }`}
+                      className={`w-fit m-auto border rounded-md`}
+                      style={{
+                        borderColor: secretaryDo
+                          ? "var(--sfit-green)"
+                          : "var(--sfit-gray-200)",
+                      }}
                     >
                       {secretaryDo ? (
-                        <Check className="text-green-500" />
+                        <Check style={{ color: "var(--sfit-green)" }} />
                       ) : (
                         <div className="p-3"></div>
                       )}
@@ -199,7 +224,8 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
                       <div className="flex items-center gap-3 ml-4">
                         <Trash2
                           size={32}
-                          className="text-red-500 cursor-pointer hover:bg-red-200 p-1.5 rounded-full overflow-visible"
+                          className="cursor-pointer p-1.5 rounded-full overflow-visible"
+                          style={{ color: "var(--sfit-red-500)" }}
                           onClick={() => handleDeleteTarget(id)}
                         />
                       </div>

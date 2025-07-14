@@ -10,49 +10,79 @@ export default function TestItem({ test }: TestItemProps) {
   const isPast = test.status === "past";
   const isUpcoming = test.status === "upcoming";
   return (
-    <div className="px-11 py-6 m-2 w-full border-2 bg-white rounded-[5px] shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)]">
+    <div
+      className="px-11 py-6 m-2 w-full border-2 rounded-[5px] shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)"
+      style={{
+        background: "var(--color-bg-primary)",
+        borderColor: "var(--color-border-primary)",
+        boxShadow:
+          "0px 0px 4px 0px var(--color-shadow-primary, rgba(0,0,0,0.25))",
+      }}
+    >
       <div className="flex *:mx-2">
-        <h1 className="text-black text-3xl font-semibold font-inter">
+        <h1
+          className="text-3xl font-semibold font-inter"
+          style={{ color: "var(--color-text-primary)" }}
+        >
           {test.title}
         </h1>
         {isOngoing && (
-          <>
-            <div className="px-5 py-1 bg-yellow-500 rounded-3xl inline-flex justify-center items-center gap-2.5">
-              <div className="text-center justify-center text-white text-sm font-semibold font-inter">
-                Đang diễn ra
-              </div>
+          <div
+            className="px-5 py-1 rounded-3xl inline-flex justify-center items-center gap-2.5"
+            style={{ background: "var(--color-badge-warning, #f59e42)" }}
+          >
+            <div
+              className="text-center justify-center text-sm font-semibold font-inter"
+              style={{ color: "var(--color-badge-text, #fff)" }}
+            >
+              Đang diễn ra
             </div>
-          </>
+          </div>
         )}
         {isPast && (
-          <>
-            <div className="px-5 py-1 bg-gray-500 rounded-3xl inline-flex justify-center items-center gap-2.5">
-              <div className="text-center justify-center text-white text-sm font-semibold font-inter">
-                Đã kết thúc
-              </div>
+          <div
+            className="px-5 py-1 rounded-3xl inline-flex justify-center items-center gap-2.5"
+            style={{ background: "var(--color-badge-secondary, #6b7280)" }}
+          >
+            <div
+              className="text-center justify-center text-sm font-semibold font-inter"
+              style={{ color: "var(--color-badge-text, #fff)" }}
+            >
+              Đã kết thúc
             </div>
-          </>
+          </div>
         )}
         {isUpcoming && (
-          <>
-            <div className="px-5 py-1 bg-green-500 rounded-3xl inline-flex justify-center items-center gap-2.5">
-              <div className="text-center justify-center text-white text-sm font-semibold font-inter">
-                Sắp diễn ra
-              </div>
+          <div
+            className="px-5 py-1 rounded-3xl inline-flex justify-center items-center gap-2.5"
+            style={{ background: "var(--color-badge-success, #22c55e)" }}
+          >
+            <div
+              className="text-center justify-center text-sm font-semibold font-inter"
+              style={{ color: "var(--color-badge-text, #fff)" }}
+            >
+              Sắp diễn ra
             </div>
-          </>
+          </div>
         )}
         {test.isRanking && (
-          <>
-            <div className="px-5 py-1 bg-red-500 rounded-3xl inline-flex justify-center items-center gap-2.5">
-              <div className="text-center justify-center text-white text-sm font-semibold font-inter">
-                Có xếp hạng
-              </div>
+          <div
+            className="px-5 py-1 rounded-3xl inline-flex justify-center items-center gap-2.5"
+            style={{ background: "var(--color-badge-danger, #ef4444)" }}
+          >
+            <div
+              className="text-center justify-center text-sm font-semibold font-inter"
+              style={{ color: "var(--color-badge-text, #fff)" }}
+            >
+              Có xếp hạng
             </div>
-          </>
+          </div>
         )}
       </div>
-      <div className="text-gray-600 flex justify-start gap-2 text-xl font-normal font-inter">
+      <div
+        className="flex justify-start gap-2 text-xl font-normal font-inter"
+        style={{ color: "var(--color-text-secondary)" }}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -82,7 +112,10 @@ export default function TestItem({ test }: TestItemProps) {
         </svg>
         Thời gian diễn ra: {test.date}
       </div>
-      <div className="mb-4 text-gray-600 flex justify-start gap-2 text-xl font-normal font-inter">
+      <div
+        className="mb-4 flex justify-start gap-2 text-xl font-normal font-inter"
+        style={{ color: "var(--color-text-secondary)" }}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -113,7 +146,10 @@ export default function TestItem({ test }: TestItemProps) {
         Thời gian làm bài: {test.time}
       </div>
       <Line />
-      <div className="mt-4 text-gray-600 flex justify-start gap-2 text-xl font-normal font-inter">
+      <div
+        className="mt-4 flex justify-start gap-2 text-xl font-normal font-inter"
+        style={{ color: "var(--color-text-secondary)" }}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -137,7 +173,7 @@ export default function TestItem({ test }: TestItemProps) {
               width="100"
               height="100"
               preserveAspectRatio="none"
-              xlinkHref="data:image/png;base64,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"
+              xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAAILElEQVR4nO2cecxdVRHAh/aembnf99WCWIlsRiPBDQwqGBFIAIMaEYhIYoliFJe4oLI2RPD65rxXKLU2RbYmILIEw0cUYgSMEqoRqzGGGgmmgog1lr3QsoSWltbM/b62fO0999373rnLC+eXnD/vWWbOzNlmLkAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEICW8H+BLqlMLKkxMQAAAABJRU5ErkJggg=="
             />
           </defs>
         </svg>
@@ -145,10 +181,22 @@ export default function TestItem({ test }: TestItemProps) {
       </div>
 
       <div className="flex justify-between gap-4 mt-4">
-        <button className="cursor-pointer w-52 h-9 bg-purple-700 rounded-[20px] flex items-center justify-center text-white text-base font-bold font-inter hover:bg-green-800 transition-colors">
+        <button
+          className="cursor-pointer w-52 h-9 rounded-[20px] flex items-center justify-center text-base font-bold font-inter transition-colors"
+          style={{
+            background: "var(--color-button-primary, #7c3aed)",
+            color: "var(--color-button-text, #fff)",
+          }}
+        >
           Theo dõi
         </button>
-        <button className="cursor-pointer px-3 h-9 bg-blue-600 rounded-[5px] flex items-center justify-center text-white text-base font-bold font-inter hover:bg-blue-700 transition-colors">
+        <button
+          className="cursor-pointer px-3 h-9 rounded-[5px] flex items-center justify-center text-base font-bold font-inter transition-colors"
+          style={{
+            background: "var(--color-button-secondary, #2563eb)",
+            color: "var(--color-button-text, #fff)",
+          }}
+        >
           Điểm danh
         </button>
       </div>

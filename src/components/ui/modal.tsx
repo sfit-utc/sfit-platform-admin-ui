@@ -32,6 +32,9 @@ export default function Modal({
     >
       <div
         className={`${className} shadow p-6 rounded-md bg-white animate-scaleIn`}
+        style={{
+          backgroundColor: "var(--background)",
+        }}
         onClick={handleClickBox}
       >
         {children}

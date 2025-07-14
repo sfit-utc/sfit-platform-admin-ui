@@ -115,8 +115,18 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
 
   return (
     <Modal className="w-1/2" state={state} funcClickToBack={funcClickToBack}>
-      <form onSubmit={handleSubmit} className="space-y-4 p-6">
-        <h2 className="text-xl font-semibold text-sfit-green">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-4 p-6"
+        style={{
+          backgroundColor: "var(--background)",
+          color: "var(--foreground)",
+        }}
+      >
+        <h2
+          className="text-xl font-semibold"
+          style={{ color: "var(--sfit-green)" }}
+        >
           Thêm Thành Viên
         </h2>
         <div className="flex justify-around">
@@ -124,7 +134,8 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
             <div>
               <label
                 htmlFor="account-id"
-                className="block text-sm font-medium text-sfit-green"
+                className="block text-sm font-medium"
+                style={{ color: "var(--sfit-green)" }}
               >
                 Mã sinh viên
               </label>
@@ -134,12 +145,21 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
                 id="account-id"
                 value={accountID}
                 onChange={(e) => setAccountID(e.target.value)}
-                className="mt-1 w-full p-2 border border-gray-300 text-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="mt-1 w-full p-2 border rounded-md focus:outline-none focus:ring-2"
+                style={{
+                  backgroundColor: "var(--background)",
+                  color: "var(--foreground)",
+                  borderColor: "var(--sfit-gray-200)",
+                }}
                 placeholder="VD: 231238888"
                 aria-describedby={errorID ? "error-id-message" : undefined}
               />
               {errorID && (
-                <p id="error-id-message" className="mt-1 text-sm text-red-500">
+                <p
+                  id="error-id-message"
+                  className="mt-1 text-sm"
+                  style={{ color: "var(--sfit-red-500)" }}
+                >
                   {errorID}
                 </p>
               )}
@@ -147,7 +167,8 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
             <div>
               <label
                 htmlFor="account-name"
-                className="block text-sm font-medium text-sfit-green"
+                className="block text-sm font-medium"
+                style={{ color: "var(--sfit-green)" }}
               >
                 Họ và tên
               </label>
@@ -157,14 +178,20 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
                 id="account-name"
                 value={accountName}
                 onChange={(e) => setAccountName(e.target.value)}
-                className="mt-1 w-full p-2 border border-gray-300 text-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="mt-1 w-full p-2 border rounded-md focus:outline-none focus:ring-2"
+                style={{
+                  backgroundColor: "var(--background)",
+                  color: "var(--foreground)",
+                  borderColor: "var(--sfit-gray-200)",
+                }}
                 placeholder="VD: Nguyễn Đức Mạnh"
                 aria-describedby={errorName ? "error-name-message" : undefined}
               />
               {errorName && (
                 <p
                   id="error-name-message"
-                  className="mt-1 text-sm text-red-500"
+                  className="mt-1 text-sm"
+                  style={{ color: "var(--sfit-red-500)" }}
                 >
                   {errorName}
                 </p>
@@ -173,7 +200,8 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
             <div>
               <label
                 htmlFor="account-email"
-                className="block text-sm font-medium text-sfit-green"
+                className="block text-sm font-medium"
+                style={{ color: "var(--sfit-green)" }}
               >
                 Email
               </label>
@@ -183,7 +211,12 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
                 id="account-email"
                 value={accountEmail}
                 onChange={(e) => setAccountEmail(e.target.value)}
-                className="mt-1 w-full p-2 border border-gray-300 text-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="mt-1 w-full p-2 border rounded-md focus:outline-none focus:ring-2"
+                style={{
+                  backgroundColor: "var(--background)",
+                  color: "var(--foreground)",
+                  borderColor: "var(--sfit-gray-200)",
+                }}
                 placeholder="VD: nkdkhtl@gmail.com"
                 aria-describedby={
                   errorEmail ? "error-email-message" : undefined
@@ -192,7 +225,8 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
               {errorEmail && (
                 <p
                   id="error-email-message"
-                  className="mt-1 text-sm text-red-500"
+                  className="mt-1 text-sm"
+                  style={{ color: "var(--sfit-red-500)" }}
                 >
                   {errorEmail}
                 </p>
@@ -201,7 +235,8 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
             <div>
               <label
                 htmlFor="account-class"
-                className="block text-sm font-medium text-sfit-green"
+                className="block text-sm font-medium"
+                style={{ color: "var(--sfit-green)" }}
               >
                 Lớp - Khoa
               </label>
@@ -211,7 +246,12 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
                 id="account-class"
                 value={accountClass}
                 onChange={(e) => setAccountClass(e.target.value)}
-                className="mt-1 w-full p-2 border border-gray-300 text-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="mt-1 w-full p-2 border rounded-md focus:outline-none focus:ring-2"
+                style={{
+                  backgroundColor: "var(--background)",
+                  color: "var(--foreground)",
+                  borderColor: "var(--sfit-gray-200)",
+                }}
                 placeholder="VD: CNTT2 - K64"
                 aria-describedby={
                   errorClass ? "error-class-message" : undefined
@@ -220,7 +260,8 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
               {errorClass && (
                 <p
                   id="error-class-message"
-                  className="mt-1 text-sm text-red-500"
+                  className="mt-1 text-sm"
+                  style={{ color: "var(--sfit-red-500)" }}
                 >
                   {errorClass}
                 </p>
@@ -229,7 +270,8 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
             <div>
               <label
                 htmlFor="account-role"
-                className="block text-sm font-medium text-sfit-green"
+                className="block text-sm font-medium"
+                style={{ color: "var(--sfit-green)" }}
               >
                 Chức vụ
               </label>
@@ -238,7 +280,12 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
                 id="account-role"
                 value={accountRole}
                 onChange={(e) => setAccountRole(e.target.value)}
-                className="mt-1 text-gray-700 w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="mt-1 w-full p-2 border rounded-md focus:outline-none focus:ring-2"
+                style={{
+                  backgroundColor: "var(--background)",
+                  color: "var(--foreground)",
+                  borderColor: "var(--sfit-gray-200)",
+                }}
                 aria-describedby={errorRole ? "error-role-message" : undefined}
               >
                 <option value="">Chọn chức vụ</option>
@@ -251,7 +298,8 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
               {errorRole && (
                 <p
                   id="error-role-message"
-                  className="mt-1 text-sm text-red-500"
+                  className="mt-1 text-sm"
+                  style={{ color: "var(--sfit-red-500)" }}
                 >
                   {errorRole}
                 </p>
@@ -259,8 +307,19 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
             </div>
           </div>
           <div className="">
-            <div className="border rounded-md px-4 py-2">
-              <p className="block text-sm font-medium text-sfit-green">Ban</p>
+            <div
+              className="border rounded-md px-4 py-2"
+              style={{
+                borderColor: "var(--sfit-gray-200)",
+                backgroundColor: "var(--background)",
+              }}
+            >
+              <p
+                className="block text-sm font-medium"
+                style={{ color: "var(--sfit-green)" }}
+              >
+                Ban
+              </p>
               <div className="flex flex-col flex-wrap h-64">
                 {teamList.map((team, index) => (
                   <label
@@ -273,14 +332,20 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
                       value={team}
                       checked={selectedTeams.includes(team)}
                       onChange={handleCheckboxChange}
-                      className="text-blue-600 focus:ring-blue-500"
+                      className="focus:ring-2"
+                      style={{ accentColor: "var(--sfit-green)" }}
                     />
-                    <span className="text-gray-800">{team}</span>
+                    <span style={{ color: "var(--foreground)" }}>{team}</span>
                   </label>
                 ))}
               </div>
               {errorTeam && (
-                <p className="mt-1 text-sm text-red-500">{errorTeam}</p>
+                <p
+                  className="mt-1 text-sm"
+                  style={{ color: "var(--sfit-red-500)" }}
+                >
+                  {errorTeam}
+                </p>
               )}
             </div>
           </div>
@@ -290,13 +355,21 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
           <button
             type="button"
             onClick={handleCancel}
-            className="px-4 py-2 bg-gray-200 text-sfit-green rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+            className="px-4 py-2 rounded-md focus:outline-none focus:ring-2"
+            style={{
+              backgroundColor: "var(--sfit-gray-200)",
+              color: "var(--sfit-green)",
+            }}
           >
             Hủy
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-sfit-green text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="px-4 py-2 rounded-md focus:outline-none focus:ring-2"
+            style={{
+              backgroundColor: "var(--sfit-green)",
+              color: "var(--background)",
+            }}
           >
             Thêm
           </button>

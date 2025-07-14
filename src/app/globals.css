@@ -36,6 +36,7 @@
   --sidebar-icon: #1e8f02;
   --line: #e5e7eb;
   --card-title-border: rgba(0,0,0,0.2);
+  --search-bg: #ffffff;
 }
 
 @theme inline {
@@ -46,8 +47,10 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root.dark {
+  .theme-dark {
+    --elm-bg: #252728;
     --background: #1b1a19;
+    --search-bg: #3b3a39;
     --foreground: #f3f4f6;
     --sfit-primary: #22c55e;
     --sfit-primary-dark: #16a34a;

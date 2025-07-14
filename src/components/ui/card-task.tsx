@@ -37,7 +37,9 @@ export default function TaskCard({
   });
   const handleEditClick = () => setEditing(true);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -48,9 +50,15 @@ export default function TaskCard({
   };
   if (editing) {
     return (
-      <div className="bg-white rounded-xl shadow border border-gray-200 p-6 mt-2">
+      <div
+        className=" rounded-xl shadow border border-gray-200 p-6 mt-2"
+        style={{
+          backgroundColor: "var(--search-bg)",
+          color: "var(--foreground)",
+        }}
+      >
         <div className="title">
-          <h3 className="text-2xl font-bold text-black mb-2 flex justify-between">
+          <h3 className="text-2xl font-bold  mb-2 flex justify-between">
             <input
               name="title"
               value={form.title}
@@ -133,7 +141,7 @@ export default function TaskCard({
                 name="startDate"
                 value={form.startDate}
                 onChange={handleChange}
-                className="ml-1 border p-1 text-black font-normal"
+                className="ml-1 border p-1  font-normal"
                 placeholder="Ngày bắt đầu"
               />
             </span>
@@ -170,7 +178,7 @@ export default function TaskCard({
                 name="deadline"
                 value={form.deadline}
                 onChange={handleChange}
-                className="ml-1 border p-1 text-black font-normal"
+                className="ml-1 border p-1  font-normal"
                 placeholder="Deadline"
               />
             </span>
@@ -192,7 +200,7 @@ export default function TaskCard({
               name="assignee"
               value={form.assignee}
               onChange={handleChange}
-              className="ml-1 border p-1 text-black font-normal"
+              className="ml-1 border p-1  font-normal"
               placeholder="Phụ trách"
             />
           </div>
@@ -218,8 +226,18 @@ export default function TaskCard({
           </div>
         </div>
         <div className="text-green-600 font-semibold flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(20, 128, 0)" d="M20 21H4V10h2v9h12v-9h2zM3 3h18v6H3zm6.5 8h5c.28 0 .5.22.5.5V13H9v-1.5c0-.28.22-.5.5-.5M5 5v2h14V5z" /></svg>
-          <span className="ml-1 text-black font-normal">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
+            <path
+              fill="rgb(20, 128, 0)"
+              d="M20 21H4V10h2v9h12v-9h2zM3 3h18v6H3zm6.5 8h5c.28 0 .5.22.5.5V13H9v-1.5c0-.28.22-.5.5-.5M5 5v2h14V5z"
+            />
+          </svg>
+          <span className="ml-1  font-normal">
             Sản phẩm:{" "}
             <a
               href="https://drive.google.com/file/d/18SqIEhWmsUi0sTD9aCtEzOhlkzU7RsVT/view?usp=drive_link"
@@ -235,9 +253,9 @@ export default function TaskCard({
     );
   }
   return (
-    <div className="bg-white rounded-xl shadow border border-gray-200 p-6 mt-2">
+    <div className=" rounded-xl shadow border border-gray-200 p-6 mt-2">
       <div className="title">
-        <h3 className="text-2xl font-bold text-black mb-2 flex justify-between">
+        <h3 className="text-2xl font-bold  mb-2 flex justify-between">
           {title}
           <div className="flex">
             <div
@@ -318,7 +336,6 @@ export default function TaskCard({
             </div>
           </div>
         </h3>
-
       </div>
       <div className="flex flex-wrap gap-2 mb-2">
         {tags.map((tag, index) => (
@@ -334,7 +351,7 @@ export default function TaskCard({
           </span>
         ))}
       </div>
-      <p className="text-gray-700 text-sm mb-4">{description}</p>
+      <p className=" text-sm mb-4">{description}</p>
       <div className="flex flex-col gap-2 mb-2">
         <div className="flex flex-col gap-2 text-sm">
           <span className="text-green-600 font-semibold flex items-center">
@@ -366,7 +383,7 @@ export default function TaskCard({
               </defs>
             </svg>
             Thời gian diễn ra:{" "}
-            <span className="ml-1 text-black font-normal">{startDate}</span>
+            <span className="ml-1  font-normal">{startDate}</span>
           </span>
           <span className="text-red-600 font-semibold flex items-center">
             <svg
@@ -396,8 +413,7 @@ export default function TaskCard({
                 />
               </defs>
             </svg>
-            Deadline:{" "}
-            <span className="ml-1 text-black font-normal">{deadline}</span>
+            Deadline: <span className="ml-1  font-normal">{deadline}</span>
           </span>
         </div>
         <div className="text-green-600 font-semibold flex items-center">
@@ -413,15 +429,15 @@ export default function TaskCard({
               d="M16 16a7 7 0 1 0 0-14a7 7 0 0 0 0 14m-8.5 2A3.5 3.5 0 0 0 4 21.5v.5c0 2.393 1.523 4.417 3.685 5.793C9.859 29.177 12.802 30 16 30s6.14-.823 8.315-2.207C26.477 26.417 28 24.393 28 22v-.5a3.5 3.5 0 0 0-3.5-3.5z"
             />
           </svg>
-          <span className="ml-1 text-black font-normal">
-            Phụ trách: {assignee}
-          </span>
+          <span className="ml-1  font-normal">Phụ trách: {assignee}</span>
         </div>
       </div>
       <div className="mb-2">
         <div className="flex items-center justify-between mb-1">
           <span className="text-sm font-semibold text-gray-700">Tiến độ</span>
-          <span className="text-sm font-semibold text-gray-700">{percentComplete}%</span>
+          <span className="text-sm font-semibold text-gray-700">
+            {percentComplete}%
+          </span>
         </div>
         <div className="w-full h-2 bg-gray-200 rounded">
           <div
@@ -431,8 +447,18 @@ export default function TaskCard({
         </div>
       </div>
       <div className="text-green-600 font-semibold flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(20, 128, 0)" d="M20 21H4V10h2v9h12v-9h2zM3 3h18v6H3zm6.5 8h5c.28 0 .5.22.5.5V13H9v-1.5c0-.28.22-.5.5-.5M5 5v2h14V5z" /></svg>
-        <span className="ml-1 text-black font-normal">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="rgb(20, 128, 0)"
+            d="M20 21H4V10h2v9h12v-9h2zM3 3h18v6H3zm6.5 8h5c.28 0 .5.22.5.5V13H9v-1.5c0-.28.22-.5.5-.5M5 5v2h14V5z"
+          />
+        </svg>
+        <span className="ml-1  font-normal">
           Sản phẩm:{" "}
           <a
             href="https://drive.google.com/file/d/18SqIEhWmsUi0sTD9aCtEzOhlkzU7RsVT/view?usp=drive_link"

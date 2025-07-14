@@ -1,49 +1,19 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import SearchBar from "@/components/ui/search-bar";
+import { useTheme } from "@/context/theme-context";
 
 interface NavBarProps {
   activeTitle?: string;
 }
 
 export default function NavBar({ activeTitle = "Trang chủ" }: NavBarProps) {
-  // Dark mode state and effect
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved) {
-      setIsDark(saved === "dark");
-      if (saved === "dark") {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-    } else {
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      setIsDark(prefersDark);
-      if (prefersDark) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-    }
-  }, []);
+  // Use theme context
+  const { theme, setTheme } = useTheme();
 
   const toggleTheme = useCallback(() => {
-    setIsDark((prev) => {
-      const newTheme = !prev;
-      if (newTheme) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-      localStorage.setItem("theme", newTheme ? "dark" : "light");
-      return newTheme;
-    });
-  }, []);
+    setTheme(theme === "dark" ? "light" : "dark");
+  }, [theme, setTheme]);
 
   const handleSearch = useCallback((value: string) => {}, []);
 
@@ -109,13 +79,13 @@ export default function NavBar({ activeTitle = "Trang chủ" }: NavBarProps) {
         <button
           onClick={toggleTheme}
           className={`mx-4 p-2 rounded-full transition-colors ${
-            isDark
+            theme === "dark"
               ? "bg-sfit-green hover:bg-gray-300"
               : "bg-gray-600 hover:bg-gray-500"
           }`}
           aria-label="Toggle dark mode"
         >
-          {isDark ? (
+          {theme === "dark" ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 text-yellow-400"

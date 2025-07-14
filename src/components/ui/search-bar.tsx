@@ -43,6 +43,9 @@ export default function SearchBar({
     <div className={`relative ${className}`}>
       <input
         className="w-full pl-4 pr-10 h-9 bg-green-50 rounded-[20px] text-green-800 placeholder-green-800 outline-green-800 focus:ring-2 focus:ring-green-300 focus:border-transparent"
+        style={{
+          backgroundColor: "var(--search-bg)",
+        }}
         type="search"
         placeholder={placeholder}
         value={searchTerm}

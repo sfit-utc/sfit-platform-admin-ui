@@ -6,10 +6,20 @@ interface ClassItemProps {
 
 export default function ClassItem({ classItem }: ClassItemProps) {
   return (
-    <div className="flex flex-col h-full p-4 bg-white rounded-[10px] shadow">
+    <div
+      className="flex flex-col h-full p-4 bg-white rounded-[10px] shadow"
+      style={{
+        backgroundColor: "var(--search-bg)",
+      }}
+    >
       <div className="flex-1 flex flex-col">
-        <div className="flex justify-between mb-2 *:items-center *:gap-2">
-          <h1 className="min-h-[3.5rem] text-black font-inter text-lg font-bold mr-5 line-clamp-2">
+        <div
+          className="flex justify-between mb-2 *:items-center *:gap-2"
+          style={{
+            color: "var(--foreground)",
+          }}
+        >
+          <h1 className="min-h-[3.5rem]  font-inter text-lg font-bold mr-5 line-clamp-2">
             {classItem.title}
           </h1>
 
@@ -80,11 +90,11 @@ export default function ClassItem({ classItem }: ClassItemProps) {
           </div>
         </div>
         <Line />
-        <div className="text-black font-inter text-sm font-normal my-2 line-clamp-2">
+        <div className=" font-inter text-sm font-normal my-2 line-clamp-2">
           {classItem.description}
         </div>
         <Line />
-        <div className="text-black *:flex *:justify-start *:gap-2 my-2 *:line-clamp-2 *:truncate">
+        <div className=" *:flex *:justify-start *:gap-2 my-2 *:line-clamp-2 *:truncate">
           <div className="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -212,8 +222,13 @@ export default function ClassItem({ classItem }: ClassItemProps) {
         </div>
         <Line />
       </div>
-      <div className="mt-4 ">
-        <div className=" w-full cursor-pointer p-2.5 bg-slate-50 rounded-[5px]  outline-1 outline-offset-[-1px] outline-blue-600 inline-flex justify-center items-center gap-2.5">
+      <div className="mt-4 hover:grayscale-50">
+        <div
+          style={{
+            backgroundColor: "var(--search-bg)",
+          }}
+          className=" w-full cursor-pointer p-2.5 bg-slate-50 rounded-[5px]  outline-1 outline-offset-[-1px] outline-blue-600 inline-flex justify-center items-center gap-2.5"
+        >
           <div className="text-center justify-center text-blue-600 text-base font-normal font-inter">
             Thông tin chi tiết
           </div>

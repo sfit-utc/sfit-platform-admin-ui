@@ -7,7 +7,12 @@ interface BoxProp {
 
 export default function Box({ children, className }: BoxProp) {
   return (
-    <div className={`${className} bg-sfit-box px-5 py-3.5 rounded-md`}>
+    <div
+      className={`${className} bg-sfit-box px-5 py-3.5 rounded-md`}
+      style={{
+        color: "var(--foreground)",
+      }}
+    >
       {children}
     </div>
   );

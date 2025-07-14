@@ -35,10 +35,13 @@ export default function EventItem({
   const isPast = event.status === "past";
   const isUpcoming = event.status === "upcoming";
   return (
-    <div className="px-11 py-6 m-2 w-full border-2 bg-white rounded-[5px] shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)]">
-      <h1 className="text-black text-3xl font-semibold font-inter">
-        {event.title}
-      </h1>
+    <div
+      className="px-11 py-6 m-2 w-full border-2 bg-white rounded-[5px] shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)]"
+      style={{
+        backgroundColor: "var(--search-bg)",
+      }}
+    >
+      <h1 className="text-3xl font-semibold font-inter">{event.title}</h1>
       <div className="text-red-600 text-xl font-normal font-inter">
         Thời gian diễn ra: {event.date}
       </div>

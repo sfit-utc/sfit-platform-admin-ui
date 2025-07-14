@@ -3,10 +3,12 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { useTests } from "@/hooks/use-test-service";
 import TestItem from "@/components/class/test-section/test-item";
 import Loading from "@/components/ui/loading";
+import CreateTestForm from "@/components/class/test-section/create-test-form";
 
 export default function TestList({ searchTerm }: { searchTerm: string }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [testsPerPage, setTestsPerPage] = useState(6); // Show 6 tests per page (2 rows of 3)
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   // Use the hook to get tests
   const { data: tests, loading, error } = useTests();
@@ -44,6 +46,15 @@ export default function TestList({ searchTerm }: { searchTerm: string }) {
   const handleNextPage = useCallback(() => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   }, [totalPages]);
+
+  const handleCancelCreate = useCallback(() => {
+    setShowCreateForm(false);
+  }, []);
+
+  const handleCreateSuccess = useCallback(() => {
+    setShowCreateForm(false);
+    // Optionally, refetch tests or update the list
+  }, []);
 
   if (loading) {
     return <Loading />;
@@ -141,6 +152,14 @@ export default function TestList({ searchTerm }: { searchTerm: string }) {
         Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of{" "}
         {totalItems} tests
       </div>
+
+      {/* Create Test Form Modal */}
+      <CreateTestForm
+        state={showCreateForm}
+        funcClickToBack={setShowCreateForm}
+        onCancel={handleCancelCreate}
+        onSuccess={handleCreateSuccess}
+      />
     </div>
   );
 }

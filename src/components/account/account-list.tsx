@@ -246,10 +246,17 @@ export default function AccountList() {
             {showFilterDropdown && (
               <div
                 ref={filterDropdownRef}
-                className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-4"
+                className="absolute top-full left-0 mt-2 w-64 rounded-lg shadow-lg z-50 p-4"
+                style={{
+                  backgroundColor: "var(--background)",
+                  border: "1px solid var(--foreground)",
+                }}
               >
                 <div className="mb-3">
-                  <label className="block text-sm font-semibold mb-1 text-green-700">
+                  <label
+                    className="block text-sm font-semibold mb-1"
+                    style={{ color: "var(--sfit-green)" }}
+                  >
                     Chức vụ
                   </label>
                   <select
@@ -258,7 +265,12 @@ export default function AccountList() {
                       setFilterRole(e.target.value);
                       setShowFilterDropdown(false);
                     }}
-                    className="border p-1 rounded w-full text-black"
+                    className="border p-1 rounded w-full"
+                    style={{
+                      color: "var(--foreground)",
+                      backgroundColor: "var(--background)",
+                      borderColor: "var(--sfit-gray-200)",
+                    }}
                   >
                     <option value="all">Tất cả chức vụ</option>
                     <option value="Thành viên">Thành viên</option>
@@ -269,7 +281,10 @@ export default function AccountList() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold mb-1 text-green-700">
+                  <label
+                    className="block text-sm font-semibold mb-1"
+                    style={{ color: "var(--sfit-green)" }}
+                  >
                     Ban
                   </label>
                   <select
@@ -278,7 +293,12 @@ export default function AccountList() {
                       setFilterTeam(e.target.value);
                       setShowFilterDropdown(false);
                     }}
-                    className="border p-1 rounded w-full text-black"
+                    className="border p-1 rounded w-full"
+                    style={{
+                      color: "var(--foreground)",
+                      backgroundColor: "var(--background)",
+                      borderColor: "var(--sfit-gray-200)",
+                    }}
                   >
                     <option value="all">Tất cả ban</option>
                     <option value="Học tập">Học tập</option>
@@ -305,6 +325,9 @@ export default function AccountList() {
             onClick={() => {
               handleClick("line");
               changeAccountsPerPage(10);
+            }}
+            style={{
+              backgroundColor: "var(--search-bg)",
             }}
           >
             {activeStyle == "line" && (
@@ -370,6 +393,9 @@ export default function AccountList() {
             onClick={() => {
               handleClick("box");
               changeAccountsPerPage(9);
+            }}
+            style={{
+              backgroundColor: "var(--search-bg)",
             }}
           >
             {activeStyle == "box" && (

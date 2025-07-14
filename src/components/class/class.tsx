@@ -29,93 +29,96 @@ export default function Class() {
 
   return (
     <div className="space-y-6">
-      {!showCreateForm ? (
-        <>
-          {/* Tab Navigation */}
-          <div className="flex items-center">
-            <button
-              onClick={() => setActiveTab("class")}
-              className={`text-xl font-semibold flex justify-center items-center cursor-pointer w-56 h-12 border-l border-r border-t transition-colors ${
-                activeTab === "class"
-                  ? "text-green-800 bg-white"
-                  : "text-gray-600 bg-gray-50"
-              }`}
-            >
-              Lớp học
-            </button>
-            <button
-              onClick={() => setActiveTab("test")}
-              className={`text-xl font-semibold flex justify-center items-center cursor-pointer w-56 h-12 border-l border-r border-t transition-colors ${
-                activeTab === "test"
-                  ? "text-green-800 bg-white"
-                  : "text-gray-600 bg-gray-50"
-              }`}
-            >
-              Bài kiểm tra
-            </button>
-          </div>
+      {/* Tab Navigation */}
+      <div className="flex items-center">
+        <button
+          style={{
+            backgroundColor: "var(--background)",
+          }}
+          onClick={() => setActiveTab("class")}
+          className={`text-xl font-semibold flex justify-center items-center cursor-pointer w-56 h-12 border-l border-r border-t transition-colors ${
+            activeTab === "class"
+              ? "text-green-800 bg-white"
+              : "text-gray-600 bg-gray-50"
+          }`}
+        >
+          Lớp học
+        </button>
+        <button
+          style={{
+            backgroundColor: "var(--background)",
+          }}
+          onClick={() => setActiveTab("test")}
+          className={`text-xl font-semibold flex justify-center items-center cursor-pointer w-56 h-12 border-l border-r border-t transition-colors ${
+            activeTab === "test"
+              ? "text-green-800 bg-white"
+              : "text-gray-600 bg-gray-50"
+          }`}
+        >
+          Bài kiểm tra
+        </button>
+      </div>
 
-          {/* Search and Add Class & Contest */}
-          <div className="flex justify-between items-center">
-            {activeTab === "class" ? (
-              <>
-                <SearchBar
-                  placeholder="Tìm lớp học"
-                  className="w-96"
-                  onSearch={handleSearch}
-                />
-                <button
-                  onClick={handleAddClass}
-                  className="cursor-pointer w-52 h-9 bg-green-700 rounded-[20px] flex justify-center items-center hover:bg-green-800 transition-colors"
-                >
-                  <span className="text-white text-base font-bold font-inter">
-                    + Tạo lớp học mới
-                  </span>
-                </button>
-              </>
-            ) : (
-              <>
-                <SearchBar
-                  placeholder="Tìm contest"
-                  className="w-96"
-                  onSearch={handleSearch}
-                />
-                <button
-                  onClick={handleAddClass}
-                  className="cursor-pointer w-52 h-9 bg-green-700 rounded-[20px] flex justify-center items-center hover:bg-green-800 transition-colors"
-                >
-                  <span className="text-white text-base font-bold font-inter">
-                    + Tạo contest mới
-                  </span>
-                </button>
-              </>
-            )}
-          </div>
+      {/* Search and Add Class & Contest */}
+      <div className="flex justify-between items-center">
+        {activeTab === "class" ? (
+          <>
+            <SearchBar
+              placeholder="Tìm lớp học"
+              className="w-96"
+              onSearch={handleSearch}
+            />
+            <button
+              onClick={handleAddClass}
+              className="cursor-pointer w-52 h-9 bg-green-700 rounded-[20px] flex justify-center items-center hover:bg-green-800 transition-colors"
+            >
+              <span className="text-white text-base font-bold font-inter">
+                + Tạo lớp học mới
+              </span>
+            </button>
+          </>
+        ) : (
+          <>
+            <SearchBar
+              placeholder="Tìm contest"
+              className="w-96"
+              onSearch={handleSearch}
+            />
+            <button
+              onClick={handleAddClass}
+              className="cursor-pointer w-52 h-9 bg-green-700 rounded-[20px] flex justify-center items-center hover:bg-green-800 transition-colors"
+            >
+              <span className="text-white text-base font-bold font-inter">
+                + Tạo contest mới
+              </span>
+            </button>
+          </>
+        )}
+      </div>
 
-          {/* Content based on active tab */}
-          {activeTab === "class" ? (
-            <ClassList searchTerm={searchTerm} />
-          ) : (
-            <TestList searchTerm={searchTerm} />
-          )}
-        </>
+      {/* Content based on active tab */}
+      {activeTab === "class" ? (
+        <ClassList searchTerm={searchTerm} />
       ) : (
-        <div className="min-h-screen bg-gray-50">
-          <div className="text-center py-8">
-            {activeTab === "class" ? (
-              <CreateClassForm
-                onCancel={handleCancelCreate}
-                onSuccess={handleCreateSuccess}
-              />
-            ) : (
-              <CreateTestForm
-                onCancel={handleCancelCreate}
-                onSuccess={handleCreateSuccess}
-              />
-            )}
-          </div>
-        </div>
+        <TestList searchTerm={searchTerm} />
       )}
+      <>
+        {activeTab === "class" ? (
+          <CreateClassForm
+            state={showCreateForm}
+            funcClickToBack={setShowCreateForm}
+            onCancel={handleCancelCreate}
+            onSuccess={handleCreateSuccess}
+          />
+        ) : (
+          <CreateTestForm
+            state={showCreateForm}
+            funcClickToBack={setShowCreateForm}
+            onCancel={handleCancelCreate}
+            onSuccess={handleCreateSuccess}
+          />
+        )}
+      </>
     </div>
   );
 }

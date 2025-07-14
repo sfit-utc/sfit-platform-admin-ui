@@ -2,8 +2,11 @@
 import { useState, useRef, useEffect } from "react";
 import { useTestManagement } from "@/hooks/use-test-service";
 import Line from "@/components/ui/line";
+import Modal from "@/components/ui/modal";
 
 interface CreateTestFormProps {
+  state: boolean;
+  funcClickToBack: (b: boolean) => void;
   onCancel: () => void;
   onSuccess: () => void;
 }
@@ -22,6 +25,8 @@ function formatTime(timeStr: string) {
 }
 
 export default function CreateTestForm({
+  state,
+  funcClickToBack,
   onCancel,
   onSuccess,
 }: CreateTestFormProps) {
@@ -96,28 +101,46 @@ export default function CreateTestForm({
   };
 
   return (
-    <div className="">
-      <div className="bg-white rounded-lg shadow-lg p-8">
+    <Modal
+      state={state}
+      funcClickToBack={funcClickToBack}
+      className="max-w-2xl w-full"
+    >
+      <div style={{ backgroundColor: "var(--background)" }}>
         <div className="flex ">
-          <span className="px-2 text-xl font-bold text-gray-800 border-r">
+          <span
+            className="px-2 text-xl font-bold border-r"
+            style={{
+              color: "var(--foreground)",
+              borderColor: "var(--sfit-gray-200)",
+            }}
+          >
             Thông tin cơ bản
           </span>
-          <span className="px-2 text-xl font-bold text-gray-800 ">
+          <span
+            className="px-2 text-xl font-bold"
+            style={{ color: "var(--foreground)" }}
+          >
             Nhiệm vụ chung
           </span>
         </div>
-        <div className="flex py-5 *:m-2">
-          <div className="flex-2 bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] p-4">
+        <div className="py-5 *:m-2">
+          <div
+            className="flex-2 shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] p-4"
+            style={{ backgroundColor: "var(--background)" }}
+          >
             <form
               id="create-test-form"
               onSubmit={handleSubmit}
-              className="space-y-6 *:text-gray-800 [&_label]:text-xl [&_label]:text-left"
+              className="grid grid-cols-2 gap-5"
+              style={{ color: "var(--foreground)" }}
             >
-              {/* Title */}
+              {/* Row 1: Tên bài kiểm tra | Thời gian diễn ra */}
               <div>
                 <label
                   htmlFor="title"
-                  className="block text-xl font-medium  mb-2"
+                  className="block text-xl font-medium mb-2"
+                  style={{ color: "var(--foreground)" }}
                 >
                   Tên bài kiểm tra *
                 </label>
@@ -127,20 +150,92 @@ export default function CreateTestForm({
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
-                  className={` w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    errors.title ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  style={{
+                    backgroundColor: "var(--background)",
+                    color: "var(--foreground)",
+                    borderColor: errors.title
+                      ? "var(--sfit-red-500)"
+                      : "var(--sfit-gray-200)",
+                  }}
                   placeholder="Nhập tên bài kiểm tra"
                 />
                 {errors.title && (
-                  <p className="mt-1 text-sm text-red-600">{errors.title}</p>
+                  <p
+                    className="mt-1 text-sm"
+                    style={{ color: "var(--sfit-red-500)" }}
+                  >
+                    {errors.title}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label
+                  className="block text-sm font-medium mb-2"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  Thời gian diễn ra *
+                </label>
+                <div className="flex flex-col gap-4">
+                  <div className="">
+                    <span className="text-base mx-2">Ngày</span>
+                    <input
+                      type="date"
+                      id="date"
+                      name="date"
+                      value={formData.date}
+                      onChange={handleInputChange}
+                      className="px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      style={{
+                        backgroundColor: "var(--background)",
+                        color: "var(--foreground)",
+                        borderColor: "var(--sfit-gray-200)",
+                      }}
+                      required
+                    />
+                  </div>
+                  <div className="">
+                    <span className="text-base mx-2">Giờ</span>
+                    <input
+                      type="time"
+                      id="time"
+                      name="time"
+                      value={formData.time}
+                      onChange={handleInputChange}
+                      className="px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      style={{
+                        backgroundColor: "var(--background)",
+                        color: "var(--foreground)",
+                        borderColor: "var(--sfit-gray-200)",
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
+                {errors.date && (
+                  <p
+                    className="mt-1 text-sm"
+                    style={{ color: "var(--sfit-red-500)" }}
+                  >
+                    {errors.date}
+                  </p>
+                )}
+                {errors.time && (
+                  <p
+                    className="mt-1 text-sm"
+                    style={{ color: "var(--sfit-red-500)" }}
+                  >
+                    {errors.time}
+                  </p>
                 )}
               </div>
 
+              {/* Row 2: Mô tả bài kiểm tra | Thời gian làm bài */}
               <div>
                 <label
                   htmlFor="description"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium mb-2"
+                  style={{ color: "var(--foreground)" }}
                 >
                   Mô tả bài kiểm tra
                 </label>
@@ -150,51 +245,28 @@ export default function CreateTestForm({
                   value={formData.description}
                   onChange={handleInputChange}
                   rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  style={{
+                    backgroundColor: "var(--background)",
+                    color: "var(--foreground)",
+                    borderColor: "var(--sfit-gray-200)",
+                  }}
                   placeholder="Nhập mô tả chi tiết về bài kiểm tra..."
                 />
-              </div>
-
-              {/* Date and Time */}
-              <div className="flex flex-col gap-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Thời gian diễn ra *
-                </label>
-                <div className="flex items-center gap-4">
-                  <span className="text-base mx-2">Ngày</span>
-                  <input
-                    type="date"
-                    id="date"
-                    name="date"
-                    value={formData.date}
-                    onChange={handleInputChange}
-                    className="px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    required
-                  />
-                  <span className="text-base mx-2">Giờ</span>
-                  <input
-                    type="time"
-                    id="time"
-                    name="time"
-                    value={formData.time}
-                    onChange={handleInputChange}
-                    className="px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    required
-                  />
-                </div>
-                {errors.date && (
-                  <p className="mt-1 text-sm text-red-600">{errors.date}</p>
-                )}
-                {errors.time && (
-                  <p className="mt-1 text-sm text-red-600">{errors.time}</p>
+                {errors.description && (
+                  <p
+                    className="mt-1 text-sm"
+                    style={{ color: "var(--sfit-red-500)" }}
+                  >
+                    {errors.description}
+                  </p>
                 )}
               </div>
-
-              {/* Duration */}
               <div>
                 <label
                   htmlFor="duration"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium mb-2"
+                  style={{ color: "var(--foreground)" }}
                 >
                   Thời gian làm bài *
                 </label>
@@ -204,23 +276,34 @@ export default function CreateTestForm({
                   name="duration"
                   value={formData.duration}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    errors.duration ? "border-red-500" : "border-gray-300"
-                  }`}
-                  placeholder="Ví dụ: 2 giờ, 90 phút, 1.5 giờ"
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  style={{
+                    backgroundColor: "var(--background)",
+                    color: "var(--foreground)",
+                    borderColor: errors.duration
+                      ? "var(--sfit-red-500)"
+                      : "var(--sfit-gray-200)",
+                  }}
+                  placeholder="Nhập thời gian làm bài (phút)"
                 />
                 {errors.duration && (
-                  <p className="mt-1 text-sm text-red-600">{errors.duration}</p>
+                  <p
+                    className="mt-1 text-sm"
+                    style={{ color: "var(--sfit-red-500)" }}
+                  >
+                    {errors.duration}
+                  </p>
                 )}
               </div>
 
-              {/* Participants */}
+              {/* Row 3: Số lượng tham gia | Trạng thái */}
               <div>
                 <label
                   htmlFor="participants"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium mb-2"
+                  style={{ color: "var(--foreground)" }}
                 >
-                  Số lượng tham gia tối đa *
+                  Số lượng tham gia *
                 </label>
                 <input
                   type="number"
@@ -228,33 +311,44 @@ export default function CreateTestForm({
                   name="participants"
                   value={formData.participants}
                   onChange={handleInputChange}
-                  min="1"
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    errors.participants ? "border-red-500" : "border-gray-300"
-                  }`}
-                  placeholder="Nhập số lượng tham gia tối đa"
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  style={{
+                    backgroundColor: "var(--background)",
+                    color: "var(--foreground)",
+                    borderColor: errors.participants
+                      ? "var(--sfit-red-500)"
+                      : "var(--sfit-gray-200)",
+                  }}
+                  placeholder="Nhập số lượng tham gia"
                 />
                 {errors.participants && (
-                  <p className="mt-1 text-sm text-red-600">
+                  <p
+                    className="mt-1 text-sm"
+                    style={{ color: "var(--sfit-red-500)" }}
+                  >
                     {errors.participants}
                   </p>
                 )}
               </div>
-
-              {/* Status */}
               <div>
                 <label
                   htmlFor="status"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium mb-2"
+                  style={{ color: "var(--foreground)" }}
                 >
-                  Trạng thái bài kiểm tra
+                  Trạng thái
                 </label>
                 <select
                   id="status"
                   name="status"
                   value={formData.status}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  style={{
+                    backgroundColor: "var(--background)",
+                    color: "var(--foreground)",
+                    borderColor: "var(--sfit-gray-200)",
+                  }}
                 >
                   <option value="upcoming">Sắp diễn ra</option>
                   <option value="ongoing">Đang diễn ra</option>
@@ -262,93 +356,56 @@ export default function CreateTestForm({
                 </select>
               </div>
 
-              {/* Is Ranking */}
-              <div>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    name="isRanking"
-                    checked={formData.isRanking}
-                    onChange={handleInputChange}
-                    className="accent-green-600"
-                  />
-                  <span className="text-sm font-medium text-gray-700">
-                    Có xếp hạng
-                  </span>
+              {/* Row 4: Xếp hạng bài kiểm tra (spans both columns) */}
+              <div className="col-span-2 flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="isRanking"
+                  name="isRanking"
+                  checked={formData.isRanking}
+                  onChange={handleInputChange}
+                  className="form-checkbox h-5 w-5 text-green-600"
+                  style={{ accentColor: "var(--sfit-green)" }}
+                />
+                <label
+                  htmlFor="isRanking"
+                  className="text-sm"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  Xếp hạng bài kiểm tra
                 </label>
+              </div>
+
+              {/* Button row: span both columns */}
+              <div className="col-span-2 flex justify-end space-x-4 pt-6">
+                <button
+                  type="button"
+                  onClick={onCancel}
+                  className="text-sm px-4 py-2 border rounded-lg font-medium transition-colors"
+                  style={{
+                    borderColor: "var(--sfit-gray-200)",
+                    color: "var(--foreground)",
+                    backgroundColor: "var(--background)",
+                  }}
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  form="create-test-form"
+                  className="text-sm px-4 py-2 font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    backgroundColor: "var(--sfit-green)",
+                    color: "var(--background)",
+                  }}
+                >
+                  Tạo bài kiểm tra
+                </button>
               </div>
             </form>
           </div>
-          <div className="p-5 text-gray-800  flex-1 bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] font-inter">
-            <div className="text-xl">Xuất bản</div>
-            <Line />
-            <div className="flex flex-col text-left">
-              <div className="text-sm my-1">
-                Tiêu đề:{" "}
-                <span className="text-sfit-green"> {formData.title}</span>
-              </div>
-              <div className="text-sm my-1">
-                Thời gian diễn ra:{" "}
-                <span className="text-sfit-green">
-                  {formData.date && formData.time
-                    ? `${formatTime(formData.time)} ${formatDate(
-                        formData.date.split("T")[0]
-                      )}`
-                    : "Chưa chọn"}
-                </span>
-              </div>
-              <div className="text-sm my-1">
-                Thời gian làm bài:{" "}
-                <span className="text-sfit-green">
-                  {" "}
-                  {formData.duration || "Chưa nhập"}
-                </span>
-              </div>
-              <div className="text-sm my-1">
-                Số lượng tham gia:{" "}
-                <span className="text-sfit-green">
-                  {" "}
-                  {formData.participants}
-                </span>
-              </div>
-              <div className="text-sm my-1">
-                Trạng thái:{" "}
-                <span className="text-sfit-green"> {formData.status}</span>
-              </div>
-              <div className="text-sm my-1">
-                Xếp hạng:{" "}
-                <span className="text-sfit-green">
-                  {" "}
-                  {formData.isRanking ? "Có" : "Không"}
-                </span>
-              </div>
-              <div className="text-sm my-1">
-                Mô tả:{" "}
-                <span className="text-sfit-green"> {formData.description}</span>
-              </div>
-            </div>
-            <Line />
-            {/* Buttons */}
-            <div className="flex justify-end space-x-4 pt-6">
-              <button
-                type="button"
-                onClick={onCancel}
-                className="text-sm px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
-              >
-                Hủy
-              </button>
-              <button
-                form="create-test-form"
-                type="submit"
-                disabled={loading}
-                className="text-sm px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? "Đang tạo..." : "Tạo bài kiểm tra"}
-              </button>
-            </div>
-          </div>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
