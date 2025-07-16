@@ -1,8 +1,8 @@
-import Account from "@/components/account/account";
+import Member from "@/components/member/member";
 export default function page() {
   return (
     <div className="mt-4">
-      <Account />
+      <Member />
     </div>
   );
 }

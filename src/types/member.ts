@@ -1,4 +1,4 @@
-export interface Account {
+export interface Member {
   id: number;
   name: string;
   teams: string[];
@@ -10,14 +10,14 @@ export interface Account {
   joinDate?: string;
 }
 
-export interface AccountStats {
-  totalUsers: number;
-  activeUsers: number;
+export interface MemberStats {
+  totalMembers: number;
+  activeMembers: number;
   leaders: number;
-  newUsers: number;
+  newMembers: number;
 }
 
-export interface AccountListItem {
+export interface MemberListItem {
   id: number;
   name: string;
   role: string;
@@ -27,7 +27,7 @@ export interface AccountListItem {
   lastActive?: string;
 }
 
-export interface AccountFilters {
+export interface MemberFilters {
   role?: string;
   class?: string;
   team?: string;
@@ -39,4 +39,4 @@ export interface ApiError {
   message: string;
   code: string;
   details?: any;
-}
+} 

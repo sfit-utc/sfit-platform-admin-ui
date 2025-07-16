@@ -1,31 +1,31 @@
-import { accountService } from "@/services/account-service";
+import { memberService } from "@/services/member-service";
 import {
-  Account,
-  AccountStats,
-  AccountListItem,
-  AccountFilters,
-} from "@/types/account";
+  Member,
+  MemberStats,
+  MemberListItem,
+  MemberFilters,
+} from "@/types/member";
 import { useEffect, useState } from "react";
 
-interface UseAccountServiceType<T> {
+interface UseMemberServiceType<T> {
   data: T;
   loading: boolean;
   error: Error | null;
 }
 
-export function useAccountStats(): UseAccountServiceType<AccountStats> {
-  const [data, setData] = useState<AccountStats>({
-    totalUsers: 0,
-    activeUsers: 0,
+export function useMemberStats(): UseMemberServiceType<MemberStats> {
+  const [data, setData] = useState<MemberStats>({
+    totalMembers: 0,
+    activeMembers: 0,
     leaders: 0,
-    newUsers: 0,
+    newMembers: 0,
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    accountService
-      .getAccountStats()
+    memberService
+      .getMemberStats()
       .then(setData)
       .catch(setError)
       .finally(() => setLoading(false));
@@ -34,17 +34,17 @@ export function useAccountStats(): UseAccountServiceType<AccountStats> {
   return { data, loading, error };
 }
 
-export function useAccounts(
-  filters?: AccountFilters
-): UseAccountServiceType<AccountListItem[]> {
-  const [data, setData] = useState<AccountListItem[]>([]);
+export function useMembers(
+  filters?: MemberFilters
+): UseMemberServiceType<MemberListItem[]> {
+  const [data, setData] = useState<MemberListItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     setLoading(true);
-    accountService
-      .getAccounts(filters)
+    memberService
+      .getMembers(filters)
       .then(setData)
       .catch(setError)
       .finally(() => setLoading(false));
@@ -53,8 +53,8 @@ export function useAccounts(
   return { data, loading, error };
 }
 
-export function useAccount(id: number): UseAccountServiceType<Account | null> {
-  const [data, setData] = useState<Account | null>(null);
+export function useMember(id: number): UseMemberServiceType<Member | null> {
+  const [data, setData] = useState<Member | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -65,8 +65,8 @@ export function useAccount(id: number): UseAccountServiceType<Account | null> {
     }
 
     setLoading(true);
-    accountService
-      .getAccountById(id)
+    memberService
+      .getMemberById(id)
       .then(setData)
       .catch(setError)
       .finally(() => setLoading(false));
@@ -75,20 +75,20 @@ export function useAccount(id: number): UseAccountServiceType<Account | null> {
   return { data, loading, error };
 }
 
-// Custom hook for account management operations
-export function useAccountManagement() {
+// Custom hook for member management operations
+export function useMemberManagement() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const updateAccount = async (
+  const updateMember = async (
     id: number,
-    data: Partial<Account>
-  ): Promise<Account | null> => {
+    data: Partial<Member>
+  ): Promise<Member | null> => {
     setLoading(true);
     setError(null);
 
     try {
-      const result = await accountService.updateAccount(id, data);
+      const result = await memberService.updateMember(id, data);
       setLoading(false);
       return result;
     } catch (err) {
@@ -98,12 +98,12 @@ export function useAccountManagement() {
     }
   };
 
-  const deleteAccount = async (id: number): Promise<boolean> => {
+  const deleteMember = async (id: number): Promise<boolean> => {
     setLoading(true);
     setError(null);
 
     try {
-      await accountService.deleteAccount(id);
+      await memberService.deleteMember(id);
       setLoading(false);
       return true;
     } catch (err) {
@@ -114,8 +114,8 @@ export function useAccountManagement() {
   };
 
   return {
-    updateAccount,
-    deleteAccount,
+    updateMember,
+    deleteMember,
     loading,
     error,
   };
