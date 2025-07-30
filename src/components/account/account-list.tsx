@@ -27,7 +27,6 @@ export default function AccountList() {
     [searchTerm, filterRole, filterTeam]
   );
 
-  // Use the hook to get accounts
   const { data: accounts, loading, error } = useAccounts(filters);
 
   const totalItems = accounts.length;
@@ -120,10 +119,10 @@ export default function AccountList() {
         <div className="flex *:mx-2">
           <div className="cursor-pointer w-52 h-9 bg-green-700 rounded-[20px] flex justify-center items-center">
             <div
-              className="w-36 h-5 justify-center text-white text-base font-bold font-inter"
+              className="w-36 h-5 justify-center text-white text-sm font-bold font-inter"
               onClick={() => setAddAccount(true)}
             >
-              + Thêm thành viên
+              + Thêm người dùng
             </div>
           </div>
 
@@ -273,11 +272,9 @@ export default function AccountList() {
                     }}
                   >
                     <option value="all">Tất cả chức vụ</option>
-                    <option value="Thành viên">Thành viên</option>
-                    <option value="Phó ban">Phó ban</option>
-                    <option value="Trưởng ban">Trưởng ban</option>
-                    <option value="Phó CN">Phó CN</option>
-                    <option value="Chủ nhiệm">Chủ nhiệm</option>
+                    <option value="Người dùng">Người dùng</option>
+                    <option value="Quản trị viên">Quản trị viên</option>
+                    <option value="Người kiểm duyệt">Người kiểm duyệt</option>
                   </select>
                 </div>
                 <div>

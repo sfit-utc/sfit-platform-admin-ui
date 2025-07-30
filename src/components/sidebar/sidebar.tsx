@@ -2,7 +2,8 @@
 import logo from "@/assets/icons/sfit-logo.svg";
 import SideItem from "@/components/sidebar/side-item";
 import HomeIcon from "@/assets/icons/home.svg";
-import AccountIcon from "@/assets/icons/account.svg";
+import AccountIcon from "@/assets/icons/user-icon.svg";
+import MemberIcon from "@/assets/icons/member.svg";
 import TeamIcon from "@/assets/icons/team.svg";
 import EventIcon from "@/assets/icons/event.svg";
 import ClassIcon from "@/assets/icons/class.svg";
@@ -62,7 +63,7 @@ export default function SideBar({ onActiveItemChange }: SideBarProps) {
           SFIT
         </div>
       </div>
-      <div className="flex-1">
+      <div className="flex-1 ">
         <SideItem
           name={"TRANG CHỦ"}
           icon={HomeIcon.src}
@@ -72,10 +73,10 @@ export default function SideBar({ onActiveItemChange }: SideBarProps) {
         />
         <SideItem
           name={"THÀNH VIÊN"}
-          icon={AccountIcon.src}
-          nav={"account"}
-          isActive={activeItem === "account"}
-          onClick={() => handleItemClick("account")}
+          icon={MemberIcon.src}
+          nav={"member"}
+          isActive={activeItem === "member"}
+          onClick={() => handleItemClick("member")}
         />
         <SideItem
           name={"BAN"}
@@ -104,6 +105,13 @@ export default function SideBar({ onActiveItemChange }: SideBarProps) {
           nav={"task"}
           isActive={activeItem === "task"}
           onClick={() => handleItemClick("task")}
+        />
+        <SideItem
+          name={"NGƯỜI DÙNG"}
+          icon={AccountIcon.src}
+          nav={"account"}
+          isActive={activeItem === "account"}
+          onClick={() => handleItemClick("account")}
         />
       </div>
     </div>

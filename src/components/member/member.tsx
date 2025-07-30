@@ -1,11 +1,11 @@
 "use client";
-import AccountList from "@/components/account/account-list";
+import MemberList from "@/components/member/member-list";
 import DashboardAction from "@/components/ui/dashboard-action";
-import { useAccountStats } from "@/hooks/use-account-service";
+import { useMemberStats } from "@/hooks/use-member-service";
 import Loading from "@/components/ui/loading";
 
-export default function Account() {
-  const { data: stats, loading, error } = useAccountStats();
+export default function Member() {
+  const { data: stats, loading, error } = useMemberStats();
 
   if (loading) {
     return <Loading />;
@@ -15,37 +15,37 @@ export default function Account() {
     return <div className="text-red-500">Error: {error.message}</div>;
   }
 
-  const accountInfo = [
+  const memberInfo = [
     {
-      children: "Tổng người dùng",
+      children: "Tổng thành viên",
       textColor: "sfit-blue",
       bgColor: "sfit-blue-light",
-      number: stats.totalUsers,
+      number: stats.totalMembers,
     },
     {
-      children: "người dùng",
+      children: "Thành viên",
       textColor: "sfit-green",
       bgColor: "sfit-green-light",
-      number: stats.activeUsers,
+      number: stats.activeMembers,
     },
     {
-      children: "Quản trị viên",
+      children: "Lãnh đạo",
       textColor: "sfit-purple",
       bgColor: "sfit-purple-light",
       number: stats.leaders,
     },
     {
-      children: "Người dùng mới",
+      children: "Thành viên mới",
       textColor: "sfit-yellow",
       bgColor: "sfit-yellow-light",
-      number: stats.newUsers,
+      number: stats.newMembers,
     },
   ];
 
   return (
     <div className="my-5">
       <div className="grid grid-cols-4 gap-5">
-        {accountInfo.map(({ children, textColor, bgColor, number }) => {
+        {memberInfo.map(({ children, textColor, bgColor, number }) => {
           return (
             <DashboardAction
               key={children}
@@ -62,7 +62,7 @@ export default function Account() {
         })}
       </div>
 
-      <AccountList />
+      <MemberList />
     </div>
   );
 }

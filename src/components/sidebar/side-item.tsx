@@ -49,7 +49,7 @@ export default function SideItem({
           className={`w-6 h-6 ${isActive ? "w-8 h-8" : ""}`}
           style={{
             filter: isActive ? "brightness(0)" : undefined,
-            color: isActive ? "var(--sidebar-icon)" : undefined,
+            color: isActive ? "var(--sidebar-icon)" : "#ffffff",
           }}
         />
 

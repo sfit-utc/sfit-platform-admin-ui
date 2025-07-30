@@ -1,18 +1,18 @@
 import Modal from "@/components/ui/modal";
 import { useState } from "react";
 
-interface AddAccountProp {
+interface AddMemberProp {
   funcClickToBack: (b: boolean) => void;
   state: boolean;
 }
 
-export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
-  const [accountID, setAccountID] = useState<string>("");
-  const [accountName, setAccountName] = useState<string>("");
-  const [accountClass, setAccountClass] = useState<string>("");
-  const [accountTeam, setAccountTeam] = useState<string>("");
-  const [accountEmail, setAccountEmail] = useState<string>("");
-  const [accountRole, setAccountRole] = useState<string>("");
+export default function AddMember({ state, funcClickToBack }: AddMemberProp) {
+  const [memberID, setMemberID] = useState<string>("");
+  const [memberName, setMemberName] = useState<string>("");
+  const [memberClass, setMemberClass] = useState<string>("");
+  const [memberTeam, setMemberTeam] = useState<string>("");
+  const [memberEmail, setMemberEmail] = useState<string>("");
+  const [memberRole, setMemberRole] = useState<string>("");
 
   //Sẽ sửa
   const teamList = [
@@ -49,31 +49,31 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     let hasError = false;
-    if (!accountID.trim()) {
+    if (!memberID.trim()) {
       setErrorID("Vui lòng nhập mã sinh viên");
       hasError = true;
     } else {
       setErrorID(null);
     }
-    if (!accountName.trim()) {
+    if (!memberName.trim()) {
       setErrorName("Vui lòng nhập họ và tên");
       hasError = true;
     } else {
       setErrorName(null);
     }
-    if (!accountEmail.trim()) {
+    if (!memberEmail.trim()) {
       setErrorEmail("Vui lòng nhập email");
       hasError = true;
     } else {
       setErrorEmail(null);
     }
-    if (!accountClass.trim()) {
+    if (!memberClass.trim()) {
       setErrorClass("Vui lòng nhập lớp - khoa");
       hasError = true;
     } else {
       setErrorClass(null);
     }
-    if (!accountRole.trim()) {
+    if (!memberRole.trim()) {
       setErrorRole("Vui lòng chọn chức vụ");
       hasError = true;
     } else {
@@ -86,23 +86,23 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
       setErrorTeam(null);
     }
     if (hasError) return;
-    setAccountID("");
-    setAccountClass("");
-    setAccountEmail("");
-    setAccountRole("");
-    setAccountTeam("");
-    setAccountName("");
+    setMemberID("");
+    setMemberClass("");
+    setMemberEmail("");
+    setMemberRole("");
+    setMemberTeam("");
+    setMemberName("");
     setSelectedTeams([]);
     funcClickToBack(false);
   };
 
   const handleCancel = () => {
-    setAccountID("");
-    setAccountName("");
-    setAccountClass("");
-    setAccountEmail("");
-    setAccountRole("");
-    setAccountTeam("");
+    setMemberID("");
+    setMemberName("");
+    setMemberClass("");
+    setMemberEmail("");
+    setMemberRole("");
+    setMemberTeam("");
     setSelectedTeams([]);
     setErrorID(null);
     setErrorName(null);
@@ -127,13 +127,13 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
           className="text-xl font-semibold"
           style={{ color: "var(--sfit-green)" }}
         >
-          Thêm Người Dùng
+          Thêm Thành Viên
         </h2>
         <div className="flex justify-around">
           <div className="*:my-2">
             <div>
               <label
-                htmlFor="account-id"
+                htmlFor="member-id"
                 className="block text-sm font-medium"
                 style={{ color: "var(--sfit-green)" }}
               >
@@ -141,10 +141,10 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
               </label>
               <input
                 type="text"
-                name="account-id"
-                id="account-id"
-                value={accountID}
-                onChange={(e) => setAccountID(e.target.value)}
+                name="member-id"
+                id="member-id"
+                value={memberID}
+                onChange={(e) => setMemberID(e.target.value)}
                 className="mt-1 w-full p-2 border rounded-md focus:outline-none focus:ring-2"
                 style={{
                   backgroundColor: "var(--background)",
@@ -166,7 +166,7 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
             </div>
             <div>
               <label
-                htmlFor="account-name"
+                htmlFor="member-name"
                 className="block text-sm font-medium"
                 style={{ color: "var(--sfit-green)" }}
               >
@@ -174,10 +174,10 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
               </label>
               <input
                 type="text"
-                name="account-name"
-                id="account-name"
-                value={accountName}
-                onChange={(e) => setAccountName(e.target.value)}
+                name="member-name"
+                id="member-name"
+                value={memberName}
+                onChange={(e) => setMemberName(e.target.value)}
                 className="mt-1 w-full p-2 border rounded-md focus:outline-none focus:ring-2"
                 style={{
                   backgroundColor: "var(--background)",
@@ -199,7 +199,7 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
             </div>
             <div>
               <label
-                htmlFor="account-email"
+                htmlFor="member-email"
                 className="block text-sm font-medium"
                 style={{ color: "var(--sfit-green)" }}
               >
@@ -207,10 +207,10 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
               </label>
               <input
                 type="email"
-                name="account-email"
-                id="account-email"
-                value={accountEmail}
-                onChange={(e) => setAccountEmail(e.target.value)}
+                name="member-email"
+                id="member-email"
+                value={memberEmail}
+                onChange={(e) => setMemberEmail(e.target.value)}
                 className="mt-1 w-full p-2 border rounded-md focus:outline-none focus:ring-2"
                 style={{
                   backgroundColor: "var(--background)",
@@ -234,7 +234,7 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
             </div>
             <div>
               <label
-                htmlFor="account-class"
+                htmlFor="member-class"
                 className="block text-sm font-medium"
                 style={{ color: "var(--sfit-green)" }}
               >
@@ -242,17 +242,17 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
               </label>
               <input
                 type="text"
-                name="account-class"
-                id="account-class"
-                value={accountClass}
-                onChange={(e) => setAccountClass(e.target.value)}
+                name="member-class"
+                id="member-class"
+                value={memberClass}
+                onChange={(e) => setMemberClass(e.target.value)}
                 className="mt-1 w-full p-2 border rounded-md focus:outline-none focus:ring-2"
                 style={{
                   backgroundColor: "var(--background)",
                   color: "var(--foreground)",
                   borderColor: "var(--sfit-gray-200)",
                 }}
-                placeholder="VD: CNTT2 - K64"
+                placeholder="VD: CNTT-K65"
                 aria-describedby={
                   errorClass ? "error-class-message" : undefined
                 }
@@ -269,17 +269,17 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
             </div>
             <div>
               <label
-                htmlFor="account-role"
+                htmlFor="member-role"
                 className="block text-sm font-medium"
                 style={{ color: "var(--sfit-green)" }}
               >
                 Chức vụ
               </label>
               <select
-                name="account-role"
-                id="account-role"
-                value={accountRole}
-                onChange={(e) => setAccountRole(e.target.value)}
+                name="member-role"
+                id="member-role"
+                value={memberRole}
+                onChange={(e) => setMemberRole(e.target.value)}
                 className="mt-1 w-full p-2 border rounded-md focus:outline-none focus:ring-2"
                 style={{
                   backgroundColor: "var(--background)",
@@ -289,11 +289,11 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
                 aria-describedby={errorRole ? "error-role-message" : undefined}
               >
                 <option value="">Chọn chức vụ</option>
-                <option value="Thành viên">Thành viên</option>
-                <option value="Phó ban">Phó ban</option>
-                <option value="Trưởng ban">Trưởng ban</option>
-                <option value="Phó CN">Phó CN</option>
                 <option value="Chủ nhiệm">Chủ nhiệm</option>
+                <option value="Phó CN">Phó CN</option>
+                <option value="Trưởng ban">Trưởng ban</option>
+                <option value="Phó ban">Phó ban</option>
+                <option value="Thành viên">Thành viên</option>
               </select>
               {errorRole && (
                 <p
@@ -306,37 +306,39 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
               )}
             </div>
           </div>
-          <div className="">
-            <div
-              className="border rounded-md px-4 py-2"
-              style={{
-                borderColor: "var(--sfit-gray-200)",
-                backgroundColor: "var(--background)",
-              }}
-            >
-              <p
-                className="block text-sm font-medium"
+          <div className="*:my-2">
+            <div>
+              <label
+                className="block text-sm font-medium mb-2"
                 style={{ color: "var(--sfit-green)" }}
               >
-                Ban
-              </p>
-              <div className="flex flex-col flex-wrap h-64">
-                {teamList.map((team, index) => (
-                  <label
-                    key={index}
-                    className="flex items-center space-x-2 m-2"
-                  >
+                Ban trực thuộc
+              </label>
+              <div
+                className="border rounded-md p-3 max-h-48 overflow-y-auto"
+                style={{
+                  backgroundColor: "var(--background)",
+                  borderColor: "var(--sfit-gray-200)",
+                }}
+              >
+                {teamList.map((team) => (
+                  <div key={team} className="flex items-center mb-2">
                     <input
                       type="checkbox"
-                      name="account-team"
+                      id={team}
                       value={team}
                       checked={selectedTeams.includes(team)}
                       onChange={handleCheckboxChange}
-                      className="focus:ring-2"
-                      style={{ accentColor: "var(--sfit-green)" }}
+                      className="mr-2"
                     />
-                    <span style={{ color: "var(--foreground)" }}>{team}</span>
-                  </label>
+                    <label
+                      htmlFor={team}
+                      className="text-sm"
+                      style={{ color: "var(--foreground)" }}
+                    >
+                      {team}
+                    </label>
+                  </div>
                 ))}
               </div>
               {errorTeam && (
@@ -350,28 +352,24 @@ export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
             </div>
           </div>
         </div>
-
-        <div className="flex justify-end space-x-2">
+        <div className="flex justify-end space-x-3 pt-4">
           <button
             type="button"
             onClick={handleCancel}
-            className="px-4 py-2 rounded-md focus:outline-none focus:ring-2"
+            className="px-4 py-2 border rounded-md hover:bg-gray-50"
             style={{
-              backgroundColor: "var(--sfit-gray-200)",
-              color: "var(--sfit-green)",
+              backgroundColor: "var(--background)",
+              color: "var(--foreground)",
+              borderColor: "var(--sfit-gray-200)",
             }}
           >
             Hủy
           </button>
           <button
             type="submit"
-            className="px-4 py-2 rounded-md focus:outline-none focus:ring-2"
-            style={{
-              backgroundColor: "var(--sfit-green)",
-              color: "var(--background)",
-            }}
+            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
           >
-            Thêm
+            Thêm thành viên
           </button>
         </div>
       </form>

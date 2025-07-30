@@ -14,7 +14,7 @@ import {
 import { ArrowLeft, Check, Pen, Plus, Trash2, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import AccountItem from "@/components/account/account-item";
+import AccountItem from "@/components/member/member-item";
 import CommitteeEdit from "@/components/committee/committee-edit";
 import AddMemberCommittee from "@/components/committee/add-member-committee";
 import AddTarget from "./add-target";
