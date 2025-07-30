@@ -272,11 +272,9 @@ export default function AccountList() {
                     }}
                   >
                     <option value="all">Tất cả chức vụ</option>
-                    <option value="Thành viên">Thành viên</option>
-                    <option value="Phó ban">Phó ban</option>
-                    <option value="Trưởng ban">Trưởng ban</option>
-                    <option value="Phó CN">Phó CN</option>
-                    <option value="Chủ nhiệm">Chủ nhiệm</option>
+                    <option value="Người dùng">Người dùng</option>
+                    <option value="Quản trị viên">Quản trị viên</option>
+                    <option value="Người kiểm duyệt">Người kiểm duyệt</option>
                   </select>
                 </div>
                 <div>
