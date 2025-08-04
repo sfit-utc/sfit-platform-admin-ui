@@ -170,7 +170,7 @@ export default function TaskEventList({ status = "all", onTaskChanged }: TaskEve
                                             if (typeof event.id === "number") {
                                                 try {
                                                     await deleteEvent(event.id);
-                                                    await deleteTasksByEventId(event.id); 
+                                                    await deleteTasksByEventId(event.id);
                                                     reloadTasks();
                                                     onTaskChanged?.();
                                                 } catch (e) {

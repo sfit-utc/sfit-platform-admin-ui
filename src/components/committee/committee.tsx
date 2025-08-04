@@ -43,7 +43,7 @@ export default function Committee() {
     useAllCommitteeInfor();
 
   return (
-    <div className="w-full">
+    <div className="w-full" style={{ fontFamily: "Arial" }}>
       <div className="grid grid-cols-4 gap-5">
         {dashboardActions.map(
           ({ icon, children, textColor, bgColor, href }) => (
@@ -61,7 +61,7 @@ export default function Committee() {
       {loadCommittees ? (
         <Loading className="mx-auto my-10 w-fit" size={48} />
       ) : (
-        <div className="mt-5 grid lg:grid-cols-3 gap-4">
+        <div className="mt-5 grid lg:grid-cols-3 gap-4 ">
           {committeeItems.map(
             ({
               id,
@@ -82,7 +82,7 @@ export default function Committee() {
           )}
         </div>
       )}
-      <div className="ml-auto mr-3.5 my-3  h-14 w-14 rounded-full bg-sfit-blue flex justify-center items-center">
+      <div className="fixed bottom-4 right-4 h-14 w-14 rounded-full bg-sfit-blue flex justify-center items-center">
         <Link href="/add-committee">
           <Plus className="text-white size-10" />
         </Link>

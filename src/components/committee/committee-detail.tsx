@@ -19,6 +19,7 @@ import CommitteeEdit from "@/components/committee/committee-edit";
 import AddMemberCommittee from "@/components/committee/add-member-committee";
 import AddTarget from "./add-target";
 import { committeeDetailService } from "@/services/committee-detail-service";
+import CreateTaskForm from "../task/create-task-form";
 
 interface CommitteeDetailProp {
   id: number;
@@ -37,6 +38,14 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
   const [targetEditing, setTargetEditing] = useState<boolean>(false);
   const [binTarget, setBinTarget] = useState<number[]>([]);
 
+  const [showCreateTaskForm, setShowCreateTaskForm] = useState(false);
+
+  const handleCancelCreateTask = () => setShowCreateTaskForm(false);
+  const handleCreateTaskSuccess = () => {
+    setShowCreateTaskForm(false);
+    // Optionally reload tasks here
+  };
+
   function handleDeleteTarget(id: number) {
     console.log("delete target: ", id);
     setBinTarget([...binTarget, id]);
@@ -44,7 +53,7 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
 
   function handleDeleteDone() {
     committeeDetailService.deleteTarget(binTarget).then(() => {
-      setTargetEditing(false);      
+      setTargetEditing(false);
       setBinTarget([]);
       refetchTargets();
     });
@@ -96,29 +105,36 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
         title={
           <div className="flex justify-between">
             <div>Nhiệm vụ</div>
-            <Link
-              href="/add-task"
+            <button
+              onClick={() => setShowCreateTaskForm(true)}
               className="flex gap-2 items-center text-white text-sm bg-sfit-primary-dark px-3 py-1.5 rounded-2xl"
             >
               <Plus size={18} />
               Tạo nhiệm vụ mới
-            </Link>
+            </button>
           </div>
         }
       >
-        {taskItems.map(({ label, items }, index) => (
-          <Panel key={index} title={label}>
-            {items.map(({ title, expired, percentComplete }, inerIndex) => (
-              <TaskItem
-                className="mb-2"
-                key={inerIndex}
-                title={title}
-                expired={expired}
-                percentComplete={percentComplete}
-              />
-            ))}
-          </Panel>
-        ))}
+        {showCreateTaskForm ? (
+          <CreateTaskForm
+            onCancel={handleCancelCreateTask}
+            onSuccess={handleCreateTaskSuccess}
+          />
+        ) : (
+          taskItems.map(({ label, items }, index) => (
+            <Panel key={index} title={label}>
+              {items.map(({ title, expired, percentComplete }, inerIndex) => (
+                <TaskItem
+                  className="mb-2"
+                  key={inerIndex}
+                  title={title}
+                  expired={expired}
+                  percentComplete={percentComplete}
+                />
+              ))}
+            </Panel>
+          ))
+        )}
       </Panel>
       <Panel
         className="mt-2.5"
@@ -170,9 +186,8 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
                   </td>
                   <td className="text-center">
                     <div
-                      className={`w-fit m-auto border rounded-md ${
-                        headDo && "border-green-500"
-                      }`}
+                      className={`w-fit m-auto border rounded-md ${headDo && "border-green-500"
+                        }`}
                     >
                       {headDo ? (
                         <Check className="text-green-500" />
@@ -183,9 +198,8 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
                   </td>
                   <td className="text-center">
                     <div
-                      className={`w-fit m-auto border rounded-md ${
-                        secretaryDo && "border-green-500"
-                      }`}
+                      className={`w-fit m-auto border rounded-md ${secretaryDo && "border-green-500"
+                        }`}
                     >
                       {secretaryDo ? (
                         <Check className="text-green-500" />
