@@ -27,7 +27,7 @@ export default function Modal({
 
   return (
     <div
-      className="flex justify-center items-center fixed left-0 right-0 bottom-0 top-0 bg-black/50"
+      className="z-100 flex justify-center items-center fixed left-0 right-0 bottom-0 top-0 bg-black/50"
       onClick={handleClose}
     >
       <div

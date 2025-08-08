@@ -3,6 +3,9 @@ import { MemberListItem } from "@/types/member";
 import { useState, useRef, useEffect } from "react";
 import Avatar from "@/assets/icons/user.svg";
 import { SquarePen, Trash, User } from "lucide-react";
+import DetailModal from "@/components/ui/detail-modal";
+import EditModal from "@/components/ui/edit-modal";
+import DeleteModal from "@/components/ui/delete-modal";
 
 interface MemberItemProps {
   member: MemberListItem;
@@ -16,6 +19,9 @@ export default function MemberItem({ member, style }: MemberItemProps) {
   }
 
   const [showTeamsDropdown, setShowTeamsDropdown] = useState(false);
+  const [openView, setOpenView] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const getRoleStyle = (role: string) => {
@@ -53,99 +59,103 @@ export default function MemberItem({ member, style }: MemberItemProps) {
   const firstTeam = member?.teams?.[0] || "";
   const hasMultipleTeams = member?.teams && member.teams.length > 1;
 
-  if (style === "line") {
-    return (
-      <div
-        className="flex overflow-x-scroll justify-between items-center py-4 border-2 my-2"
-        style={{
-          color: "var(--foreground)",
-          backgroundColor: "var(--background)",
-        }}
-      >
-        <div className="flex-2 text-center font-bold text-2xl">{member.id}</div>
-        <div className="flex-5 text-left font-bold text-2xl whitespace-nowrap overflow-hidden text-ellipsis">
-          {member.name}
-        </div>
-        <div className="flex-3 text-left relative" ref={dropdownRef}>
-          {/* Styled Dropdown Button */}
-          <button
-            type="button"
-            className="w-full flex items-center justify-between px-4 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-semibold whitespace-nowrap"
-            onClick={() =>
-              hasMultipleTeams && setShowTeamsDropdown(!showTeamsDropdown)
-            }
-            disabled={!hasMultipleTeams}
-          >
-            <span>{firstTeam}</span>
-            {hasMultipleTeams && (
-              <svg
-                className="w-4 h-4 ml-2"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-            )}
-          </button>
-
-          {/* Teams Dropdown Popup */}
-          {showTeamsDropdown && hasMultipleTeams && (
-            <div
-              className="absolute top-full left-0 mt-1 border border-gray-200 rounded-md shadow-lg z-10 min-w-full"
-              style={{
-                backgroundColor: "var(--background)",
-                color: "var(--foreground)",
-              }}
+  const lineView = (
+    <div
+      className="flex justify-between items-center py-4 border-2 my-2"
+      style={{
+        color: "var(--foreground)",
+        backgroundColor: "var(--background)",
+      }}
+    >
+      <div className="flex-2 text-center font-bold text-2xl">{member.id}</div>
+      <div className="flex-5 text-left font-bold text-2xl whitespace-nowrap overflow-hidden text-ellipsis">
+        {member.name}
+      </div>
+      <div className="flex-3 text-left relative" ref={dropdownRef}>
+        <button
+          type="button"
+          className="w-full  flex items-center justify-between px-4 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-semibold whitespace-nowrap"
+          onClick={() =>
+            hasMultipleTeams && setShowTeamsDropdown(!showTeamsDropdown)
+          }
+          disabled={!hasMultipleTeams}
+        >
+          <span>{firstTeam}</span>
+          {hasMultipleTeams && (
+            <svg
+              className="w-4 h-4 ml-2"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <div className="p-1">
-                {member?.teams?.map((team) => (
-                  <div
-                    key={team}
-                    className="py-1 px-3 hover:bg-amber-50 rounded text-sm cursor-pointer"
-                  >
-                    {team}
-                  </div>
-                ))}
-              </div>
-            </div>
+              <path
+                fillRule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
           )}
-        </div>
-        <div className="flex-3 flex justify-center items-center">
+        </button>
+
+        {showTeamsDropdown && hasMultipleTeams && (
           <div
-            className={`text-center py-1 px-4 w-fit ${getRoleStyle(
-              member.role
-            )} rounded-full text-sm font-semibold whitespace-nowrap`}
+            className="absolute top-full left-0 mt-1 border border-gray-200 rounded-md shadow-lg z-10 min-w-full"
+            style={{
+              backgroundColor: "var(--background)",
+              color: "var(--foreground)",
+            }}
           >
-            {member.role}
+            <div className="p-1">
+              {member?.teams?.map((team) => (
+                <div
+                  key={team}
+                  className="py-1 px-3 hover:bg-amber-50 rounded text-sm cursor-pointer"
+                >
+                  {team}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-        <div className="flex-2 flex justify-center items-center">
-          <div className="text-center py-1 px-4 w-fit bg-blue-100 text-blue-600 rounded-full text-sm font-semibold whitespace-nowrap">
-            {member.class}
-          </div>
-        </div>
-        <div className="flex-1 flex items-center justify-center gap-1">
-          <button className="p-1 rounded-full hover:text-green-400 hover:bg-gray-100">
-            <User />
-          </button>
-          <button className="p-1 rounded-full hover:text-yellow-400 hover:bg-gray-100">
-            <SquarePen />
-          </button>
-          <button className="p-1 rounded-full hover:text-red-400 hover:bg-gray-100">
-            <Trash />
-          </button>
+        )}
+      </div>
+      <div className="flex-3 flex justify-center items-center">
+        <div
+          className={`text-center py-1 px-4 w-fit ${getRoleStyle(
+            member.role
+          )} rounded-full text-sm font-semibold whitespace-nowrap`}
+        >
+          {member.role}
         </div>
       </div>
-    );
-  }
+      <div className="flex-2 flex justify-center items-center">
+        <div className="text-center py-1 px-4 w-fit bg-blue-100 text-blue-600 rounded-full text-sm font-semibold whitespace-nowrap">
+          {member.class}
+        </div>
+      </div>
+      <div className="flex-1 flex items-center justify-center gap-1">
+        <button
+          className="p-1 rounded-full hover:text-green-400 hover:bg-gray-100"
+          onClick={() => setOpenView(true)}
+        >
+          <User />
+        </button>
+        <button
+          className="p-1 rounded-full hover:text-yellow-400 hover:bg-gray-100"
+          onClick={() => setOpenEdit(true)}
+        >
+          <SquarePen />
+        </button>
+        <button
+          className="p-1 rounded-full hover:text-red-400 hover:bg-gray-100"
+          onClick={() => setOpenDelete(true)}
+        >
+          <Trash />
+        </button>
+      </div>
+    </div>
+  );
 
-  // Box view
-  return (
+  const boxView = (
     <div
       className="rounded-lg shadow-md p-4 border flex flex-col justify-between"
       style={{
@@ -208,16 +218,46 @@ export default function MemberItem({ member, style }: MemberItemProps) {
       </div>
 
       <div className="flex justify-center space-x-2 mt-4">
-        <button className="p-2 rounded-full hover:bg-gray-100 hover:text-green-400">
+        <button
+          className="p-2 rounded-full hover:bg-gray-100 hover:text-green-400"
+          onClick={() => setOpenView(true)}
+        >
           <User />
         </button>
-        <button className="p-2 rounded-full hover:bg-gray-100 hover:text-yellow-400">
+        <button
+          className="p-2 rounded-full hover:bg-gray-100 hover:text-yellow-400"
+          onClick={() => setOpenEdit(true)}
+        >
           <SquarePen />
         </button>
-        <button className="p-2 rounded-full hover:bg-gray-100 hover:text-red-400">
+        <button
+          className="p-2 rounded-full hover:bg-gray-100 hover:text-red-400"
+          onClick={() => setOpenDelete(true)}
+        >
           <Trash />
         </button>
       </div>
     </div>
+  );
+
+  return (
+    <>
+      {style === "line" ? lineView : boxView}
+      <DetailModal
+        open={openView}
+        onClose={() => setOpenView(false)}
+        memberId={member.id}
+      />
+      <EditModal
+        open={openEdit}
+        onClose={() => setOpenEdit(false)}
+        memberId={member.id}
+      />
+      <DeleteModal
+        open={openDelete}
+        onClose={() => setOpenDelete(false)}
+        memberId={member.id}
+      />
+    </>
   );
 }
