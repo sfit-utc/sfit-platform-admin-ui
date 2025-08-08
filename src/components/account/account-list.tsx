@@ -116,20 +116,21 @@ export default function AccountList() {
   return (
     <div className="">
       <div className="my-5 py-2 flex justify-between">
-        <div className="flex *:mx-2">
-          <div className="cursor-pointer w-52 h-9 bg-green-700 rounded-[20px] flex justify-center items-center">
+        <div className="flex *:mx-2 gap-1 flex-wrap">
+          <div className="cursor-pointer w-9 md:w-52 h-9 bg-green-700 rounded-full md:rounded-[20px] flex justify-center items-center">
             <div
-              className="w-36 h-5 justify-center text-white text-sm font-bold font-inter"
+              className="w-5 md:w-36 h-5 justify-center text-white text-center text-base font-bold font-inter"
               onClick={() => setAddAccount(true)}
             >
-              + Thêm người dùng
+              <span className="">+</span>
+              <span className="hidden md:inline">Thêm thành viên</span>
             </div>
           </div>
 
           <SearchBar
             placeholder="Tra theo tên"
             onSearch={handleSearchChange}
-            className="w-96"
+            className="w-fit"
           />
 
           <div className="*:text-green-700 flex justify-center items-center">
@@ -192,7 +193,11 @@ export default function AccountList() {
             </div>
           </div>
 
-          <div className="cursor-pointer w-52 h-9 bg-green-700 rounded-[20px] flex justify-center items-center relative">
+          <div
+            ref={filterDropdownRef}
+            onClick={() => setShowFilterDropdown((prev) => !prev)}
+            className="cursor-pointer w-20 md:w-52 h-9 bg-green-700 rounded-[20px] flex justify-center items-center relative"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -221,10 +226,7 @@ export default function AccountList() {
               </defs>
             </svg>
 
-            <div
-              className="w-36 h-5 justify-center ml-2 text-white text-base font-bold font-inter"
-              onClick={() => setShowFilterDropdown((prev) => !prev)}
-            >
+            <div className="md:inline hidden md:w-36 h-5 justify-center ml-2 text-white text-base font-bold font-inter">
               Lựa chọn
             </div>
 
@@ -232,6 +234,7 @@ export default function AccountList() {
               xmlns="http://www.w3.org/2000/svg"
               width="18"
               height="11"
+              className="ml-1"
               viewBox="0 0 18 11"
               fill="none"
             >
@@ -465,7 +468,7 @@ export default function AccountList() {
               ))}
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {loading
             ? [...Array(6)].map((_, i) => <AccountItemSkeleton key={i} />)
             : currentPageData.map((account) => (

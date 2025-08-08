@@ -19,7 +19,7 @@ export default function TestItem({ test }: TestItemProps) {
           "0px 0px 4px 0px var(--color-shadow-primary, rgba(0,0,0,0.25))",
       }}
     >
-      <div className="flex *:mx-2">
+      <div className="flex flex-col md:flex-row *:mx-2">
         <h1
           className="text-3xl font-semibold font-inter"
           style={{ color: "var(--color-text-primary)" }}

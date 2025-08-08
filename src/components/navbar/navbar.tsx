@@ -26,7 +26,7 @@ export default function NavBar({ activeTitle = "Trang chủ" }: NavBarProps) {
       }}
     >
       <div className="flex-2/3 flex justify-between items-center mr-2">
-        <div className="flex items-center ml-8">
+        <div className=" hidden lg:flex items-center ml-8">
           <div
             className="w-44 h-6 justify-center text-xl font-normal"
             style={{ color: "var(--foreground)" }}
@@ -39,7 +39,7 @@ export default function NavBar({ activeTitle = "Trang chủ" }: NavBarProps) {
           <SearchBar
             placeholder="Search"
             onSearch={handleSearch}
-            className="w-96"
+            className="sm:w-fit md:w-96"
           />
         )}
       </div>
@@ -120,10 +120,16 @@ export default function NavBar({ activeTitle = "Trang chủ" }: NavBarProps) {
         </button>
         <div className="text-black flex justify-center items-center mr-6">
           <div className="flex flex-col text-right *:font-montserrat ">
-            <div className="text-base" style={{ color: "var(--foreground)" }}>
+            <div
+              className="hidden xl:block text-base"
+              style={{ color: "var(--foreground)" }}
+            >
               Nam Khúc
             </div>
-            <div className="text-xs" style={{ color: "var(--foreground)" }}>
+            <div
+              className="hidden xl:block text-xs"
+              style={{ color: "var(--foreground)" }}
+            >
               Thành viên
             </div>
           </div>
