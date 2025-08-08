@@ -10,6 +10,11 @@ interface MemberItemProps {
 }
 
 export default function MemberItem({ member, style }: MemberItemProps) {
+  // Early return if member is undefined
+  if (!member) {
+    return null;
+  }
+
   const [showTeamsDropdown, setShowTeamsDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -45,13 +50,13 @@ export default function MemberItem({ member, style }: MemberItemProps) {
     };
   }, []);
 
-  const firstTeam = member.teams[0];
-  const hasMultipleTeams = member.teams.length > 1;
+  const firstTeam = member?.teams?.[0] || "";
+  const hasMultipleTeams = member?.teams && member.teams.length > 1;
 
   if (style === "line") {
     return (
       <div
-        className="flex justify-between items-center py-4 border-2 my-2"
+        className="flex overflow-x-scroll justify-between items-center py-4 border-2 my-2"
         style={{
           color: "var(--foreground)",
           backgroundColor: "var(--background)",
@@ -98,7 +103,7 @@ export default function MemberItem({ member, style }: MemberItemProps) {
               }}
             >
               <div className="p-1">
-                {member.teams.map((team) => (
+                {member?.teams?.map((team) => (
                   <div
                     key={team}
                     className="py-1 px-3 hover:bg-amber-50 rounded text-sm cursor-pointer"
@@ -189,7 +194,7 @@ export default function MemberItem({ member, style }: MemberItemProps) {
           <div className="flex justify-between">
             <span className="font-medium">Ban:</span>
             <div className="flex flex-wrap gap-1">
-              {member.teams.map((team, index) => (
+              {member?.teams?.map((team, index) => (
                 <span
                   key={index}
                   className="bg-amber-100 text-amber-800 px-2 py-1 rounded text-sm"

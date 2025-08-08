@@ -14,7 +14,7 @@ import {
 import { ArrowLeft, Check, Pen, Plus, Trash2, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import AccountItem from "@/components/member/member-item";
+import MemberItem from "@/components/member/member-item";
 import CommitteeEdit from "@/components/committee/committee-edit";
 import AddMemberCommittee from "@/components/committee/add-member-committee";
 import AddTarget from "./add-target";
@@ -242,7 +242,7 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
           <Loading className="m-auto w-fit" size={48} />
         ) : (
           member.map((account) => (
-            <AccountItem key={account.id} account={account} style="line" />
+            <MemberItem key={account.id} member={account} style="line" />
           ))
         )}
       </Panel>

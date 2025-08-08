@@ -247,54 +247,54 @@ export default function AccountItem({ account, style }: AccountItemProps) {
             alt={account.name}
             className="w-24 h-24 rounded-full"
           />
-          <h3
-            className="my-3 font-semibold text-lg mb-1"
-            style={{ color: "var(--foreground)" }}
-          >
+          <h3 className="text-lg font-semibold mt-2 text-center">
             {account.name}
           </h3>
-          <div className="text-sm" style={{ color: "var(--foreground)" }}>
-            Email : {account.email || "Chưa có"}
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <span className="font-medium">Chức vụ:</span>
+            <span
+              className={`${getRoleStyle(
+                account.role
+              )} px-2 py-1 rounded text-sm`}
+            >
+              {account.role}
+            </span>
           </div>
-          <div
-            className={` my-3 text-center py-1 px-4 w-fit rounded-full text-sm font-semibold whitespace-nowrap ${getRoleStyle(
-              account.role
-            )}`}
-          >
-            {account.role}
+          <div className="flex justify-between">
+            <span className="font-medium">Lớp:</span>
+            <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-sm">
+              {account.class}
+            </span>
           </div>
-          <div className="mb-3 flex flex-wrap gap-1 justify-center items-center">
-            {account.teams.map((team) => (
-              <button
-                key={team}
-                type="button"
-                className=" bg-amber-50 text-amber-800 text-center py-1 px-4 w-fit rounded-full text-sm font-semibold whitespace-nowrap"
-              >
-                <span>Ban {team}</span>
-              </button>
-            ))}
-          </div>
-          <div className="text-center py-1 px-4 w-fit bg-blue-100 text-green-600 rounded-full text-sm font-semibold whitespace-nowrap">
-            {account.class}
+          <div className="flex justify-between">
+            <span className="font-medium">Ban:</span>
+            <div className="flex flex-wrap gap-1">
+              {account?.teams?.map((team, index) => (
+                <span
+                  key={index}
+                  className="bg-amber-100 text-amber-800 px-2 py-1 rounded text-sm"
+                >
+                  {team}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="">
-        <div className="flex justify-center space-x-2 mb-3">
-          <button className="p-2 hover:bg-gray-100 rounded-full">
-            <User />
-          </button>
-          <button className="p-2 hover:bg-gray-100 rounded-full">
-            <SquarePen />
-          </button>
-          <button className="p-2 hover:bg-red-50 rounded-full">
-            <Trash />
-          </button>
-        </div>
-        <div className=" text-black w-full text-center py-1 px-4 bg-green-100 rounded-full text-sm font-semibold whitespace-nowrap">
-          Trạng thái: {account.status || "Chưa cập nhật"}
-        </div>
+      <div className="flex justify-center space-x-2 mt-4">
+        <button className="p-2 rounded-full hover:bg-gray-100 hover:text-green-400">
+          <User />
+        </button>
+        <button className="p-2 rounded-full hover:bg-gray-100 hover:text-yellow-400">
+          <SquarePen />
+        </button>
+        <button className="p-2 rounded-full hover:bg-gray-100 hover:text-red-400">
+          <Trash />
+        </button>
       </div>
     </div>
   );

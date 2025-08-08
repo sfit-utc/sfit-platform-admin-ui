@@ -18,6 +18,7 @@ export default function SideItem({
     <div className="relative flex flex-col items-start">
       <div
         className={`
+          hidden lg:block
           absolute right-0 top-[-24px] 
           transition-all duration-500 ease-in
           ${isActive ? "opacity-100 " : "opacity-0 pointer-events-none"}
@@ -37,7 +38,7 @@ export default function SideItem({
       </div>
       <Link
         href={nav}
-        className={`flex w-full items-center px-6 py-2 
+        className={`flex xl:w-full items-center px-6 py-2 
           ${isActive ? "rounded-l-full p-10" : ""} 
           transition-all duration-500 ease-in`}
         onClick={onClick}
@@ -54,7 +55,7 @@ export default function SideItem({
         />
 
         <div
-          className="ml-4 text-center font-bold font-['Oswald']"
+          className="hidden xl:block ml-4 text-center font-bold font-['Oswald']"
           style={{
             color: isActive ? "var(--sidebar-icon)" : "var(--sidebar-text)",
             fontSize: isActive ? "1.125rem" : "1rem",
@@ -65,6 +66,7 @@ export default function SideItem({
       </Link>
       <div
         className={`
+          hidden lg:block
           absolute right-0 bottom-[-24px] rotate-270
           transition-all duration-500 ease-in
           ${isActive ? "opacity-100 " : "opacity-0 pointer-events-none"}

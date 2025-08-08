@@ -48,7 +48,7 @@ export default function SideBar({ onActiveItemChange }: SideBarProps) {
 
   return (
     <div
-      className="pl-4 min-w-1/6 min-h-full rounded-[3px] flex flex-col fixed top-0 left-0 z-50"
+      className="xl:pl-4 xl:min-w-1/6 min-h-full rounded-[3px] flex flex-col fixed top-0 left-0 z-50"
       style={{
         backgroundColor: "var(--sidebar-bg)",
         color: "var(--sidebar-text)",
@@ -57,7 +57,7 @@ export default function SideBar({ onActiveItemChange }: SideBarProps) {
       <div className="flex items-center p-5">
         <img src={logo.src} alt="logo" className="w-10 h-10" />
         <div
-          className="ml-4 text-center text-3xl font-bold font-['Oswald']"
+          className="hidden xl:block ml-4 text-center text-3xl font-bold font-['Oswald']"
           style={{ color: "var(--sidebar-text)" }}
         >
           SFIT
