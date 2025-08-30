@@ -1,64 +1,13 @@
 import { Task, ApiError } from "@/types/task";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
-const USE_MOCK_DATA = true;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 type TaskStatus = "done" | "ongoing" | "upcoming";
 
 function getTaskStatus(task: Task): TaskStatus {
-  if (task.percentComplete === 100) return "done";
-  if (task.percentComplete === 0) return "upcoming";
+  if (task.percent_complete === 100) return "done";
+  if (task.percent_complete === 0) return "upcoming";
   return "ongoing";
 }
-const mockTasks: Task[] = [
-  {
-    id: 1,
-    eventId: 1,
-    title: "Chuẩn bị tài liệu họp",
-    tags: [
-      { label: "Quan trọng", color: "#ff4d4f", textColor: "#fff" },
-      { label: "Họp", color: "#1890ff", textColor: "#fff" },
-    ],
-    description: "Chuẩn bị tài liệu cho cuộc họp tổng kết quý.",
-    startDate: "01/06/2005",
-    deadline: "25/05/2005",
-    assignee: "Nguyễn Văn A",
-    percentComplete: 60,
-  },
-  {
-    id: 2,
-    eventId: 1,
-    title: "Kiểm tra thiết bị",
-    tags: [{ label: "Thiết bị", color: "#52c41a", textColor: "#fff" }],
-    description: "Kiểm tra toàn bộ thiết bị trước sự kiện.",
-    startDate: "01/06/2005",
-    deadline: "25/05/2005",
-    assignee: "Trần Thị B",
-    percentComplete: 30,
-  },
-  {
-    id: 3,
-    eventId: 3,
-    title: "Gửi thư mời",
-    tags: [{ label: "Khách mời", color: "#faad14", textColor: "#fff" }],
-    description: "Gửi thư mời tham dự sự kiện cho khách mời.",
-    startDate: "01/06/2005",
-    deadline: "25/05/2005",
-    assignee: "Lê Văn C",
-    percentComplete: 100,
-  },
-  {
-    id: 4,
-    eventId: 4,
-    title: "Thiết kế poster cho cuộc thi lập trình",
-    tags: [{ label: "Khách mời", color: "#faad14", textColor: "#fff" }],
-    description: "Thiết kế poster",
-    startDate: "01/06/2005",
-    deadline: "25/05/2005",
-    assignee: "Lê Văn C",
-    percentComplete: 0,
-  },
-];
 
 class TaskService {
   private async handleResponse<T>(response: Response): Promise<T> {
@@ -68,89 +17,111 @@ class TaskService {
     }
     return response.json();
   }
-  private async simulateDelay(ms: number = 500): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+
+  // Lấy danh sách tất cả nhiệm vụ
   async getTasks(): Promise<Task[]> {
-    if (USE_MOCK_DATA) {
-      await this.simulateDelay();
-      return [...mockTasks];
-    }
     const response = await fetch(`${API_BASE_URL}/tasks`);
     return this.handleResponse<Task[]>(response);
   }
-  async getTaskById(id: number): Promise<Task | undefined> {
-    if (USE_MOCK_DATA) {
-      await this.simulateDelay();
-      const task = mockTasks.find((e) => e.id === id);
-      if (!task) {
-        throw new Error("Task not found");
-      }
-      return task;
-    }
+
+  // Lấy nhiệm vụ theo ID
+  async getTaskById(id: string): Promise<Task | undefined> {
     const response = await fetch(`${API_BASE_URL}/tasks/${id}`);
     return this.handleResponse<Task>(response);
   }
-  async createTask(task: Omit<Task, "id">): Promise<Task> {
-    if (USE_MOCK_DATA) {
-      await this.simulateDelay();
-      const newTask: Task = { ...task, id: mockTasks.length + 1 };
-      mockTasks.push(newTask);
-      return newTask;
-    }
+
+  // Tạo nhiệm vụ mới
+  async createTask(
+    task: Omit<Task, "id">
+  ): Promise<{ id: string; create_at: string }> {
     const response = await fetch(`${API_BASE_URL}/tasks`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(task),
     });
-    return this.handleResponse<Task>(response);
+    return this.handleResponse<{ id: string; create_at: string }>(response);
   }
+
+  // Cập nhật nhiệm vụ
   async updateTask(
-    id: number,
+    id: string,
     updates: Partial<Task>
-  ): Promise<Task | undefined> {
-    if (USE_MOCK_DATA) {
-      await this.simulateDelay();
-      const idx = mockTasks.findIndex((task) => task.id === id);
-      if (idx === -1) return undefined;
-      mockTasks[idx] = { ...mockTasks[idx], ...updates };
-      return mockTasks[idx];
-    }
+  ): Promise<{ id: string; update_at: string }> {
     const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updates),
     });
-    return this.handleResponse<Task>(response);
+    return this.handleResponse<{ id: string; update_at: string }>(response);
   }
-  async deleteTask(id: number): Promise<boolean> {
-    if (USE_MOCK_DATA) {
-      await this.simulateDelay();
-      const idx = mockTasks.findIndex((task) => task.id === id);
-      if (idx === -1) return false;
-      mockTasks.splice(idx, 1);
-      return true;
-    }
+
+  // Xóa nhiệm vụ
+  async deleteTask(id: string): Promise<{ task_id: string }> {
     const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
       method: "DELETE",
     });
+    return this.handleResponse<{ task_id: string }>(response);
+  }
+
+  // Lấy danh sách nhiệm vụ theo sự kiện
+  async getTasksByEventId(eventId: string): Promise<Task[]> {
+    const response = await fetch(`${API_BASE_URL}/events/${eventId}/tasks`);
+    return this.handleResponse<Task[]>(response);
+  }
+
+  // Lấy danh sách nhiệm vụ theo user
+  async getTasksByUserId(userId: string): Promise<Task[]> {
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/tasks`);
+    return this.handleResponse<Task[]>(response);
+  }
+
+  // Gán nhiệm vụ cho user
+  async assignTaskToUser(
+    userId: string,
+    taskId: string
+  ): Promise<{ id: string; create_at: string }> {
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/tasks`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ task_id: taskId }),
+    });
+    return this.handleResponse<{ id: string; create_at: string }>(response);
+  }
+
+  // Gỡ nhiệm vụ khỏi user
+  async removeTaskFromUser(userId: string, taskId: string): Promise<boolean> {
+    const response = await fetch(
+      `${API_BASE_URL}/users/${userId}/tasks/${taskId}`,
+      {
+        method: "DELETE",
+      }
+    );
     await this.handleResponse(response);
     return true;
   }
+
+  // Lấy nhiệm vụ của user theo event
+  async getUserTasksByEvent(
+    userId: string,
+    eventId: string,
+    page?: number,
+    pageSize?: number
+  ): Promise<Task[]> {
+    let url = `${API_BASE_URL}/users/${userId}/tasks?event_id=${eventId}`;
+    if (page !== undefined && pageSize !== undefined) {
+      url += `&page=${page}&page_size=${pageSize}`;
+    }
+    const response = await fetch(url);
+    return this.handleResponse<Task[]>(response);
+  }
+
+  // Lấy danh sách nhiệm vụ kèm trạng thái
   async getTasksWithStatus(): Promise<(Task & { status: TaskStatus })[]> {
     const tasks = await this.getTasks();
     return tasks.map((task) => ({
       ...task,
       status: getTaskStatus(task),
     }));
-  }
-  async getTaskByEventId(eventId: number): Promise<Task[]> {
-    if (USE_MOCK_DATA) {
-      await this.simulateDelay();
-      return mockTasks.filter((task) => task.eventId === eventId);
-    }
-    const response = await fetch(`${API_BASE_URL}/tasks?eventId=${eventId}`);
-    return this.handleResponse<Task[]>(response);
   }
 }
 
