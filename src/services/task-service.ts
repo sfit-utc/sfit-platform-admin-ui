@@ -6,8 +6,8 @@ type TaskStatus = "done" | "ongoing" | "upcoming";
 function getTaskStatus(task: Task): TaskStatus {
   if (task.percent_complete === 100) return "done";
   if (task.percent_complete === 0) return "upcoming";
-  return "ongoing";
-}
+    return "ongoing";
+  }
 
 class TaskService {
   private async handleResponse<T>(response: Response): Promise<T> {
