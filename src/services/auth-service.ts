@@ -16,6 +16,28 @@ class AuthService {
     if (typeof resp?.data === 'string' && resp?.status === 'success') return resp.data;
     return null;
   }
+
+  private getRolesFromJwt(token: string): string[] {
+    try {
+      const [, payload] = token.split('.');
+      const json = JSON.parse(atob(payload));
+      const roles = json.roles;
+      return Array.isArray(roles) ? roles.map((r: any) => String(r)) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private toUiRole(roles: string[] | undefined, fallback?: string): 'admin' | 'moderator' | 'user' {
+    const rs = (roles || []).map((r) => r.toLowerCase());
+    if (rs.includes('admin')) return 'admin';
+    if (rs.includes('moderator')) return 'moderator';
+    const fb = (fallback || '').toLowerCase();
+    if (fb === 'admin') return 'admin';
+    if (fb === 'moderator') return 'moderator';
+    return 'user';
+  }
+
   async login(credentials: LoginRequest): Promise<AuthResponse> {
     try {
       const payload = {
@@ -34,8 +56,9 @@ class AuthService {
       }
       localStorage.setItem('accessToken', accessToken)
 
-      // Derive userId from JWT (sub) and fetch profile
+      // Derive roles and userId from JWT
       const userId = this.getUserIdFromJwt(accessToken)
+      const rolesFromJwt = this.getRolesFromJwt(accessToken)
       let user: User | null = null
       if (userId) {
         try {
@@ -46,7 +69,7 @@ class AuthService {
             email: p?.email || '',
             firstName: p?.full_name?.split(' ')?.slice(0, -1)?.join(' ') || '',
             lastName: p?.full_name?.split(' ')?.slice(-1)?.join(' ') || '',
-            role: 'student',
+            role: this.toUiRole(rolesFromJwt, p?.role),
             avatar: p?.avatar,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
@@ -60,7 +83,7 @@ class AuthService {
           email: payload.email,
           firstName: '',
           lastName: '',
-          role: 'student',
+          role: this.toUiRole(rolesFromJwt),
           avatar: undefined,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -96,6 +119,7 @@ class AuthService {
       localStorage.setItem('accessToken', accessToken)
 
       const userId = this.getUserIdFromJwt(accessToken)
+      const rolesFromJwt = this.getRolesFromJwt(accessToken)
       let user: User | null = null
       
       if (userId) {
@@ -108,27 +132,26 @@ class AuthService {
             email: p?.email || userData.email,
             firstName: p?.firstName || userData.firstName,
             lastName: p?.lastName || userData.lastName,
-            role: 'student',
+            role: this.toUiRole(rolesFromJwt, p?.role),
             avatar: p?.avatar,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           }
           
-          // Automatically create member record for new user
+          
           try {
             await apiClient.post('/members', {
               userId: userId,
               name: `${userData.firstName} ${userData.lastName}`,
               email: userData.email,
               role: 'Thành viên',
-              class: 'Chưa phân lớp', // Default class, can be updated later
-              teams: ['Chưa phân ban'], // Default team, can be updated later
+              class: 'Chưa phân lớp',
+              teams: ['Chưa phân ban'],
               status: 'active',
               joinDate: new Date().toISOString()
             })
           } catch (memberError) {
             console.warn('Failed to create member record:', memberError)
-            // Don't fail registration if member creation fails
           }
         } catch (profileError) {
           console.warn('Failed to fetch user profile:', profileError)
@@ -141,7 +164,7 @@ class AuthService {
           email: payload.email,
           firstName: userData.firstName,
           lastName: userData.lastName,
-          role: 'student',
+          role: this.toUiRole(rolesFromJwt),
           avatar: undefined,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
