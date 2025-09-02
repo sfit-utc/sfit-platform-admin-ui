@@ -31,7 +31,7 @@ export default function MemberList() {
 
   // Use the hook to get members
   const { data: members, loading, error } = useMembers(filters);
-
+  
   const totalItems = members.length;
   const totalPages = Math.ceil(totalItems / membersPerPage);
   const startIdx = (currentPage - 1) * membersPerPage;

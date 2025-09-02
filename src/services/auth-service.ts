@@ -83,7 +83,11 @@ class AuthService {
         username: (userData as any).username || usernameFromEmail || fallbackUsername,
         email: userData.email,
         password: userData.password,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
       }
+      
+      // Register user
       const { data } = await apiClient.post<any>(`/auth/register`, payload)
       const accessToken = this.extractAccessToken(data)
       if (!accessToken) {
@@ -93,28 +97,50 @@ class AuthService {
 
       const userId = this.getUserIdFromJwt(accessToken)
       let user: User | null = null
+      
       if (userId) {
         try {
+          // Fetch user profile
           const profileRes = await apiClient.get<any>(`/user-profiles/${userId}`)
           const p = profileRes.data
           user = {
             id: userId,
-            email: p?.email || '',
-            firstName: p?.full_name?.split(' ')?.slice(0, -1)?.join(' ') || '',
-            lastName: p?.full_name?.split(' ')?.slice(-1)?.join(' ') || '',
+            email: p?.email || userData.email,
+            firstName: p?.firstName || userData.firstName,
+            lastName: p?.lastName || userData.lastName,
             role: 'student',
             avatar: p?.avatar,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           }
-        } catch {}
+          
+          // Automatically create member record for new user
+          try {
+            await apiClient.post('/members', {
+              userId: userId,
+              name: `${userData.firstName} ${userData.lastName}`,
+              email: userData.email,
+              role: 'Thành viên',
+              class: 'Chưa phân lớp', // Default class, can be updated later
+              teams: ['Chưa phân ban'], // Default team, can be updated later
+              status: 'active',
+              joinDate: new Date().toISOString()
+            })
+          } catch (memberError) {
+            console.warn('Failed to create member record:', memberError)
+            // Don't fail registration if member creation fails
+          }
+        } catch (profileError) {
+          console.warn('Failed to fetch user profile:', profileError)
+        }
       }
+      
       if (!user) {
         user = {
           id: userId || '',
           email: payload.email,
-          firstName: '',
-          lastName: '',
+          firstName: userData.firstName,
+          lastName: userData.lastName,
           role: 'student',
           avatar: undefined,
           createdAt: new Date().toISOString(),
