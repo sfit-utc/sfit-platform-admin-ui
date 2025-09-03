@@ -3,6 +3,20 @@ import { useState } from "react";
 import SearchBar from "@/components/ui/search-bar";
 import EventList from "@/components/event/event-list";
 import CreateEventForm from "@/components/event/create-event-form";
+import { EventStatus } from "@/types/event";
+
+const getStatusValue = (tab: "ongoing" | "upcoming" | "past"): EventStatus | undefined => {
+    switch (tab) {
+      case "ongoing":
+        return "ONGOING";
+      case "upcoming":
+        return "UPCOMING";
+      case "past":
+        return "COMPLETED";
+      default:
+        return undefined;
+    }
+  };
 
 export default function Event() {
   const [activeTab, setActiveTab] = useState<"ongoing" | "upcoming" | "past">(
@@ -92,7 +106,10 @@ export default function Event() {
 
       {/* Event List */}
       <div>
-        <EventList status={activeTab} searchTerm={searchTerm} />
+        <EventList
+          status={getStatusValue(activeTab)}
+          searchTerm={searchTerm}
+        />
       </div>
       <CreateEventForm
         state={showCreateForm}

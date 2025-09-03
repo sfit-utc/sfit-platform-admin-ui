@@ -24,18 +24,18 @@ export default function TaskEventList({
   const [loadingTasks, setLoadingTasks] = useState(false);
   const [errorTasks, setErrorTasks] = useState<string | null>(null);
 
-  const [editingEventId, setEditingEventId] = useState<number | null>(null);
+  const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleStartEdit = (eventId: number, currentTitle: string) => {
+  const handleStartEdit = (eventId: string, currentTitle: string) => {
     setEditingEventId(eventId);
     setEditingTitle(currentTitle);
     setTimeout(() => inputRef.current?.focus(), 100);
   };
-  const deleteTasksByEventId = async (eventId: number) => {
+  const deleteTasksByEventId = async (eventId: string) => {
     const allTasks = await taskService.getTasksWithStatus();
-    const tasksToDelete = allTasks.filter((task) => task.eventId === eventId);
+    const tasksToDelete = allTasks.filter((task) => task.event_id === eventId);
     for (const task of tasksToDelete) {
       await taskService.deleteTask(task.id);
     }
@@ -53,7 +53,7 @@ export default function TaskEventList({
   useEffect(() => {
     reloadTasks();
   }, []);
-  const handleSaveEdit = async (eventId: number) => {
+  const handleSaveEdit = async (eventId: string) => {
     try {
       await updateEvent(eventId, { title: editingTitle });
     } catch (e) {
@@ -75,8 +75,9 @@ export default function TaskEventList({
   if (loadingEvents || loadingTasks) return <Loading />;
   if (errorEvents) return <div>Error: {errorEvents}</div>;
   if (errorTasks) return <div>Error: {errorTasks}</div>;
+  const safeEvents = Array.isArray(events) ? events : [];
 
-  const eventTasks = events
+  const eventTasks = safeEvents
     .map((event) => {
       const filteredTasks = tasks.filter(
         (task) =>
@@ -87,7 +88,7 @@ export default function TaskEventList({
       return { event, tasks: filteredTasks };
     })
     .filter(
-      (item): item is { event: (typeof events)[number]; tasks: any[] } =>
+      (item): item is { event: (typeof safeEvents)[number]; tasks: any[] } =>
         item !== null
     );
 
@@ -190,7 +191,7 @@ export default function TaskEventList({
                   className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full cursor-pointer"
                   onClick={async () => {
                     if (window.confirm("Bạn có chắc muốn xóa sự kiện này?")) {
-                      if (typeof event.id === "number") {
+                      if (typeof event.id === "string") {
                         try {
                           await deleteEvent(event.id);
                           await deleteTasksByEventId(event.id);

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useEventService } from "@/hooks/use-event-service";
+import { EventStatus } from "@/types/event";
 import Line from "@/components/ui/line";
 import Modal from "@/components/ui/modal";
 
@@ -21,11 +22,16 @@ export default function CreateEventForm({
 
   const [formData, setFormData] = useState({
     title: "",
-    date: "",
-    address: "",
-    participants: 0,
-    requirements: "",
-    status: "upcoming" as const,
+    type: "",
+    description: "",
+    priority: 1,
+    location: "",
+    maxPeople: 1,
+    agency: "",
+    status: "UPCOMING" as EventStatus,
+    beginAt: "",
+    endAt: "",
+    tags: [] as string[],
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -40,51 +46,36 @@ export default function CreateEventForm({
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "participants" ? parseInt(value) || 0 : value,
+      [name]:
+        name === "priority" || name === "maxPeople"
+          ? parseInt(value) || 1
+          : value,
     }));
 
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-
-    if (!formData.title.trim()) {
-      newErrors.title = "Tiêu đề sự kiện là bắt buộc";
-    }
-
-    if (!formData.date) {
-      newErrors.date = "Ngày diễn ra là bắt buộc";
-    } else {
-      const selectedDate = new Date(formData.date);
-      const today = new Date();
-      if (selectedDate < today) {
-        newErrors.date = "Ngày diễn ra không thể là ngày trong quá khứ";
-      }
-    }
-
-    if (!formData.address.trim()) {
-      newErrors.address = "Địa điểm là bắt buộc";
-    }
-
-    if (formData.participants <= 0) {
-      newErrors.participants = "Số lượng tham dự phải lớn hơn 0";
-    }
-
+    if (!formData.title.trim()) newErrors.title = "Tiêu đề là bắt buộc";
+    if (!formData.type.trim()) newErrors.type = "Loại sự kiện là bắt buộc";
+    if (!formData.description.trim()) newErrors.description = "Mô tả là bắt buộc";
+    if (!formData.location.trim()) newErrors.location = "Địa điểm là bắt buộc";
+    if (!formData.agency.trim()) newErrors.agency = "Đơn vị tổ chức là bắt buộc";
+    if (!formData.beginAt) newErrors.beginAt = "Thời gian bắt đầu là bắt buộc";
+    if (!formData.endAt) newErrors.endAt = "Thời gian kết thúc là bắt buộc";
+    if (formData.maxPeople <= 0) newErrors.maxPeople = "Số lượng phải > 0";
+    if (formData.priority <= 0) newErrors.priority = "Độ ưu tiên phải > 0";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
+    if (!validateForm()) return;
     try {
       await createEvent(formData);
       alert("Tạo sự kiện thành công!");
@@ -92,18 +83,22 @@ export default function CreateEventForm({
     } catch (error) {
       alert(
         "Tạo sự kiện thất bại: " +
-          (error instanceof Error ? error.message : "Unknown error")
+        (error instanceof Error ? error.message : "Unknown error")
       );
     }
   };
 
+  // ...existing code...
   return (
     <Modal
       state={state}
       funcClickToBack={funcClickToBack}
       className="max-w-2xl min-w-4/5"
     >
-      <div className="" style={{ color: "var(--foreground)" }}>
+      <div 
+        style={{ color: "var(--foreground)" }}
+        className="max-h-[90vh] overflow-y-auto"
+      >
         <div
           className="rounded-lg shadow-lg p-6"
           style={{ backgroundColor: "var(--background)" }}
@@ -133,201 +128,334 @@ export default function CreateEventForm({
               <form
                 id="create-event-form"
                 onSubmit={handleSubmit}
-                className="space-y-6 flex justify-between gap-5"
+                className="space-y-6 flex flex-col gap-5"
                 style={{ color: "var(--foreground)" }}
               >
-                <div className="w-full">
-                  {/* Title */}
-                  <div>
-                    <label
-                      htmlFor="title"
-                      className="block text-xl font-medium mb-2"
-                      style={{ color: "var(--foreground)" }}
-                    >
-                      Tiêu đề sự kiện *
-                    </label>
-                    <input
-                      type="text"
-                      id="title"
-                      name="title"
-                      value={formData.title}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      style={{
-                        backgroundColor: "var(--background)",
-                        color: "var(--foreground)",
-                        borderColor: errors.title
-                          ? "var(--sfit-red-500)"
-                          : "var(--sfit-gray-200)",
-                      }}
-                      placeholder="Nhập tiêu đề sự kiện"
-                    />
-                    {errors.title && (
-                      <p
-                        className="mt-1 text-sm"
-                        style={{ color: "var(--sfit-red-500)" }}
-                      >
-                        {errors.title}
-                      </p>
-                    )}
-                  </div>
-                  {/* Requirements */}
-                  <div>
-                    <label
-                      htmlFor="requirements"
-                      className="block text-sm font-medium mb-2"
-                      style={{ color: "var(--foreground)" }}
-                    >
-                      Yêu cầu về sự kiện
-                    </label>
-                    <textarea
-                      id="requirements"
-                      name="requirements"
-                      value={formData.requirements}
-                      onChange={handleInputChange}
-                      rows={4}
-                      className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      style={{
-                        backgroundColor: "var(--background)",
-                        color: "var(--foreground)",
-                        borderColor: "var(--sfit-gray-200)",
-                      }}
-                      placeholder="Nhập các yêu cầu, lưu ý cho người tham dự..."
-                    />
-                  </div>
-                  {/* Date */}
-                  <div>
-                    <label
-                      htmlFor="date"
-                      className="block text-sm font-medium mb-2"
-                      style={{ color: "var(--foreground)" }}
-                    >
-                      Ngày diễn ra *
-                    </label>
-                    <input
-                      type="datetime-local"
-                      id="date"
-                      name="date"
-                      value={formData.date}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      style={{
-                        backgroundColor: "var(--background)",
-                        color: "var(--foreground)",
-                        borderColor: errors.date
-                          ? "var(--sfit-red-500)"
-                          : "var(--sfit-gray-200)",
-                      }}
-                    />
-                    {errors.date && (
-                      <p
-                        className="mt-1 text-sm"
-                        style={{ color: "var(--sfit-red-500)" }}
-                      >
-                        {errors.date}
-                      </p>
-                    )}
-                  </div>
+                {/* Title */}
+                <div>
+                  <label
+                    htmlFor="title"
+                    className="block text-xl font-medium mb-2"
+                  >
+                    Tiêu đề sự kiện *
+                  </label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    style={{
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                      borderColor: errors.title
+                        ? "var(--sfit-red-500)"
+                        : "var(--sfit-gray-200)",
+                    }}
+                    placeholder="Nhập tiêu đề sự kiện"
+                  />
+                  {errors.title && (
+                    <p className="mt-1 text-sm" style={{ color: "var(--sfit-red-500)" }}>
+                      {errors.title}
+                    </p>
+                  )}
                 </div>
-                <div className="w-full">
-                  {/* Address */}
-                  <div>
-                    <label
-                      htmlFor="address"
-                      className="block text-sm font-medium mb-2"
-                      style={{ color: "var(--foreground)" }}
-                    >
-                      Địa điểm *
-                    </label>
-                    <input
-                      type="text"
-                      id="address"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      style={{
-                        backgroundColor: "var(--background)",
-                        color: "var(--foreground)",
-                        borderColor: errors.address
-                          ? "var(--sfit-red-500)"
-                          : "var(--sfit-gray-200)",
-                      }}
-                      placeholder="Nhập địa điểm diễn ra sự kiện"
-                    />
-                    {errors.address && (
-                      <p
-                        className="mt-1 text-sm"
-                        style={{ color: "var(--sfit-red-500)" }}
-                      >
-                        {errors.address}
-                      </p>
-                    )}
-                  </div>
-                  {/* Participants */}
-                  <div>
-                    <label
-                      htmlFor="participants"
-                      className="block text-sm font-medium mb-2"
-                      style={{ color: "var(--foreground)" }}
-                    >
-                      Số lượng tham dự tối đa *
-                    </label>
-                    <input
-                      type="number"
-                      id="participants"
-                      name="participants"
-                      value={formData.participants}
-                      onChange={handleInputChange}
-                      min="1"
-                      className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      style={{
-                        backgroundColor: "var(--background)",
-                        color: "var(--foreground)",
-                        borderColor: errors.participants
-                          ? "var(--sfit-red-500)"
-                          : "var(--sfit-gray-200)",
-                      }}
-                      placeholder="Nhập số lượng tham dự tối đa"
-                    />
-                    {errors.participants && (
-                      <p
-                        className="mt-1 text-sm"
-                        style={{ color: "var(--sfit-red-500)" }}
-                      >
-                        {errors.participants}
-                      </p>
-                    )}
-                  </div>
-                  {/* Status */}
-                  <div>
-                    <label
-                      htmlFor="status"
-                      className="block text-sm font-medium mb-2"
-                      style={{ color: "var(--foreground)" }}
-                    >
-                      Trạng thái sự kiện
-                    </label>
-                    <select
-                      id="status"
-                      name="status"
-                      value={formData.status}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      style={{
-                        backgroundColor: "var(--background)",
-                        color: "var(--foreground)",
-                        borderColor: "var(--sfit-gray-200)",
-                      }}
-                    >
-                      <option value="upcoming">Sắp diễn ra</option>
-                      <option value="ongoing">Đang diễn ra</option>
-                      <option value="past">Đã qua</option>
-                    </select>
-                  </div>
+                {/* Type */}
+                <div>
+                  <label htmlFor="type" className="block text-sm font-medium mb-2">
+                    Loại sự kiện *
+                  </label>
+                  <input
+                    type="text"
+                    id="type"
+                    name="type"
+                    value={formData.type}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border rounded-lg"
+                    style={{
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                      borderColor: errors.type
+                        ? "var(--sfit-red-500)"
+                        : "var(--sfit-gray-200)",
+                    }}
+                    placeholder="Nhập loại sự kiện"
+                  />
+                  {errors.type && (
+                    <p className="mt-1 text-sm" style={{ color: "var(--sfit-red-500)" }}>
+                      {errors.type}
+                    </p>
+                  )}
+                </div>
+                {/* Description */}
+                <div>
+                  <label htmlFor="description" className="block text-sm font-medium mb-2">
+                    Mô tả *
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    rows={3}
+                    className="w-full px-4 py-3 border rounded-lg"
+                    style={{
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                      borderColor: errors.description
+                        ? "var(--sfit-red-500)"
+                        : "var(--sfit-gray-200)",
+                    }}
+                    placeholder="Nhập mô tả sự kiện"
+                  />
+                  {errors.description && (
+                    <p className="mt-1 text-sm" style={{ color: "var(--sfit-red-500)" }}>
+                      {errors.description}
+                    </p>
+                  )}
+                </div>
+                {/* Priority */}
+                <div>
+                  <label htmlFor="priority" className="block text-sm font-medium mb-2">
+                    Độ ưu tiên *
+                  </label>
+                  <input
+                    type="number"
+                    id="priority"
+                    name="priority"
+                    value={formData.priority}
+                    onChange={handleInputChange}
+                    min={1}
+                    className="w-full px-4 py-3 border rounded-lg"
+                    style={{
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                      borderColor: errors.priority
+                        ? "var(--sfit-red-500)"
+                        : "var(--sfit-gray-200)",
+                    }}
+                    placeholder="Nhập độ ưu tiên"
+                  />
+                  {errors.priority && (
+                    <p className="mt-1 text-sm" style={{ color: "var(--sfit-red-500)" }}>
+                      {errors.priority}
+                    </p>
+                  )}
+                </div>
+                {/* Location */}
+                <div>
+                  <label htmlFor="location" className="block text-sm font-medium mb-2">
+                    Địa điểm *
+                  </label>
+                  <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border rounded-lg"
+                    style={{
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                      borderColor: errors.location
+                        ? "var(--sfit-red-500)"
+                        : "var(--sfit-gray-200)",
+                    }}
+                    placeholder="Nhập địa điểm diễn ra sự kiện"
+                  />
+                  {errors.location && (
+                    <p className="mt-1 text-sm" style={{ color: "var(--sfit-red-500)" }}>
+                      {errors.location}
+                    </p>
+                  )}
+                </div>
+                {/* Max People */}
+                <div>
+                  <label htmlFor="maxPeople" className="block text-sm font-medium mb-2">
+                    Số lượng tham dự tối đa *
+                  </label>
+                  <input
+                    type="number"
+                    id="maxPeople"
+                    name="maxPeople"
+                    value={formData.maxPeople}
+                    onChange={handleInputChange}
+                    min={1}
+                    className="w-full px-4 py-3 border rounded-lg"
+                    style={{
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                      borderColor: errors.maxPeople
+                        ? "var(--sfit-red-500)"
+                        : "var(--sfit-gray-200)",
+                    }}
+                    placeholder="Nhập số lượng tham dự tối đa"
+                  />
+                  {errors.maxPeople && (
+                    <p className="mt-1 text-sm" style={{ color: "var(--sfit-red-500)" }}>
+                      {errors.maxPeople}
+                    </p>
+                  )}
+                </div>
+                {/* Agency */}
+                <div>
+                  <label htmlFor="agency" className="block text-sm font-medium mb-2">
+                    Đơn vị tổ chức *
+                  </label>
+                  <input
+                    type="text"
+                    id="agency"
+                    name="agency"
+                    value={formData.agency}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border rounded-lg"
+                    style={{
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                      borderColor: errors.agency
+                        ? "var(--sfit-red-500)"
+                        : "var(--sfit-gray-200)",
+                    }}
+                    placeholder="Nhập đơn vị tổ chức"
+                  />
+                  {errors.agency && (
+                    <p className="mt-1 text-sm" style={{ color: "var(--sfit-red-500)" }}>
+                      {errors.agency}
+                    </p>
+                  )}
+                </div>
+                {/* Status */}
+                <div>
+                  <label htmlFor="status" className="block text-sm font-medium mb-2">
+                    Trạng thái sự kiện *
+                  </label>
+                  <select
+                    id="status"
+                    name="status"
+                    value={formData.status}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border rounded-lg"
+                    style={{
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                      borderColor: "var(--sfit-gray-200)",
+                    }}
+                  >
+                    <option value="DRAFT">Nháp</option>
+                    <option value="UPCOMING">Sắp diễn ra</option>
+                    <option value="ONGOING">Đang diễn ra</option>
+                    <option value="COMPLETED">Đã hoàn thành</option>
+                    <option value="CANCELLED">Đã hủy</option>
+                  </select>
+                </div>
+                {/* BeginAt */}
+                <div>
+                  <label htmlFor="beginAt" className="block text-sm font-medium mb-2">
+                    Thời gian bắt đầu *
+                  </label>
+                  <input
+                    type="datetime-local"
+                    id="beginAt"
+                    name="beginAt"
+                    value={formData.beginAt}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border rounded-lg"
+                    style={{
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                      borderColor: errors.beginAt
+                        ? "var(--sfit-red-500)"
+                        : "var(--sfit-gray-200)",
+                    }}
+                  />
+                  {errors.beginAt && (
+                    <p className="mt-1 text-sm" style={{ color: "var(--sfit-red-500)" }}>
+                      {errors.beginAt}
+                    </p>
+                  )}
+                </div>
+                {/* EndAt */}
+                <div>
+                  <label htmlFor="endAt" className="block text-sm font-medium mb-2">
+                    Thời gian kết thúc *
+                  </label>
+                  <input
+                    type="datetime-local"
+                    id="endAt"
+                    name="endAt"
+                    value={formData.endAt}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border rounded-lg"
+                    style={{
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                      borderColor: errors.endAt
+                        ? "var(--sfit-red-500)"
+                        : "var(--sfit-gray-200)",
+                    }}
+                  />
+                  {errors.endAt && (
+                    <p className="mt-1 text-sm" style={{ color: "var(--sfit-red-500)" }}>
+                      {errors.endAt}
+                    </p>
+                  )}
+                </div>
+                {/* Tags */}
+                <div>
+                  <label htmlFor="tags" className="block text-sm font-medium mb-2">
+                    Tags (phân cách bằng dấu phẩy)
+                  </label>
+                  <input
+                    type="text"
+                    id="tags"
+                    name="tags"
+                    value={formData.tags.join(", ")}
+                    onChange={e =>
+                      setFormData(prev => ({
+                        ...prev,
+                        tags: e.target.value.split(",").map(tag => tag.trim()).filter(Boolean),
+                      }))
+                    }
+                    className="w-full px-4 py-3 border rounded-lg"
+                    style={{
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                      borderColor: "var(--sfit-gray-200)",
+                    }}
+                    placeholder="Ví dụ: tình nguyện, môi trường, giáo dục"
+                  />
+                </div>
+                {/* Buttons */}
+                <div className="flex justify-end space-x-4 pt-6">
+                  <button
+                    type="button"
+                    onClick={onCancel}
+                    className="text-sm px-4 py-2 border rounded-lg font-medium transition-colors"
+                    style={{
+                      borderColor: "var(--sfit-gray-200)",
+                      color: "var(--foreground)",
+                      backgroundColor: "var(--background)",
+                    }}
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    type="submit"
+                    form="create-event-form"
+                    disabled={loading}
+                    className="text-sm px-4 py-2 font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{
+                      backgroundColor: "var(--sfit-green)",
+                      color: "var(--background)",
+                    }}
+                  >
+                    {loading ? "Đang tạo..." : "Tạo sự kiện"}
+                  </button>
                 </div>
               </form>
             </div>
+            {/* Preview */}
             <div
               className="p-5 flex-2 shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] font-inter"
               style={{
@@ -340,74 +468,68 @@ export default function CreateEventForm({
               <div className="text-sm my-1">
                 Tiêu đề:{" "}
                 <span style={{ color: "var(--sfit-green)" }}>
-                  {" "}
                   {formData.title}
                 </span>
               </div>
               <div className="text-sm my-1">
                 Trạng thái:{" "}
                 <span style={{ color: "var(--sfit-green)" }}>
-                  {" "}
                   {formData.status}
                 </span>
               </div>
-              <div className="text-sm my-1">Bản sửa đổi: </div>
-              <Line />
               <div className="text-sm my-1">
-                Thời gian tổ chức sự kiện: <br />
+                Loại sự kiện:{" "}
                 <span style={{ color: "var(--sfit-green)" }}>
-                  {" "}
-                  {formData.date}
+                  {formData.type}
+                </span>
+              </div>
+              <div className="text-sm my-1">
+                Đơn vị tổ chức:{" "}
+                <span style={{ color: "var(--sfit-green)" }}>
+                  {formData.agency}
+                </span>
+              </div>
+              <div className="text-sm my-1">
+                Thời gian bắt đầu:{" "}
+                <span style={{ color: "var(--sfit-green)" }}>
+                  {formData.beginAt}
+                </span>
+              </div>
+              <div className="text-sm my-1">
+                Thời gian kết thúc:{" "}
+                <span style={{ color: "var(--sfit-green)" }}>
+                  {formData.endAt}
                 </span>
               </div>
               <div className="text-sm my-1">
                 Địa điểm:
                 <span style={{ color: "var(--sfit-green)" }}>
-                  {" "}
-                  {formData.address}
+                  {formData.location}
                 </span>
               </div>
               <div className="text-sm my-1">
                 Số lượng tham dự:
                 <span style={{ color: "var(--sfit-green)" }}>
-                  {" "}
-                  {formData.participants}
+                  {formData.maxPeople}
                 </span>
               </div>
               <div className="text-sm my-1">
-                Yêu cầu:
+                Độ ưu tiên:
                 <span style={{ color: "var(--sfit-green)" }}>
-                  {" "}
-                  {formData.requirements}
+                  {formData.priority}
                 </span>
               </div>
-              <Line />
-              {/* Buttons */}
-              <div className="flex justify-end space-x-4 pt-6">
-                <button
-                  type="button"
-                  onClick={onCancel}
-                  className="text-sm px-4 py-2 border rounded-lg font-medium transition-colors"
-                  style={{
-                    borderColor: "var(--sfit-gray-200)",
-                    color: "var(--foreground)",
-                    backgroundColor: "var(--background)",
-                  }}
-                >
-                  Hủy
-                </button>
-                <button
-                  type="submit"
-                  form="create-event-form"
-                  disabled={loading}
-                  className="text-sm px-4 py-2 font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{
-                    backgroundColor: "var(--sfit-green)",
-                    color: "var(--background)",
-                  }}
-                >
-                  {loading ? "Đang tạo..." : "Tạo sự kiện"}
-                </button>
+              <div className="text-sm my-1">
+                Tags:
+                <span style={{ color: "var(--sfit-green)" }}>
+                  {formData.tags.join(", ")}
+                </span>
+              </div>
+              <div className="text-sm my-1">
+                Mô tả:
+                <span style={{ color: "var(--sfit-green)" }}>
+                  {formData.description}
+                </span>
               </div>
             </div>
           </div>
@@ -415,4 +537,5 @@ export default function CreateEventForm({
       </div>
     </Modal>
   );
+  // ...existing code...
 }

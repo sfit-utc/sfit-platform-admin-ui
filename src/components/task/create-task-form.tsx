@@ -24,6 +24,7 @@ export default function CreateTaskForm({
   onSuccess,
 }: CreateTaskFormProps) {
   const { events, loading: loadingEvents } = useEventService();
+  const safeEvents = Array.isArray(events) ? events : [];
   const { createTask, loading } = useTaskService();
   const [formData, setFormData] = useState({
     eventId: "",
@@ -85,16 +86,21 @@ export default function CreateTaskForm({
     e.preventDefault();
     if (!validateForm()) return;
     try {
-      await createTask({
-        ...formData,
-        eventId: Number(formData.eventId), // Đảm bảo eventId là số
-      });
+      // Chỉ gửi đúng các trường backend yêu cầu
+      const payload = {
+        name: formData.title.trim(),
+        description: formData.description.trim(),
+        event_id: Number(formData.eventId),
+        start_date: formData.startDate,
+        deadline: formData.deadline,
+      };
+      await createTask(payload as any);
       alert("Tạo nhiệm vụ thành công!");
       onSuccess();
     } catch (error) {
       alert(
         "Tạo nhiệm vụ thất bại: " +
-          (error instanceof Error ? error.message : "Unknown error")
+        (error instanceof Error ? error.message : "Unknown error")
       );
     }
   };
@@ -164,7 +170,7 @@ export default function CreateTaskForm({
                       disabled={loadingEvents}
                     >
                       <option value="">-- Chọn sự kiện --</option>
-                      {events.map((event) => (
+                      {safeEvents.map((event) => (
                         <option key={event.id} value={event.id}>
                           {event.title}
                         </option>
@@ -227,11 +233,10 @@ export default function CreateTaskForm({
                           type="button"
                           key={tag.label}
                           onClick={() => handleTagToggle(tag)}
-                          className={`px-3 py-1 rounded-full text-sm font-medium border ${
-                            formData.tags.find((t) => t.label === tag.label)
+                          className={`px-3 py-1 rounded-full text-sm font-medium border ${formData.tags.find((t) => t.label === tag.label)
                               ? "border-transparent"
                               : "border-gray-300"
-                          }`}
+                            }`}
                           style={{
                             background: formData.tags.find(
                               (t) => t.label === tag.label

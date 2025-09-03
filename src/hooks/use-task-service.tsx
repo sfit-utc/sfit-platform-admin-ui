@@ -13,7 +13,7 @@ export const useTaskService = () => {
     setError(null);
     try {
       const data = await taskService.getTasks();
-      setTasks(data);
+      setTasks(Array.isArray(data.items) ? data.items : []);
     } catch (err: any) {
       setError(err.message || "Failed to fetch tasks");
     } finally {
@@ -40,7 +40,8 @@ export const useTaskService = () => {
     setLoading(true);
     setError(null);
     try {
-      return await taskService.getTasksByEventId(eventId);
+      const data = await taskService.getTasksByEventId(eventId);
+      return Array.isArray(data.items) ? data.items : [];
     } catch (err: any) {
       setError(err.message || "Failed to fetch tasks by event");
       throw err;
@@ -54,7 +55,8 @@ export const useTaskService = () => {
     setLoading(true);
     setError(null);
     try {
-      return await taskService.getTasksByUserId(userId);
+      const data = await taskService.getTasksByUserId(userId);
+      return Array.isArray(data.items) ? data.items : [];
     } catch (err: any) {
       setError(err.message || "Failed to fetch tasks by user");
       throw err;
@@ -69,7 +71,8 @@ export const useTaskService = () => {
       setLoading(true);
       setError(null);
       try {
-        return await taskService.getUserTasksByEvent(userId, eventId, page, pageSize);
+        const data = await taskService.getUserTasksByEvent(userId, eventId, page, pageSize);
+        return Array.isArray(data.items) ? data.items : [];
       } catch (err: any) {
         setError(err.message || "Failed to fetch user tasks by event");
         throw err;

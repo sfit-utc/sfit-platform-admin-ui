@@ -1,13 +1,21 @@
 import { Task, ApiError } from "@/types/task";
-
+import { authService } from "./auth-service";
+import { PaginatedResult, PaginationQuery } from "@/types/pagination";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 type TaskStatus = "done" | "ongoing" | "upcoming";
 
+function getAuthHeaders(): Record<string, string> {
+  const token = authService.getStoredToken();
+  if (token) {
+    return { Authorization: `Bearer ${token}` };
+  }
+  return {};
+}
 function getTaskStatus(task: Task): TaskStatus {
   if (task.percent_complete === 100) return "done";
   if (task.percent_complete === 0) return "upcoming";
-    return "ongoing";
-  }
+  return "ongoing";
+}
 
 class TaskService {
   private async handleResponse<T>(response: Response): Promise<T> {
@@ -19,14 +27,33 @@ class TaskService {
   }
 
   // Lấy danh sách tất cả nhiệm vụ
-  async getTasks(): Promise<Task[]> {
-    const response = await fetch(`${API_BASE_URL}/tasks`);
-    return this.handleResponse<Task[]>(response);
+  async getTasks(
+    page = 1,
+    pageSize = 10,
+    name?: string,
+    eventId?: string,
+    isCompleted?: boolean
+  ): Promise<PaginatedResult<Task>> {
+    const params = new URLSearchParams({
+      page: String(page),
+      page_size: String(pageSize),
+      ...(name ? { name } : {}),
+      ...(eventId ? { event_id: eventId } : {}),
+      ...(isCompleted !== undefined
+        ? { is_completed: String(isCompleted) }
+        : {}),
+    });
+    const response = await fetch(`${API_BASE_URL}/tasks?${params.toString()}`, {
+      headers: getAuthHeaders(),
+    });
+    return this.handleResponse<PaginatedResult<Task>>(response);
   }
 
   // Lấy nhiệm vụ theo ID
   async getTaskById(id: string): Promise<Task | undefined> {
-    const response = await fetch(`${API_BASE_URL}/tasks/${id}`);
+    const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
+      headers: getAuthHeaders(),
+    });
     return this.handleResponse<Task>(response);
   }
 
@@ -36,7 +63,9 @@ class TaskService {
   ): Promise<{ id: string; create_at: string }> {
     const response = await fetch(`${API_BASE_URL}/tasks`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        ...getAuthHeaders(),
+      },
       body: JSON.stringify(task),
     });
     return this.handleResponse<{ id: string; create_at: string }>(response);
@@ -49,7 +78,10 @@ class TaskService {
   ): Promise<{ id: string; update_at: string }> {
     const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        ...getAuthHeaders(),
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(updates),
     });
     return this.handleResponse<{ id: string; update_at: string }>(response);
@@ -59,20 +91,35 @@ class TaskService {
   async deleteTask(id: string): Promise<{ task_id: string }> {
     const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
       method: "DELETE",
+      headers: getAuthHeaders(),
     });
     return this.handleResponse<{ task_id: string }>(response);
   }
 
   // Lấy danh sách nhiệm vụ theo sự kiện
-  async getTasksByEventId(eventId: string): Promise<Task[]> {
-    const response = await fetch(`${API_BASE_URL}/events/${eventId}/tasks`);
-    return this.handleResponse<Task[]>(response);
+  async getTasksByEventId(eventId: string, page = 1, pageSize = 10, isCompleted?: boolean): Promise<PaginatedResult<Task>> {
+    const params = new URLSearchParams({
+      page: String(page),
+      page_size: String(pageSize),
+      ...(isCompleted !== undefined ? { is_completed: String(isCompleted) } : {}),
+    });
+    const response = await fetch(`${API_BASE_URL}/events/${eventId}/tasks?${params.toString()}`, {
+      headers: getAuthHeaders(),
+    });
+    return this.handleResponse<PaginatedResult<Task>>(response);
   }
 
   // Lấy danh sách nhiệm vụ theo user
-  async getTasksByUserId(userId: string): Promise<Task[]> {
-    const response = await fetch(`${API_BASE_URL}/users/${userId}/tasks`);
-    return this.handleResponse<Task[]>(response);
+  async getTasksByUserId(userId: string, page = 1, pageSize = 10, isCompleted?: boolean): Promise<PaginatedResult<Task>> {
+    const params = new URLSearchParams({
+      page: String(page),
+      page_size: String(pageSize),
+      ...(isCompleted !== undefined ? { is_completed: String(isCompleted) } : {}),
+    });
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/tasks?${params.toString()}`, {
+      headers: getAuthHeaders(),
+    });
+    return this.handleResponse<PaginatedResult<Task>>(response);
   }
 
   // Gán nhiệm vụ cho user
@@ -82,7 +129,10 @@ class TaskService {
   ): Promise<{ id: string; create_at: string }> {
     const response = await fetch(`${API_BASE_URL}/users/${userId}/tasks`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        ...getAuthHeaders(),
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ task_id: taskId }),
     });
     return this.handleResponse<{ id: string; create_at: string }>(response);
@@ -94,6 +144,7 @@ class TaskService {
       `${API_BASE_URL}/users/${userId}/tasks/${taskId}`,
       {
         method: "DELETE",
+        headers: getAuthHeaders(),
       }
     );
     await this.handleResponse(response);
@@ -104,21 +155,25 @@ class TaskService {
   async getUserTasksByEvent(
     userId: string,
     eventId: string,
-    page?: number,
-    pageSize?: number
-  ): Promise<Task[]> {
-    let url = `${API_BASE_URL}/users/${userId}/tasks?event_id=${eventId}`;
-    if (page !== undefined && pageSize !== undefined) {
-      url += `&page=${page}&page_size=${pageSize}`;
-    }
-    const response = await fetch(url);
-    return this.handleResponse<Task[]>(response);
+    page = 1,
+    pageSize = 10
+  ): Promise<PaginatedResult<Task>> {
+    const params = new URLSearchParams({
+      event_id: eventId,
+      page: String(page),
+      page_size: String(pageSize),
+    });
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/tasks?${params.toString()}`, {
+      headers: getAuthHeaders(),
+    });
+    return this.handleResponse<PaginatedResult<Task>>(response);
   }
 
   // Lấy danh sách nhiệm vụ kèm trạng thái
-  async getTasksWithStatus(): Promise<(Task & { status: TaskStatus })[]> {
-    const tasks = await this.getTasks();
-    return tasks.map((task) => ({
+  async getTasksWithStatus(page = 1, pageSize = 10): Promise<(Task & { status: TaskStatus })[]> {
+    const paged = await this.getTasks(page, pageSize);
+    const items = paged.items ?? [];
+    return items.map((task) => ({
       ...task,
       status: getTaskStatus(task),
     }));
