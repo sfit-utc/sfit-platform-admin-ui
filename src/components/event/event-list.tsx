@@ -1,7 +1,7 @@
 import { useEventService } from "@/hooks/use-event-service";
 import EventItem from "@/components/event/event-item";
 import Loading from "@/components/ui/loading";
-import { EventStatus } from "@/types/event";
+import { EventStatus, Event } from "@/types/event";
 import { useEffect } from "react";
 
 interface EventListProps {
@@ -10,14 +10,7 @@ interface EventListProps {
 }
 
 export default function EventList({ status, searchTerm }: EventListProps) {
-  const {
-    events,
-    loading,
-    error,
-    registerForEvent,
-    fetchEvents,
-  } = useEventService();
-
+  const { events, loading, error, registerForEvent, fetchEvents } = useEventService();
   const userId =
     typeof window !== "undefined" ? localStorage.getItem("user_id") || "" : "";
 
@@ -25,11 +18,12 @@ export default function EventList({ status, searchTerm }: EventListProps) {
     fetchEvents({
       page: 1,
       pageSize: 20,
-      title: searchTerm,
-      status: status,
+      // title: searchTerm ?? "",
+      // type: "",
+      // status: status,
     });
-  }, [searchTerm, status, fetchEvents]);
-
+  }, [searchTerm, status]);
+  
   const handleRegister = async (eventId: string) => {
     try {
       if (!userId) {
@@ -45,14 +39,29 @@ export default function EventList({ status, searchTerm }: EventListProps) {
       );
     }
   };
-
+  
   const handleInfo = (eventId: string) => {
+
     console.log("Show info for event:", eventId);
   };
 
   const handleAttendance = (eventId: string) => {
+
     console.log("Mark attendance for event:", eventId);
   };
+
+
+  const safeEvents: Event[] = Array.isArray(events) ? events : [];
+
+  const filteredEvents = safeEvents.filter((event: Event) => {
+    const matchesStatus = !status || event.status === status;
+    const matchesSearch =
+      !searchTerm ||
+      event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesStatus && matchesSearch;
+  });
 
   if (loading) {
     return <Loading />;
@@ -62,7 +71,7 @@ export default function EventList({ status, searchTerm }: EventListProps) {
     return <div className="text-red-600 text-center py-8">Lỗi: {error}</div>;
   }
 
-  if (!events || events.length === 0) {
+  if (filteredEvents.length === 0) {
     return (
       <div className="text-gray-500 text-center py-8">
         {searchTerm ? "Không tìm thấy sự kiện phù hợp" : "Không có sự kiện nào"}
@@ -72,7 +81,7 @@ export default function EventList({ status, searchTerm }: EventListProps) {
 
   return (
     <div className="space-y-4">
-      {events.map((event) => (
+      {filteredEvents.map((event) => (
         <EventItem
           key={event.id}
           event={event}
