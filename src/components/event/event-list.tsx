@@ -1,21 +1,25 @@
 import { useEventService } from "@/hooks/use-event-service";
 import EventItem from "@/components/event/event-item";
 import Loading from "@/components/ui/loading";
+import { EventStatus, Event } from "@/types/event";
+import { useEffect } from "react";
 
 interface EventListProps {
-  status?: "ongoing" | "upcoming" | "past";
+  status?: EventStatus;
   searchTerm?: string;
 }
 
 export default function EventList({ status, searchTerm }: EventListProps) {
-  const { events, loading, error, registerForEvent, fetchEvents } =
-    useEventService();
-
-  const handleRegister = async (eventId: number) => {
+  const { events, loading, error} = useEventService();
+  const userId =
+    typeof window !== "undefined" ? localStorage.getItem("user_id") || "" : "";
+  const handleRegister = async (eventId: string) => {
     try {
-      // You would typically get userId from auth context
-      const userId = 1; // Replace with actual user ID
-      await registerForEvent(eventId, userId);
+      if (!userId) {
+        alert("Bạn cần đăng nhập để đăng ký sự kiện!");
+        return;
+      }
+      // await registerForEvent(eventId, userId);
       alert("Đăng ký thành công!");
     } catch (error) {
       alert(
@@ -24,27 +28,26 @@ export default function EventList({ status, searchTerm }: EventListProps) {
       );
     }
   };
+  const handleInfo = (eventId: string) => {
 
-  const handleInfo = (eventId: number) => {
-    // Navigate to event details or show modal
     console.log("Show info for event:", eventId);
   };
 
-  const handleAttendance = (eventId: number) => {
-    // Handle attendance logic
+  const handleAttendance = (eventId: string) => {
+
     console.log("Mark attendance for event:", eventId);
   };
 
-  // Filter events based on status and search term
-  const filteredEvents = events.filter((event) => {
-    const matchesStatus = !status || event.status === status;
+
+
+  const filteredEvents = events.filter((event: Event) => {
+    // const matchesStatus = !status || event.status === status;
     const matchesSearch =
       !searchTerm ||
       event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.requirements?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    return matchesStatus && matchesSearch;
+      event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesSearch;
   });
 
   if (loading) {

@@ -1,19 +1,28 @@
 import { useState, useEffect, useCallback } from "react";
-import { Event } from "@/types/event";
+import {
+  Event,
+  ListEventReq,
+  NewEventRequest,
+  UpdateEventRequest,
+  EventDetailRp,
+} from "@/types/event";
+import { PageListResp } from "@/types/pagination";
 import { eventService } from "@/services/event-service";
 
 export const useEventService = () => {
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<EventDetailRp[]>([]);
+  const [pagination, setPagination] = useState<PageListResp<EventDetailRp[]> | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch all events
-  const fetchEvents = useCallback(async () => {
+  // Fetch events with pagination
+  const fetchEvents = useCallback(async (params: ListEventReq = { page: 1, page_size: 20, status:"UPCOMING" }) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await eventService.getEvents();
-      setEvents(data);
+      const res = await eventService.getEvents(params);
+      setEvents(res.data.items);
+      setPagination(res.data.page);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch events");
     } finally {
@@ -21,13 +30,27 @@ export const useEventService = () => {
     }
   }, []);
 
+  // Fetch event detail
+  const fetchEventDetail = useCallback(async (eventId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      return await eventService.getEventDetail(eventId);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch event detail");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   // Create new event
-  const createEvent = useCallback(async (eventData: Omit<Event, "id">) => {
+  const createEvent = useCallback(async (eventData: NewEventRequest) => {
     setLoading(true);
     setError(null);
     try {
       const newEvent = await eventService.createEvent(eventData);
-      setEvents((prev) => [...prev, newEvent]);
+      await fetchEvents(); // Refresh list
       return newEvent;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create event");
@@ -35,78 +58,52 @@ export const useEventService = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [fetchEvents]);
 
   // Update event
-  const updateEvent = useCallback(
-    async (id: number, eventData: Partial<Event>) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const updatedEvent = await eventService.updateEvent(id, eventData);
-        setEvents((prev) =>
-          prev.map((event) => (event.id === id ? updatedEvent : event))
-        );
-        return updatedEvent;
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to update event");
-        throw err;
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
-
-  // Delete event
-  const deleteEvent = useCallback(async (id: number) => {
+  const updateEvent = useCallback(async (eventData: UpdateEventRequest) => {
     setLoading(true);
     setError(null);
     try {
-      await eventService.deleteEvent(id);
-      setEvents((prev) => prev.filter((event) => event.id !== id));
+      const updatedEvent = await eventService.updateEvent(eventData);
+      await fetchEvents();
+      return updatedEvent;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update event");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchEvents]);
+
+  // Delete event
+  const deleteEvent = useCallback(async (eventId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await eventService.deleteEvent(eventId);
+      await fetchEvents();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete event");
       throw err;
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  // Register for event
-  const registerForEvent = useCallback(
-    async (eventId: number, userId: number) => {
-      setLoading(true);
-      setError(null);
-      try {
-        await eventService.registerForEvent(eventId, userId);
-        // Optionally refresh events or update local state
-        await fetchEvents();
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to register for event"
-        );
-        throw err;
-      } finally {
-        setLoading(false);
-      }
-    },
-    [fetchEvents]
-  );
+  }, [fetchEvents]);
 
   // Load events on mount
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);
-
   return {
     events,
+    pagination,
     loading,
     error,
     fetchEvents,
+    fetchEventDetail,
     createEvent,
     updateEvent,
     deleteEvent,
-    registerForEvent,
   };
 };
