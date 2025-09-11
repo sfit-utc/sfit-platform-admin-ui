@@ -5,7 +5,7 @@ import {
   MemberListItem,
   MemberFilters,
 } from "@/types/member";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 interface UseMemberServiceType<T> {
   data: T;
@@ -27,7 +27,19 @@ export function useMemberStats(): UseMemberServiceType<MemberStats> {
     memberService
       .getMemberStats()
       .then(setData)
-      .catch(setError)
+      .catch((error) => {
+        console.error("Error fetching member stats:", error);
+        if (
+          error.message.includes("Token expired") ||
+          error.message.includes("not authenticated")
+        ) {
+          setError(
+            new Error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.")
+          );
+        } else {
+          setError(error);
+        }
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -36,24 +48,45 @@ export function useMemberStats(): UseMemberServiceType<MemberStats> {
 
 export function useMembers(
   filters?: MemberFilters
-): UseMemberServiceType<MemberListItem[]> {
+): UseMemberServiceType<MemberListItem[]> & { refetch: () => Promise<void> } {
   const [data, setData] = useState<MemberListItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
+  const fetchMembers = useCallback(async () => {
     setLoading(true);
-    memberService
-      .getMembers(filters)
-      .then(setData)
-      .catch(setError)
-      .finally(() => setLoading(false));
+    setError(null);
+    try {
+      const members = await memberService.getMembers(filters);
+      setData(members);
+    } catch (err: any) {
+      console.error("Error fetching members:", err);
+      if (
+        err.message.includes("Token expired") ||
+        err.message.includes("not authenticated")
+      ) {
+        setError(
+          new Error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.")
+        );
+      } else {
+        setError(err);
+      }
+      setData([]); // Reset data on error
+    } finally {
+      setLoading(false);
+    }
   }, [filters]);
 
-  return { data, loading, error };
+  useEffect(() => {
+    fetchMembers();
+  }, [fetchMembers]);
+
+  return { data, loading, error, refetch: fetchMembers };
 }
 
-export function useMember(id: number): UseMemberServiceType<Member | null> {
+export function useMember(
+  id: number | string
+): UseMemberServiceType<Member | null> {
   const [data, setData] = useState<Member | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
@@ -66,7 +99,7 @@ export function useMember(id: number): UseMemberServiceType<Member | null> {
 
     setLoading(true);
     memberService
-      .getMemberById(id)
+      .getMemberById(String(id))
       .then(setData)
       .catch(setError)
       .finally(() => setLoading(false));
@@ -81,7 +114,7 @@ export function useMemberManagement() {
   const [error, setError] = useState<Error | null>(null);
 
   const updateMember = async (
-    id: number,
+    id: number | string,
     data: Partial<Member>
   ): Promise<Member | null> => {
     setLoading(true);

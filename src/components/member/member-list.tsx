@@ -30,8 +30,8 @@ export default function MemberList() {
   );
 
   // Use the hook to get members
-  const { data: members, loading, error } = useMembers(filters);
-  
+  const { data: members, loading, error, refetch } = useMembers(filters);
+
   const totalItems = members.length;
   const totalPages = Math.ceil(totalItems / membersPerPage);
   const startIdx = (currentPage - 1) * membersPerPage;
@@ -273,8 +273,6 @@ export default function MemberList() {
                       }}
                     >
                       <option value="all">Tất cả</option>
-                      <option value="Chủ nhiệm">Chủ nhiệm</option>
-                      <option value="Phó CN">Phó CN</option>
                       <option value="Trưởng ban">Trưởng ban</option>
                       <option value="Phó ban">Phó ban</option>
                       <option value="Thành viên">Thành viên</option>
@@ -366,6 +364,53 @@ export default function MemberList() {
               <MemberItemSkeleton key={index} />
             ))}
           </div>
+        ) : members.length === 0 ? (
+          <div className="text-center py-8">
+            <div className="mb-4">
+              <svg
+                className="mx-auto h-12 w-12 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                />
+              </svg>
+            </div>
+            <p className="text-gray-500 text-lg font-medium">
+              Không có thành viên nào
+            </p>
+            <p className="text-gray-400 text-sm mt-2 max-w-md mx-auto">
+              {error
+                ? `Lỗi: ${String(error)}`
+                : "Bạn chưa được phân vào ban nào. Vui lòng liên hệ quản trị viên để được phân ban hoặc tạo ban mới."}
+            </p>
+            <div className="mt-4">
+              <button
+                onClick={() => setAddMember(true)}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              >
+                <svg
+                  className="w-4 h-4 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                </svg>
+                Thêm thành viên mới
+              </button>
+            </div>
+          </div>
         ) : (
           <div
             className={
@@ -374,8 +419,13 @@ export default function MemberList() {
                 : "space-y-2"
             }
           >
-            {currentPageData.map((member) => (
-              <MemberItem key={member.id} member={member} style={activeStyle} />
+            {currentPageData.map((member, i) => (
+              <MemberItem
+                key={i}
+                member={member}
+                style={activeStyle}
+                onMemberUpdated={refetch}
+              />
             ))}
           </div>
         )}
@@ -434,7 +484,11 @@ export default function MemberList() {
       </div>
 
       {addMember && (
-        <AddMember state={addMember} funcClickToBack={setAddMember} />
+        <AddMember
+          state={addMember}
+          funcClickToBack={setAddMember}
+          onMemberAdded={refetch}
+        />
       )}
     </div>
   );

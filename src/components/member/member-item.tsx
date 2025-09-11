@@ -1,6 +1,7 @@
 "use client";
 import { MemberListItem } from "@/types/member";
 import { useState, useRef, useEffect } from "react";
+import { memberService } from "@/services/member-service";
 import Avatar from "@/assets/icons/user.svg";
 import { SquarePen, Trash, User } from "lucide-react";
 import DetailModal from "@/components/ui/detail-modal";
@@ -10,9 +11,14 @@ import DeleteModal from "@/components/ui/delete-modal";
 interface MemberItemProps {
   member: MemberListItem;
   style?: string;
+  onMemberUpdated?: () => void;
 }
 
-export default function MemberItem({ member, style }: MemberItemProps) {
+export default function MemberItem({
+  member,
+  style,
+  onMemberUpdated,
+}: MemberItemProps) {
   // Early return if member is undefined
   if (!member) {
     return null;
@@ -56,8 +62,29 @@ export default function MemberItem({ member, style }: MemberItemProps) {
     };
   }, []);
 
-  const firstTeam = member?.teams?.[0] || "";
+  const [activeTeam, setActiveTeam] = useState<string>(
+    member?.teams?.[0] || ""
+  );
+  const [displayRole, setDisplayRole] = useState<string>(member.role);
+  const firstTeam = activeTeam;
   const hasMultipleTeams = member?.teams && member.teams.length > 1;
+
+  useEffect(() => {
+    setActiveTeam(member?.teams?.[0] || "");
+    setDisplayRole(member.role);
+  }, [member]);
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      if (!activeTeam) return;
+      const role = await memberService.getTeamMemberRole(
+        activeTeam,
+        member.userId || member.id
+      );
+      setDisplayRole(role);
+    };
+    fetchRole();
+  }, [activeTeam, member.id, member.userId]);
 
   const lineView = (
     <div
@@ -110,6 +137,15 @@ export default function MemberItem({ member, style }: MemberItemProps) {
                 <div
                   key={team}
                   className="py-1 px-3 hover:bg-amber-50 rounded text-sm cursor-pointer"
+                  onClick={async () => {
+                    setActiveTeam(team);
+                    setShowTeamsDropdown(false);
+                    const role = await memberService.getTeamMemberRole(
+                      team,
+                      member.userId || member.id
+                    );
+                    setDisplayRole(role);
+                  }}
                 >
                   {team}
                 </div>
@@ -121,10 +157,10 @@ export default function MemberItem({ member, style }: MemberItemProps) {
       <div className="flex-3 flex justify-center items-center">
         <div
           className={`text-center py-1 px-4 w-fit ${getRoleStyle(
-            member.role
+            displayRole
           )} rounded-full text-sm font-semibold whitespace-nowrap`}
         >
-          {member.role}
+          {displayRole}
         </div>
       </div>
       <div className="flex-2 flex justify-center items-center">
@@ -246,17 +282,27 @@ export default function MemberItem({ member, style }: MemberItemProps) {
       <DetailModal
         open={openView}
         onClose={() => setOpenView(false)}
-        memberId={member.id}
+        memberId={member.userId || member.id}
       />
       <EditModal
         open={openEdit}
         onClose={() => setOpenEdit(false)}
-        memberId={member.id}
+        memberId={member.userId || member.id}
+        onSaved={() => {
+          if (onMemberUpdated) {
+            onMemberUpdated();
+          }
+        }}
       />
       <DeleteModal
         open={openDelete}
         onClose={() => setOpenDelete(false)}
-        memberId={member.id}
+        memberId={member.userId || member.id}
+        onDeleted={() => {
+          if (onMemberUpdated) {
+            onMemberUpdated();
+          }
+        }}
       />
     </>
   );

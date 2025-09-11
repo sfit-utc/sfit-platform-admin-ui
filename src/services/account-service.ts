@@ -58,6 +58,7 @@ class AccountService {
       const role = Array.isArray(u.roles) && u.roles.length > 0 ? u.roles[0] : (u.role || "user");
       return {
         id: Number(u.id) || 0,
+        userId: u.id || u.user_id || u.ID,
         name: String(name),
         role: normalizeRole(role),
         class: u.class_name || u.class || "",

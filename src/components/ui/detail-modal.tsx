@@ -10,7 +10,7 @@ export default function DetailModal({
 }: {
   open: boolean;
   onClose: () => void;
-  memberId: number;
+  memberId: number | string;
 }) {
   const { data: member, loading } = useMember(memberId);
   return (

@@ -13,7 +13,7 @@ interface NavBarProps {
 export default function NavBar({ activeTitle = "Trang chủ" }: NavBarProps) {
   // Use theme context
   const { theme, setTheme } = useTheme();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const router = useRouter();
   const [openProfile, setOpenProfile] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -156,13 +156,15 @@ export default function NavBar({ activeTitle = "Trang chủ" }: NavBarProps) {
               className="hidden xl:block text-base"
               style={{ color: "var(--foreground)" }}
             >
-              Nam Khúc
+              {user
+                ? `${user.firstName} ${user.lastName}`.trim() || user.email
+                : "User"}
             </div>
             <div
               className="hidden xl:block text-xs"
               style={{ color: "var(--foreground)" }}
             >
-              Thành viên
+              {user?.role || "user"}
             </div>
           </div>
           <div className="ml-2 ">

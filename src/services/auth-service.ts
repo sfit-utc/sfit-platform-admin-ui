@@ -1,4 +1,4 @@
-import { LoginRequest, RegisterRequest, AuthResponse, ApiError, User } from '@/types/auth'
+import { LoginRequest, RegisterRequest, AuthResponse, ApiError, User, ChangePasswordRequest } from '@/types/auth'
 import apiClient from '@/libs/http'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080'
@@ -237,6 +237,20 @@ class AuthService {
     const token = this.getStoredToken()
     const user = this.getStoredUser()
     return !!(token && user)
+  }
+
+  async changePassword(passwordData: ChangePasswordRequest): Promise<void> {
+    try {
+      const payload = {
+        old_password: passwordData.currentPassword,
+        new_password: passwordData.newPassword,
+      }
+      
+      await apiClient.post('/auth/change-password', payload)
+    } catch (error) {
+      console.error('Change password error:', error)
+      throw error
+    }
   }
 
   private getUserIdFromJwt(token: string): string | null {

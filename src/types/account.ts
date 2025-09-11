@@ -19,6 +19,7 @@ export interface AccountStats {
 
 export interface AccountListItem {
   id: number;
+  userId?: string;
   name: string;
   role: string;
   class: string;

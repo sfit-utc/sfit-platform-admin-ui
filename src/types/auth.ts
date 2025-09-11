@@ -28,6 +28,12 @@ export interface AuthResponse {
   refreshToken: string
 }
 
+export interface ChangePasswordRequest {
+  currentPassword: string
+  newPassword: string
+  confirmPassword: string
+}
+
 export interface ApiError {
   message: string
   code: string
