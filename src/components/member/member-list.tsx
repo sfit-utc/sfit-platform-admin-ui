@@ -8,7 +8,11 @@ import SearchBar from "@/components/ui/search-bar";
 import AddMember from "@/components/member/add-member";
 import { Rows2 } from "lucide-react";
 import { Grid2X2 } from "lucide-react";
-export default function MemberList() {
+export default function MemberList({
+  onMemberUpdated,
+}: {
+  onMemberUpdated?: () => void;
+}) {
   const [currentPage, setCurrentPage] = useState(1);
   const [membersPerPage, setMembersPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
@@ -29,14 +33,24 @@ export default function MemberList() {
     [searchTerm, filterRole, filterTeam]
   );
 
-  // Use the hook to get members
-  const { data: members, loading, error, refetch } = useMembers(filters);
+  // Use the hook to get members with pagination
+  const {
+    data: members,
+    loading,
+    error,
+    refetch: refetchMembers,
+    total: totalItems,
+  } = useMembers(filters, currentPage, membersPerPage);
 
-  const totalItems = members.length;
+  const refetch = useCallback(async () => {
+    await refetchMembers();
+    if (onMemberUpdated) {
+      onMemberUpdated();
+    }
+  }, [refetchMembers, onMemberUpdated]);
+
   const totalPages = Math.ceil(totalItems / membersPerPage);
-  const startIdx = (currentPage - 1) * membersPerPage;
-  const endIdx = startIdx + membersPerPage;
-  const currentPageData = members.slice(startIdx, endIdx);
+  const currentPageData = members;
 
   useEffect(() => {
     setCurrentPage(1);
@@ -273,6 +287,8 @@ export default function MemberList() {
                       }}
                     >
                       <option value="all">Tất cả</option>
+                      <option value="Chủ nhiệm">Chủ nhiệm</option>
+                      <option value="Phó CN">Phó CN</option>
                       <option value="Trưởng ban">Trưởng ban</option>
                       <option value="Phó ban">Phó ban</option>
                       <option value="Thành viên">Thành viên</option>

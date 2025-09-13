@@ -6,7 +6,14 @@ import AccountItem from "@/components/account/account-item";
 import Loading from "@/components/ui/loading";
 import SearchBar from "@/components/ui/search-bar";
 import AddAccount from "@/components/account/add-account";
-export default function AccountList() {
+import { Rows2 } from "lucide-react";
+import { Grid2X2 } from "lucide-react";
+
+export default function AccountList({
+  onAccountUpdated,
+}: {
+  onAccountUpdated?: () => void;
+}) {
   const [currentPage, setCurrentPage] = useState(1);
   const [accountsPerPage, setAccountsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,13 +34,24 @@ export default function AccountList() {
     [searchTerm, filterRole, filterTeam]
   );
 
-  const { data: accounts, loading, error } = useAccounts(filters);
+  // Use the hook to get accounts with pagination
+  const {
+    data: accounts,
+    loading,
+    error,
+    refetch: refetchAccounts,
+    total: totalItems,
+  } = useAccounts(filters, currentPage, accountsPerPage);
 
-  const totalItems = accounts.length;
+  const refetch = useCallback(async () => {
+    await refetchAccounts();
+    if (onAccountUpdated) {
+      onAccountUpdated();
+    }
+  }, [refetchAccounts, onAccountUpdated]);
+
   const totalPages = Math.ceil(totalItems / accountsPerPage);
-  const startIdx = (currentPage - 1) * accountsPerPage;
-  const endIdx = startIdx + accountsPerPage;
-  const currentPageData = accounts.slice(startIdx, endIdx);
+  const currentPageData = accounts;
 
   useEffect(() => {
     setCurrentPage(1);
@@ -123,7 +141,7 @@ export default function AccountList() {
               onClick={() => setAddAccount(true)}
             >
               <span className="">+</span>
-              <span className="hidden md:inline">Thêm thành viên</span>
+              <span className="hidden md:inline">Thêm tài khoản</span>
             </div>
           </div>
 
@@ -226,7 +244,7 @@ export default function AccountList() {
               </defs>
             </svg>
 
-            <div className="md:inline hidden md:w-36 h-5 justify-center ml-2 text-white text-base font-bold font-inter">
+            <div className=" md:inline hidden md:w-36 h-5 justify-center ml-2 text-white text-base font-bold font-inter">
               Lựa chọn
             </div>
 
@@ -247,237 +265,246 @@ export default function AccountList() {
             {/* Filter Dropdown */}
             {showFilterDropdown && (
               <div
-                ref={filterDropdownRef}
+                onClick={(e) => e.stopPropagation()}
                 className="absolute top-full left-0 mt-2 w-64 rounded-lg shadow-lg z-50 p-4"
                 style={{
                   backgroundColor: "var(--background)",
-                  border: "1px solid var(--foreground)",
+                  color: "var(--foreground)",
                 }}
               >
-                <div className="mb-3">
-                  <label
-                    className="block text-sm font-semibold mb-1"
-                    style={{ color: "var(--sfit-green)" }}
-                  >
-                    Chức vụ
-                  </label>
-                  <select
-                    value={filterRole}
-                    onChange={(e) => {
-                      setFilterRole(e.target.value);
-                      setShowFilterDropdown(false);
-                    }}
-                    className="border p-1 rounded w-full"
-                    style={{
-                      color: "var(--foreground)",
-                      backgroundColor: "var(--background)",
-                      borderColor: "var(--sfit-gray-200)",
-                    }}
-                  >
-                    <option value="all">Tất cả chức vụ</option>
-                    <option value="Người dùng">Người dùng</option>
-                    <option value="Quản trị viên">Quản trị viên</option>
-                    <option value="Người kiểm duyệt">Người kiểm duyệt</option>
-                  </select>
-                </div>
-                <div>
-                  <label
-                    className="block text-sm font-semibold mb-1"
-                    style={{ color: "var(--sfit-green)" }}
-                  >
-                    Ban
-                  </label>
-                  <select
-                    value={filterTeam}
-                    onChange={(e) => {
-                      setFilterTeam(e.target.value);
-                      setShowFilterDropdown(false);
-                    }}
-                    className="border p-1 rounded w-full"
-                    style={{
-                      color: "var(--foreground)",
-                      backgroundColor: "var(--background)",
-                      borderColor: "var(--sfit-gray-200)",
-                    }}
-                  >
-                    <option value="all">Tất cả ban</option>
-                    <option value="Học tập">Học tập</option>
-                    <option value="Hậu cần">Hậu cần</option>
-                    <option value="Đối ngoại">Đối ngoại</option>
-                    <option value="Truyền thông">Truyền thông</option>
-                    <option value="Kỹ thuật">Kỹ thuật</option>
-                    <option value="Data & AI">Data & AI</option>
-                    <option value="IOT">IOT</option>
-                    <option value="Game">Game</option>
-                    <option value="Web">Web</option>
-                    <option value="Chuyên môn">Chuyên môn</option>
-                    <option value="Cán sự">Cán sự</option>
-                    <option value="Chủ nhiệm">Chủ nhiệm</option>
-                  </select>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Chức vụ
+                    </label>
+                    <select
+                      value={filterRole}
+                      onChange={(e) => setFilterRole(e.target.value)}
+                      className="w-full p-2 border rounded-md"
+                      style={{
+                        backgroundColor: "var(--background)",
+                        color: "var(--foreground)",
+                        borderColor: "var(--sfit-gray-200)",
+                      }}
+                    >
+                      <option value="all">Tất cả</option>
+                      <option value="admin">Quản trị viên</option>
+                      <option value="user">Người dùng</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Ban
+                    </label>
+                    <select
+                      value={filterTeam}
+                      onChange={(e) => setFilterTeam(e.target.value)}
+                      className="w-full p-2 border rounded-md"
+                      style={{
+                        backgroundColor: "var(--background)",
+                        color: "var(--foreground)",
+                        borderColor: "var(--sfit-gray-200)",
+                      }}
+                    >
+                      <option value="all">Tất cả</option>
+                      <option value="Học tập">Học tập</option>
+                      <option value="Hậu cần">Hậu cần</option>
+                      <option value="Đối ngoại">Đối ngoại</option>
+                      <option value="Truyền thông">Truyền thông</option>
+                      <option value="Kỹ thuật">Kỹ thuật</option>
+                      <option value="Data & AI">Data & AI</option>
+                      <option value="IOT">IOT</option>
+                      <option value="Game">Game</option>
+                      <option value="Web">Web</option>
+                      <option value="Chuyên môn">Chuyên môn</option>
+                      <option value="Cán sự">Cán sự</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             )}
           </div>
         </div>
         <div className="flex">
-          <div
-            className="cursor-pointer flex items-center justify-center w-16 h-9 bg-white rounded-tl-[20px] rounded-bl-[20px] border-black border-1"
-            onClick={() => {
-              handleClick("line");
-              changeAccountsPerPage(10);
-            }}
-            style={{
-              backgroundColor: "var(--search-bg)",
-            }}
+          <button
+            onClick={() => handleClick("line")}
+            className={`px-4 py-2 rounded-l-2xl ${
+              activeStyle === "line"
+                ? "bg-green-700 text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}
           >
-            {activeStyle == "line" && (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                xmlnsXlink="http://www.w3.org/1999/xlink"
-                width="23"
-                height="23"
-                viewBox="0 0 23 23"
-                fill="none"
-              >
-                <rect width="23" height="23" fill="url(#pattern0_1070_137)" />
-                <defs>
-                  <pattern
-                    id="pattern0_1070_137"
-                    patternContentUnits="objectBoundingBox"
-                    width="1"
-                    height="1"
-                  >
-                    <use xlinkHref="#image0_1070_137" transform="scale(0.01)" />
-                  </pattern>
-                  <image
-                    id="image0_1070_137"
-                    width="100"
-                    height="100"
-                    preserveAspectRatio="none"
-                    xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAACFklEQVR4nO3cP2pVQRSA8UHMHCT+QeIKBGEKzxklQSxtbdyAK7C2M4ULsLQXUQLyZmJj5xYSMKXuwQ0EEpS5CajEkNzivjm8+/1gCAQCQ743lzdw3gsBAAAAAAAAAAAAAAAAAACvXocrvbcwe48+hptW4lsr8WeucpyL/LAqL2b/j+khfb6xYVW+5Sq//rPedNnUrGMUOTgnRlvHtrt2v/c+ZyFdHGNYVuPL3ntdeemSMdrSEl/13u9K051wO1fZv0yMYRV50nvPKyuNOBnD46rEr7wNdhNDDtrfTLWfWdORj6kWY3Pn+p3e+15JSgw/iOGIcjL8UGL4ocTwQ4nhhxLDDyWGH0oMP5QYfigx/FBi+KHE8EOJ4YcSww8lhh9KDD+UGH4oMfxQYpx4WK5u5SKfcpXvVmUv17j9eBGuLTNGYjrk9FW5G5/lKodnRyllb1njMIkYJ9opOB3F7zajlIjxh5b4tOfgWCLGv/Ji7Xmvab5EjLPaZyB6jFgmYpwvV/myzCiJGBe/91/WMHIixogow/1juqFk5dLnJ4oSw08UJYafKEoMP1GUGH6iKDH8RHlQ4z0+Rjah0XeHKkc9bv+zMvak5InuMpgoihHDz0kxYviJYsTwE8WI4SeKEcNPFCOGn3uKcc/oY3MRblmN7/8aJzq0Gt+1L5nstCU09iGsa5W77efwCwAAAAAAAAAAAAAAEBDCbxTxSbNbOaOZAAAAAElFTkSuQmCC"
-                  />
-                </defs>
-              </svg>
-            )}
-
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              xmlnsXlink="http://www.w3.org/1999/xlink"
-              width="27"
-              height="27"
-              viewBox="0 0 27 27"
-              fill="none"
-            >
-              <rect width="27" height="27" fill="url(#pattern0_1070_139)" />
-              <defs>
-                <pattern
-                  id="pattern0_1070_139"
-                  patternContentUnits="objectBoundingBox"
-                  width="1"
-                  height="1"
-                >
-                  <use xlinkHref="#image0_1070_139" transform="scale(0.01)" />
-                </pattern>
-                <image
-                  id="image0_1070_139"
-                  width="100"
-                  height="100"
-                  preserveAspectRatio="none"
-                  xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAABK0lEQVR4nO3cS07DMBQF0EioeWsBVBsWwyZri98I2BSCzjoJMhILaNQojjhH8gbeje0MbjIMAAAAAAAA/1guu9tc4jXV+Mo1Jitmz+B3hiVe7g7jzaww9ofdPtc4CiEu/SAe22zPDiSV8UMYscipkOr4flYYD4fhKtU4CSQWCiRObcYCqRsNxJEVy4ZSxrfzLhCX+rRcGPE961Jv2itaqvGcSnyuvc3zxlebYSrxdP84Xs8KAwAAAAAAAAAA5tF+j8vVgLTfo9el/Z672y3a71Nnx5f2e95yII0PdmK5ULTfo6MwtN+n1UPQfgcAAAAAAAAAYD3a73HJtqJ/v+c+l/Z77m63aL9PnR1f2u95y4E02u+xXCja79FRGNrv0+ohaL8DAAAAAAAMf34ANOZZwo61A5UAAAAASUVORK5CYII="
-                />
-              </defs>
-            </svg>
-          </div>
-          <div
-            className="cursor-pointer flex items-center justify-center w-16 h-9 bg-white rounded-tr-[20px] rounded-br-[20px] border-black border-1"
-            onClick={() => {
-              handleClick("box");
-              changeAccountsPerPage(9);
-            }}
-            style={{
-              backgroundColor: "var(--search-bg)",
-            }}
+            <Rows2 />
+          </button>
+          <button
+            onClick={() => handleClick("box")}
+            className={`px-4 py-2 rounded-r-2xl ${
+              activeStyle === "box"
+                ? "bg-green-700 text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}
           >
-            {activeStyle == "box" && (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                xmlnsXlink="http://www.w3.org/1999/xlink"
-                width="23"
-                height="23"
-                viewBox="0 0 23 23"
-                fill="none"
-              >
-                <rect width="23" height="23" fill="url(#pattern0_1070_137)" />
-                <defs>
-                  <pattern
-                    id="pattern0_1070_137"
-                    patternContentUnits="objectBoundingBox"
-                    width="1"
-                    height="1"
-                  >
-                    <use xlinkHref="#image0_1070_137" transform="scale(0.01)" />
-                  </pattern>
-                  <image
-                    id="image0_1070_137"
-                    width="100"
-                    height="100"
-                    preserveAspectRatio="none"
-                    xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAACFklEQVR4nO3cP2pVQRSA8UHMHCT+QeIKBGEKzxklQSxtbdyAK7C2M4ULsLQXUQLyZmJj5xYSMKXuwQ0EEpS5CajEkNzivjm8+/1gCAQCQ743lzdw3gsBAAAAAAAAAAAAAAAAAACvXocrvbcwe48+hptW4lsr8WeucpyL/LAqL2b/j+khfb6xYVW+5Sq//rPedNnUrGMUOTgnRlvHtrt2v/c+ZyFdHGNYVuPL3ntdeemSMdrSEl/13u9K051wO1fZv0yMYRV50nvPKyuNOBnD46rEr7wNdhNDDtrfTLWfWdORj6kWY3Pn+p3e+15JSgw/iOGIcjL8UGL4ocTwQ4nhhxLDDyWGH0oMP5QYfigx/FBi+KHE8EOJ4YcSww8lhh9KDD+UGH4oMfxQYpx4WK5u5SKfcpXvVmUv17j9eBGuLTNGYjrk9FW5G5/lKodnRyllb1njMIkYJ9opOB3F7zajlIjxh5b4tOfgWCLGv/Ji7Xmvab5EjLPaZyB6jFgmYpwvV/myzCiJGBe/91/WMHIixogow/1juqFk5dLnJ4oSw08UJYafKEoMP1GUGH6iKDH8RHlQ4z0+Rjah0XeHKkc9bv+zMvak5InuMpgoihHDz0kxYviJYsTwE8WI4SeKEcNPFCOGn3uKcc/oY3MRblmN7/8aJzq0Gt+1L5nstCU09iGsa5W77efwCwAAAAAAAAAAAAAAEBDCbxTxSbNbOaOZAAAAAElFTkSuQmCC"
-                  />
-                </defs>
-              </svg>
-            )}
-
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="#15803d"
-              className="lucide lucide-layout-grid-icon lucide-layout-grid"
-            >
-              <rect width="7" height="7" x="3" y="3" rx="1" />
-              <rect width="7" height="7" x="14" y="3" rx="1" />
-              <rect width="7" height="7" x="14" y="14" rx="1" />
-              <rect width="7" height="7" x="3" y="14" rx="1" />
-            </svg>
-          </div>
+            <Grid2X2 />
+          </button>
         </div>
       </div>
-      {activeStyle === "line" ? (
-        <div className="flex flex-col w-full">
-          <div
-            className="flex justify-between items-center py-4  my-2 font-bold"
-            style={{
-              color: "var(--foreground)",
-            }}
-          >
-            <div className="flex-2 text-center">STT</div>
-            <div className="flex-5 text-center">HỌ VÀ TÊN</div>
-            <div className="flex-3 text-center">BAN</div>
-            <div className="flex-3 text-center">CHỨC VỤ</div>
-            <div className="flex-2 text-center">LỚP - KHÓA</div>
-            <div className="flex-1 text-center"></div>
-            <div className="flex-1 text-center"></div>
-            <div className="flex-1 text-center"></div>
-          </div>
-          {loading
-            ? [...Array(5)].map((_, i) => <AccountItemSkeleton key={i} />)
-            : currentPageData.map((account) => (
-                <AccountItem key={account.id} account={account} style="line" />
-              ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {loading
-            ? [...Array(6)].map((_, i) => <AccountItemSkeleton key={i} />)
-            : currentPageData.map((account) => (
-                <AccountItem key={account.id} account={account} style="box" />
-              ))}
-        </div>
-      )}
 
-      <AddAccount state={addAccount} funcClickToBack={setAddAccount} />
+      <div className="my-5">
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center space-x-2">
+            <span>Hiển thị:</span>
+            <select
+              value={accountsPerPage}
+              onChange={(e) => changeAccountsPerPage(Number(e.target.value))}
+              className="border rounded px-2 py-1"
+              style={{
+                backgroundColor: "var(--background)",
+                color: "var(--foreground)",
+                borderColor: "var(--sfit-gray-200)",
+              }}
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+            </select>
+            <span>tài khoản</span>
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="space-y-2">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <AccountItemSkeleton key={index} />
+            ))}
+          </div>
+        ) : accounts.length === 0 ? (
+          <div className="text-center py-8">
+            <div className="mb-4">
+              <svg
+                className="mx-auto h-12 w-12 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                />
+              </svg>
+            </div>
+            <p className="text-gray-500 text-lg font-medium">
+              Không có tài khoản nào
+            </p>
+            <p className="text-gray-400 text-sm mt-2 max-w-md mx-auto">
+              {error
+                ? `Lỗi: ${String(error)}`
+                : "Bạn chưa có tài khoản nào. Vui lòng tạo tài khoản mới."}
+            </p>
+            <div className="mt-4">
+              <button
+                onClick={() => setAddAccount(true)}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              >
+                <svg
+                  className="w-4 h-4 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                </svg>
+                Thêm tài khoản mới
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div
+            className={
+              activeStyle === "box"
+                ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+                : "space-y-2"
+            }
+          >
+            {currentPageData.map((account, i) => (
+              <AccountItem
+                key={`account-${account.userId || i}`}
+                account={account}
+                index={(currentPage - 1) * accountsPerPage + i + 1}
+                style={activeStyle}
+                onAccountUpdated={refetch}
+              />
+            ))}
+          </div>
+        )}
+
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-6">
+            <div className="flex space-x-2">
+              <button
+                onClick={handlePreviousPage}
+                disabled={currentPage === 1}
+                className="px-3 py-2 border rounded disabled:opacity-50"
+                style={{
+                  backgroundColor: "var(--background)",
+                  color: "var(--foreground)",
+                  borderColor: "var(--sfit-gray-200)",
+                }}
+              >
+                Trước
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`px-3 py-2 border rounded ${
+                      currentPage === page ? "bg-green-700 text-white" : ""
+                    }`}
+                    style={{
+                      backgroundColor:
+                        currentPage === page
+                          ? "var(--sfit-green)"
+                          : "var(--background)",
+                      color: "var(--foreground)",
+                      borderColor: "var(--sfit-gray-200)",
+                    }}
+                  >
+                    {page}
+                  </button>
+                )
+              )}
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                className="px-3 py-2 border rounded disabled:opacity-50"
+                style={{
+                  backgroundColor: "var(--background)",
+                  color: "var(--foreground)",
+                  borderColor: "var(--sfit-gray-200)",
+                }}
+              >
+                Sau
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {addAccount && (
+        <AddAccount
+          state={addAccount}
+          funcClickToBack={setAddAccount}
+          onAccountAdded={refetch}
+        />
+      )}
     </div>
   );
 }

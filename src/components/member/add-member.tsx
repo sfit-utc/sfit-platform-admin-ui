@@ -27,6 +27,7 @@ export default function AddMember({
   // Member assignment fields
   const [memberRole, setMemberRole] = useState<string>("");
   const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
+  const [teamRoles, setTeamRoles] = useState<Record<string, string>>({});
   const [availableTeams, setAvailableTeams] = useState<
     Array<{ id: string; name: string }>
   >([]);
@@ -130,8 +131,19 @@ export default function AddMember({
     const { value, checked } = e.target;
     if (checked) {
       setSelectedTeams([...selectedTeams, value]);
+      // Set default role for the team
+      setTeamRoles((prev) => ({
+        ...prev,
+        [value]: "Thành viên",
+      }));
     } else {
       setSelectedTeams(selectedTeams.filter((team) => team !== value));
+      // Remove role for the team
+      setTeamRoles((prev) => {
+        const next = { ...prev };
+        delete next[value];
+        return next;
+      });
     }
   }
 
@@ -173,12 +185,18 @@ export default function AddMember({
       }
 
       const userId = selectedAccount.userId || selectedAccount.id.toString();
-      await memberService.addMemberToTeams(userId, selectedTeams, memberRole);
+
+      // Add user to each selected team with their assigned role
+      for (const teamId of selectedTeams) {
+        const role = teamRoles[teamId] || "Thành viên";
+        await memberService.addUserToTeam(teamId, userId, role);
+      }
 
       // Reset form
       clearSelectedAccount();
       setMemberRole("");
       setSelectedTeams([]);
+      setTeamRoles({});
 
       // Refresh member list before closing
       if (onMemberAdded) {
@@ -205,7 +223,7 @@ export default function AddMember({
   };
 
   return (
-    <Modal className="w-1/2" state={state} funcClickToBack={funcClickToBack}>
+    <Modal className="w-2/3" state={state} funcClickToBack={funcClickToBack}>
       <form
         onSubmit={handleSubmit}
         className="space-y-4 p-6"
@@ -245,9 +263,9 @@ export default function AddMember({
                       Đang tìm kiếm...
                     </div>
                   ) : searchResults.length > 0 ? (
-                    searchResults.map((account) => (
+                    searchResults.map((account, index) => (
                       <div
-                        key={account.id}
+                        key={account.id || account.userId || `account-${index}`}
                         onClick={() => selectAccount(account)}
                         className="p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-200 last:border-b-0"
                       >
@@ -325,84 +343,63 @@ export default function AddMember({
             <div className="*:my-2">
               <div>
                 <label
-                  htmlFor="member-role"
-                  className="block text-sm font-medium"
-                  style={{ color: "var(--sfit-green)" }}
-                >
-                  Chức vụ
-                </label>
-                <select
-                  name="member-role"
-                  id="member-role"
-                  value={memberRole}
-                  onChange={(e) => setMemberRole(e.target.value)}
-                  className="mt-1 w-full p-2 border rounded-md focus:outline-none focus:ring-2"
-                  style={{
-                    backgroundColor: "var(--background)",
-                    color: "var(--foreground)",
-                    borderColor: "var(--sfit-gray-200)",
-                  }}
-                  aria-describedby={
-                    errorRole ? "error-role-message" : undefined
-                  }
-                >
-                  <option value="">Chọn chức vụ</option>
-                  <option value="Trưởng ban">Trưởng ban</option>
-                  <option value="Phó ban">Phó ban</option>
-                  <option value="Thành viên">Thành viên</option>
-                </select>
-                {errorRole && (
-                  <p
-                    id="error-role-message"
-                    className="mt-1 text-sm"
-                    style={{ color: "var(--sfit-red-500)" }}
-                  >
-                    {errorRole}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="*:my-2">
-              <div>
-                <label
                   className="block text-sm font-medium mb-2"
                   style={{ color: "var(--sfit-green)" }}
                 >
-                  Ban trực thuộc
+                  Ban trực thuộc & vai trò theo ban
                 </label>
                 <div
-                  className="border rounded-md p-3 max-h-48 overflow-y-auto"
+                  className="border rounded-md p-3 grid grid-cols-2 min-w-[500px] gap-2 max-h-64 overflow-y-auto"
                   style={{
                     backgroundColor: "var(--background)",
                     borderColor: "var(--sfit-gray-200)",
                   }}
                 >
                   {loadingTeams ? (
-                    <div className="text-sm text-gray-500 text-center py-4">
+                    <div className="col-span-2 text-sm text-gray-500 text-center py-4">
                       Đang tải danh sách ban...
                     </div>
                   ) : availableTeams.length > 0 ? (
-                    availableTeams.map((team) => (
-                      <div key={team.id} className="flex items-center mb-2">
+                    availableTeams.map((team, index) => (
+                      <div
+                        key={team.id || `team-${index}`}
+                        className="flex items-center gap-2 text-sm"
+                      >
                         <input
                           type="checkbox"
                           id={team.id}
                           value={team.id}
                           checked={selectedTeams.includes(team.id)}
                           onChange={handleCheckboxChange}
-                          className="mr-2"
                         />
-                        <label
-                          htmlFor={team.id}
-                          className="text-sm"
-                          style={{ color: "var(--foreground)" }}
-                        >
-                          {team.name}
-                        </label>
+                        <span className="min-w-[100px]">{team.name}</span>
+                        {selectedTeams.includes(team.id) && (
+                          <select
+                            value={teamRoles[team.id] || "Thành viên"}
+                            onChange={(e) =>
+                              setTeamRoles((prev) => ({
+                                ...prev,
+                                [team.id]: e.target.value,
+                              }))
+                            }
+                            className="ml-auto p-1 border rounded"
+                            style={{
+                              backgroundColor: "var(--background)",
+                              color: "var(--foreground)",
+                              borderColor: "var(--sfit-gray-200)",
+                            }}
+                          >
+                            <option value="Chủ nhiệm">Chủ nhiệm</option>
+                            <option value="Phó CN">Phó CN</option>
+                            <option value="Trưởng ban">Trưởng ban</option>
+                            <option value="Phó ban">Phó ban</option>
+                            <option value="Thành viên">Thành viên</option>
+                          </select>
+                        )}
                       </div>
                     ))
                   ) : (
-                    <div className="text-sm text-gray-500 text-center py-4">
+                    <div className="col-span-2 text-sm text-gray-500 text-center py-4">
                       Không có ban nào khả dụng
                     </div>
                   )}

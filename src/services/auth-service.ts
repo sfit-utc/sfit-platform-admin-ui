@@ -63,10 +63,10 @@ class AuthService {
       if (userId) {
         try {
           const profileRes = await apiClient.get<any>(`/user-profiles/${userId}`)
-          const p = profileRes.data
+          const p = profileRes.data.data || profileRes.data
           user = {
             id: userId,
-            email: p?.email || '',
+            email: p?.email || payload.email,
             firstName: p?.full_name?.split(' ')?.slice(0, -1)?.join(' ') || '',
             lastName: p?.full_name?.split(' ')?.slice(-1)?.join(' ') || '',
             role: this.toUiRole(rolesFromJwt, p?.role),
@@ -126,7 +126,7 @@ class AuthService {
         try {
           // Fetch user profile
           const profileRes = await apiClient.get<any>(`/user-profiles/${userId}`)
-          const p = profileRes.data
+          const p = profileRes.data.data || profileRes.data
           user = {
             id: userId,
             email: p?.email || userData.email,
@@ -241,12 +241,50 @@ class AuthService {
 
   async changePassword(passwordData: ChangePasswordRequest): Promise<void> {
     try {
+      // Frontend validation
+      if (!passwordData.currentPassword) {
+        throw new Error('Mật khẩu hiện tại là bắt buộc')
+      }
+      
+      if (!passwordData.newPassword) {
+        throw new Error('Mật khẩu mới là bắt buộc')
+      }
+      
+      if (!passwordData.confirmPassword) {
+        throw new Error('Xác nhận mật khẩu là bắt buộc')
+      }
+      
+      if (passwordData.newPassword !== passwordData.confirmPassword) {
+        throw new Error('Mật khẩu mới và xác nhận mật khẩu không khớp')
+      }
+      
+      if (passwordData.newPassword.length < 6) {
+        throw new Error('Mật khẩu mới phải có ít nhất 6 ký tự')
+      }
+      
+      if (passwordData.currentPassword === passwordData.newPassword) {
+        throw new Error('Mật khẩu mới phải khác mật khẩu hiện tại')
+      }
+
+      // Get user email from stored user data
+      const user = this.getStoredUser()
+      
+      if (!user) {
+        throw new Error('User not found')
+      }
+
+      if (!user.email) {
+        throw new Error('User email not found. Please log in again.')
+      }
+
       const payload = {
+        email: user.email,
         old_password: passwordData.currentPassword,
         new_password: passwordData.newPassword,
       }
       
-      await apiClient.post('/auth/change-password', payload)
+      console.log('Sending change password request:', payload)
+      await apiClient.patch(`/users/${user.id}`, payload)
     } catch (error) {
       console.error('Change password error:', error)
       throw error

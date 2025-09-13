@@ -131,6 +131,7 @@ export default function ChangePasswordForm() {
                   type="button"
                   onClick={() => togglePasswordVisibility("current")}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  tabIndex={-1}
                 >
                   {showPasswords.current ? (
                     <EyeOff className="h-4 w-4 text-gray-400" />
@@ -168,6 +169,7 @@ export default function ChangePasswordForm() {
                   type="button"
                   onClick={() => togglePasswordVisibility("new")}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  tabIndex={-1}
                 >
                   {showPasswords.new ? (
                     <EyeOff className="h-4 w-4 text-gray-400" />
@@ -205,6 +207,7 @@ export default function ChangePasswordForm() {
                   type="button"
                   onClick={() => togglePasswordVisibility("confirm")}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  tabIndex={-1}
                 >
                   {showPasswords.confirm ? (
                     <EyeOff className="h-4 w-4 text-gray-400" />

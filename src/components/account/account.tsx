@@ -5,7 +5,7 @@ import { useAccountStats } from "@/hooks/use-account-service";
 import Loading from "@/components/ui/loading";
 
 export default function Account() {
-  const { data: stats, loading, error } = useAccountStats();
+  const { data: stats, loading, error, refetch } = useAccountStats();
 
   if (loading) {
     return <Loading />;
@@ -17,25 +17,25 @@ export default function Account() {
 
   const accountInfo = [
     {
-      children: "Tổng người dùng",
+      children: "Tổng tài khoản",
       textColor: "sfit-blue",
       bgColor: "sfit-blue-light",
       number: stats.totalUsers,
     },
     {
-      children: "người dùng",
+      children: "Tài khoản hoạt động",
       textColor: "sfit-green",
       bgColor: "sfit-green-light",
       number: stats.activeUsers,
     },
     {
-      children: "Quản trị viên",
+      children: "Lãnh đạo",
       textColor: "sfit-purple",
       bgColor: "sfit-purple-light",
       number: stats.leaders,
     },
     {
-      children: "Người dùng mới",
+      children: "Tài khoản mới",
       textColor: "sfit-yellow",
       bgColor: "sfit-yellow-light",
       number: stats.newUsers,
@@ -62,7 +62,7 @@ export default function Account() {
         })}
       </div>
 
-      <AccountList />
+      <AccountList onAccountUpdated={refetch} />
     </div>
   );
 }

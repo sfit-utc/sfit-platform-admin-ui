@@ -10,6 +10,7 @@ export interface Member {
   status?: 'active' | 'inactive';
   joinDate?: string;
   lastActive?: string;
+  teamRoles?: Record<string, string>; // Map of team name to role in that team
 }
 
 export interface MemberStats {

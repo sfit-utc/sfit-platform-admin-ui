@@ -11,7 +11,7 @@ export default function DeleteModal({
   const { deleteMember, loading } = useMemberManagement();
 
   const handleDelete = async () => {
-    const ok = await deleteMember(memberId);
+    const ok = await deleteMember(String(memberId));
     if (ok) {
       if (onDeleted) onDeleted();
       onClose();
