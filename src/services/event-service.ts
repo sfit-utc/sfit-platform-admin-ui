@@ -1,4 +1,4 @@
-import apiClient from '@/libs/http';
+import apiClient from "@/libs/http";
 import {
   Event,
   EventStatus,
@@ -9,22 +9,26 @@ import {
   QueryUsersInEvent,
   UpdateUserAttendanceReq,
   ApiError,
-} from '@/types/event';
-import { PageListResp } from '@/types/pagination';
+} from "@/types/event";
+import { PageListResp } from "@/types/pagination";
 
 class EventService {
-  async getEvents(params: ListEventReq= {page:1, page_size:20, status:"ONGOING"}):Promise<PageListResp<EventDetailRp[]>>{
-    const response = await apiClient.get('/events', {params});
-    return response.data
+  async getEvents(
+    params: ListEventReq = { page: 1, page_size: 20, status: "ONGOING" }
+  ): Promise<PageListResp<EventDetailRp[]>> {
+    const response = await apiClient.get("/events", { params });
+    return response.data;
   }
-  
+
   async getEventDetail(eventId: string): Promise<EventDetailRp> {
     const response = await apiClient.get(`/events/${eventId}`);
     return response.data;
   }
 
-  async createEvent(event: NewEventRequest): Promise<{ id: string; createdAt: string }> {
-    const response = await apiClient.post('/events', event);
+  async createEvent(
+    event: NewEventRequest
+  ): Promise<{ id: string; createdAt: string }> {
+    const response = await apiClient.post("/events", event);
     return response.data;
   }
 
@@ -33,16 +37,26 @@ class EventService {
     return response.data;
   }
 
-  async deleteEvent(eventId: string): Promise<void> {
+  async deleteEvent(eventId: string): Promise<{ message: string }> {
     await apiClient.delete(`/events/${eventId}`);
+    return { message: "Deleted successfully" };
   }
 
-  async getUsersInEvent(eventId: string, params: QueryUsersInEvent): Promise<PageListResp<any[]>> {
-    const response = await apiClient.get(`/events/${eventId}/users`, { params });
+  async getUsersInEvent(
+    eventId: string,
+    params: QueryUsersInEvent
+  ): Promise<PageListResp<any[]>> {
+    const response = await apiClient.get(`/events/${eventId}/users`, {
+      params,
+    });
     return response.data;
   }
 
-  async updateUserAttendance(eventId: string, userId: string, data: UpdateUserAttendanceReq): Promise<void> {
+  async updateUserAttendance(
+    eventId: string,
+    userId: string,
+    data: UpdateUserAttendanceReq
+  ): Promise<void> {
     await apiClient.put(`/events/${eventId}/users/${userId}/attendance`, data);
   }
   // async getEventById(id: number): Promise<Event> {
@@ -87,7 +101,7 @@ class EventService {
   //     if (eventIndex === -1) {
   //       throw new Error('Event not found');
   //     }
-      
+
   //     mockEvents[eventIndex] = { ...mockEvents[eventIndex], ...eventData };
   //     return mockEvents[eventIndex];
   //   }
@@ -162,7 +176,7 @@ class EventService {
   //   if (USE_MOCK_DATA) {
   //     await this.simulateDelay();
   //     const term = searchTerm.toLowerCase();
-  //     return mockEvents.filter(event => 
+  //     return mockEvents.filter(event =>
   //       event.title.toLowerCase().includes(term) ||
   //       event.address.toLowerCase().includes(term) ||
   //       event.requirements?.toLowerCase().includes(term)

@@ -1,19 +1,28 @@
-import { Event } from "@/types/event";
+import { Event, EventStatus } from "@/types/event";
 import { useEffect } from "react";
-
+import { useEventService } from "@/hooks/use-event-service";
 interface EventItemProps {
   event: Event;
+  status?: EventStatus;
+  onEdit?: (eventId: string) => void;
+  onDelete?: (eventId: string) => void;
   onRegister?: (eventId: string) => void;
   onInfo?: (eventId: string) => void;
   onAttendance?: (eventId: string) => void;
+  onChange?: ()=>void;
 }
 
 export default function EventItem({
   event,
+  status,
   onRegister,
   onInfo,
   onAttendance,
+  onEdit,
+  onDelete,
+  onChange,
 }: EventItemProps) {
+  const {events, deleteEvent, updateEvent} = useEventService();
   const handleRegister = () => {
     if (onRegister && event.id) {
       onRegister(event.id);
@@ -46,28 +55,60 @@ export default function EventItem({
       onAttendance(event.id);
     }
   };
-  const isOngoing = event.status === "ONGOING";
-  const isPast = event.status === "COMPLETED";
-  const isUpcoming = event.status === "UPCOMING";
+  const handleEdit = () => {
+    if (onEdit && event.id) {
+      onEdit(event.id);
+    }
+  };
+
+  const handleDelete = async (eventId: string) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa sự kiện này?")) {
+      await deleteEvent(eventId);
+      if (onDelete) onDelete(eventId);
+      if (onChange) onChange();
+    }
+  };
+
+  const isOngoing = status === "ONGOING";
+  const isPast = status === "COMPLETED";
+  const isUpcoming = status === "UPCOMING";
   return (
-    <div 
+    <div
       className="px-11 py-6 m-2 w-full border-2 bg-white rounded-[5px] shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)]"
       style={{
         backgroundColor: "var(--search-bg)",
       }}
     >
-      <h1 className="text-3xl font-semibold font-inter">{event.title}</h1>
-      <div className="text-red-600 text-xl font-normal font-inter">
-        Thời gian diễn ra: {formatDateTime(event.begin_at)}
-      </div>
-      <div className="text-red-600 text-xl font-normal font-inter">
-        Địa điểm: {event.location}
-      </div>
-      <div className="text-red-600 text-xl font-normal font-inter">
-        Số lượng tham dự: {event.max_people}
-      </div>
-      <div className="text-red-600 text-xl font-normal font-inter">
-        Yêu cầu về sự kiện: {event.description}
+      <div className="flex flex-row justify-between">
+        <div>
+          <h1 className="text-3xl font-semibold font-inter">{event.title}</h1>
+          <div className="text-red-600 text-xl font-normal font-inter">
+            Thời gian diễn ra: {formatDateTime(event.begin_at)}
+          </div>
+          <div className="text-red-600 text-xl font-normal font-inter">
+            Địa điểm: {event.location}
+          </div>
+          <div className="text-red-600 text-xl font-normal font-inter">
+            Số lượng tham dự: {event.max_people}
+          </div>
+          <div className="text-red-600 text-xl font-normal font-inter">
+            Yêu cầu về sự kiện: {event.description}
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={handleEdit}
+            className="cursor-pointer px-4 h-9 bg-green-700 rounded-[5px] flex items-center justify-center text-white text-base font-bold font-inter hover:bg-yellow-800 transition-colors"
+          >
+            Sửa
+          </button>
+          <button
+            onClick={() => event.id && handleDelete(event.id)}
+            className="cursor-pointer px-4 h-9 bg-red-600 rounded-[5px] flex items-center justify-center text-white text-base font-bold font-inter hover:bg-red-700 transition-colors"
+          >
+            Xóa
+          </button>
+        </div>
       </div>
       <div className="flex justify-between gap-4 mt-4">
         {isOngoing && (

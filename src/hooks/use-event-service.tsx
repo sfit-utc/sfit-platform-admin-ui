@@ -80,12 +80,13 @@ export const useEventService = () => {
   }, [fetchEvents]);
 
   // Delete event
-  const deleteEvent = useCallback(async (eventId: string) => {
+    const deleteEvent = useCallback(async (eventId: string) => {
     setLoading(true);
     setError(null);
     try {
-      await eventService.deleteEvent(eventId);
+      const res = await eventService.deleteEvent(eventId);
       await fetchEvents();
+      return res; 
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete event");
       throw err;

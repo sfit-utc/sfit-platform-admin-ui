@@ -2,13 +2,14 @@ import { useEventService } from "@/hooks/use-event-service";
 import EventItem from "@/components/event/event-item";
 import Loading from "@/components/ui/loading";
 import { useEffect } from "react";
-
+import { EventStatus } from "@/types/event";
 interface EventListProps {
-  status?: "ONGOING" | "UPCOMING" | "COMPLETED";
+  status?: EventStatus;
   searchTerm?: string;
+  onChange?: ()=> void;
 }
 
-export default function EventList({ status, searchTerm }: EventListProps) {
+export default function EventList({ status, searchTerm, onChange }: EventListProps) {
   const { events, loading, error, fetchEvents } =
     useEventService();
 
@@ -77,9 +78,11 @@ export default function EventList({ status, searchTerm }: EventListProps) {
         <EventItem
           key={event.id}
           event={event}
+          status= {status}
           onRegister={handleRegister}
           onInfo={handleInfo}
           onAttendance={handleAttendance}
+          onChange={onChange}
         />
       ))}
     </div>
