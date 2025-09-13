@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useTests } from "@/hooks/use-test-service";
-import TestItem from "@/components/class/test-section/test-item";
+import TestItem from "@/components/course/test-section/test-item";
 import Loading from "@/components/ui/loading";
-import CreateTestForm from "@/components/class/test-section/create-test-form";
+import CreateTestForm from "@/components/course/test-section/create-test-form";
 
 export default function TestList({ searchTerm }: { searchTerm: string }) {
   const [currentPage, setCurrentPage] = useState(1);

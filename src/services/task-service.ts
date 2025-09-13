@@ -1,157 +1,73 @@
-import { Task, ApiError } from "@/types/task";
+import { Task, CreateTaskReq, UpdateTaskReq, ListTaskQuery, AddUserTaskReq, ListTaskOfUserReq, ListTasksByEventID, UpdateTaskUserStatusReq, ResponseTasksOfUser, ApiError } from "@/types/task";
+import { PageListResp } from "@/types/pagination";
+import apiClient from "@/libs/http";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
-const USE_MOCK_DATA = true;
 type TaskStatus = "done" | "ongoing" | "upcoming";
 
 function getTaskStatus(task: Task): TaskStatus {
-  if (task.percentComplete === 100) return "done";
-  if (task.percentComplete === 0) return "upcoming";
+  if (task.percent_complete === 100) return "done";
+  if (task.percent_complete === 0) return "upcoming";
   return "ongoing";
 }
-const mockTasks: Task[] = [
-  {
-    id: 1,
-    eventId: 1,
-    title: "Chuẩn bị tài liệu họp",
-    tags: [
-      { label: "Quan trọng", color: "#ff4d4f", textColor: "#fff" },
-      { label: "Họp", color: "#1890ff", textColor: "#fff" },
-    ],
-    description: "Chuẩn bị tài liệu cho cuộc họp tổng kết quý.",
-    startDate: "01/06/2005",
-    deadline: "25/05/2005",
-    assignee: "Nguyễn Văn A",
-    percentComplete: 60,
-  },
-  {
-    id: 2,
-    eventId: 1,
-    title: "Kiểm tra thiết bị",
-    tags: [{ label: "Thiết bị", color: "#52c41a", textColor: "#fff" }],
-    description: "Kiểm tra toàn bộ thiết bị trước sự kiện.",
-    startDate: "01/06/2005",
-    deadline: "25/05/2005",
-    assignee: "Trần Thị B",
-    percentComplete: 30,
-  },
-  {
-    id: 3,
-    eventId: 3,
-    title: "Gửi thư mời",
-    tags: [{ label: "Khách mời", color: "#faad14", textColor: "#fff" }],
-    description: "Gửi thư mời tham dự sự kiện cho khách mời.",
-    startDate: "01/06/2005",
-    deadline: "25/05/2005",
-    assignee: "Lê Văn C",
-    percentComplete: 100,
-  },
-  {
-    id: 4,
-    eventId: 4,
-    title: "Thiết kế poster cho cuộc thi lập trình",
-    tags: [{ label: "Khách mời", color: "#faad14", textColor: "#fff" }],
-    description: "Thiết kế poster",
-    startDate: "01/06/2005",
-    deadline: "25/05/2005",
-    assignee: "Lê Văn C",
-    percentComplete: 0,
-  },
-];
 
 class TaskService {
-  private async handleResponse<T>(response: Response): Promise<T> {
-    if (!response.ok) {
-      const error: ApiError = await response.json();
-      throw new Error(error.message || "Something went wrong");
-    }
-    return response.json();
+  async createTask(data: CreateTaskReq): Promise<Task> {
+    const res = await apiClient.post<{ data: Task }>("/tasks", data);
+    return res.data.data;
   }
-  private async simulateDelay(ms: number = 500): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+
+  async getTaskDetail(taskId: string): Promise<Task> {
+    const res = await apiClient.get<{ data: Task }>(`/tasks/${taskId}`);
+    return res.data.data;
   }
-  async getTasks(): Promise<Task[]> {
-    if (USE_MOCK_DATA) {
-      await this.simulateDelay();
-      return [...mockTasks];
-    }
-    const response = await fetch(`${API_BASE_URL}/tasks`);
-    return this.handleResponse<Task[]>(response);
+
+  async updateTask(taskId: string, data: UpdateTaskReq): Promise<void> {
+    await apiClient.put(`/tasks/${taskId}`, data);
   }
-  async getTaskById(id: number): Promise<Task | undefined> {
-    if (USE_MOCK_DATA) {
-      await this.simulateDelay();
-      const task = mockTasks.find((e) => e.id === id);
-      if (!task) {
-        throw new Error("Task not found");
-      }
-      return task;
-    }
-    const response = await fetch(`${API_BASE_URL}/tasks/${id}`);
-    return this.handleResponse<Task>(response);
+
+  async deleteTask(taskId: string): Promise<void> {
+    await apiClient.delete(`/tasks/${taskId}`);
   }
-  async createTask(task: Omit<Task, "id">): Promise<Task> {
-    if (USE_MOCK_DATA) {
-      await this.simulateDelay();
-      const newTask: Task = { ...task, id: mockTasks.length + 1 };
-      mockTasks.push(newTask);
-      return newTask;
-    }
-    const response = await fetch(`${API_BASE_URL}/tasks`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(task),
-    });
-    return this.handleResponse<Task>(response);
+
+  async getTasks(query: ListTaskQuery): Promise<PageListResp<Task[]>> {
+    const res = await apiClient.get<{ data: PageListResp<Task[]> }>("/tasks", { params: query });
+    return res.data.data;
   }
-  async updateTask(
-    id: number,
-    updates: Partial<Task>
-  ): Promise<Task | undefined> {
-    if (USE_MOCK_DATA) {
-      await this.simulateDelay();
-      const idx = mockTasks.findIndex((task) => task.id === id);
-      if (idx === -1) return undefined;
-      mockTasks[idx] = { ...mockTasks[idx], ...updates };
-      return mockTasks[idx];
-    }
-    const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updates),
-    });
-    return this.handleResponse<Task>(response);
+
+  async listTasksByEventID(eventId: string, query: ListTasksByEventID): Promise<PageListResp<Task[]>> {
+    const res = await apiClient.get<{ data: PageListResp<Task[]> }>(`/events/${eventId}/tasks`, { params: query });
+    return res.data.data;
   }
-  async deleteTask(id: number): Promise<boolean> {
-    if (USE_MOCK_DATA) {
-      await this.simulateDelay();
-      const idx = mockTasks.findIndex((task) => task.id === id);
-      if (idx === -1) return false;
-      mockTasks.splice(idx, 1);
-      return true;
-    }
-    const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
-      method: "DELETE",
-    });
-    await this.handleResponse(response);
-    return true;
+
+  async listTasksByUserID(userId: string, query: ListTaskOfUserReq): Promise<PageListResp<ResponseTasksOfUser[]>> {
+    const res = await apiClient.get<{ data: PageListResp<ResponseTasksOfUser[]> }>(`/tasks/user/${userId}`, { params: query });
+    return res.data.data;
   }
-  async getTasksWithStatus(): Promise<(Task & { status: TaskStatus })[]> {
-    const tasks = await this.getTasks();
-    return tasks.map((task) => ({
-      ...task,
-      status: getTaskStatus(task),
-    }));
+
+  async addUserTask(userId: string, data: AddUserTaskReq): Promise<void> {
+    await apiClient.post(`/tasks/user/${userId}`, data);
   }
-  async getTaskByEventId(eventId: number): Promise<Task[]> {
-    if (USE_MOCK_DATA) {
-      await this.simulateDelay();
-      return mockTasks.filter((task) => task.eventId === eventId);
-    }
-    const response = await fetch(`${API_BASE_URL}/tasks?eventId=${eventId}`);
-    return this.handleResponse<Task[]>(response);
+
+  async deleteUserTask(userId: string, taskId: string): Promise<void> {
+    await apiClient.delete(`/tasks/user/${userId}/${taskId}`);
   }
+
+  async updateTaskUserStatus(userId: string, taskId: string, data: UpdateTaskUserStatusReq): Promise<void> {
+    await apiClient.put(`/tasks/user/${userId}/${taskId}`, data);
+  }
+  // async getTaskByStatus(query: ListTaskQuery, status: "done" | "ongoing" | "upcoming"): Promise<PageListResp<Task[]>> {
+  //   const res = await this.getTasks(query);
+  //   const filteredItems = res.items.filter(task => {
+  //     if (status === "done") return task.percent_complete === 100;
+  //     if (status === "upcoming") return task.percent_complete === 0;
+  //     return task.percent_complete > 0 && task.percent_complete < 100;
+  //   });
+  //   return {
+  //     ...res,
+  //     items: filteredItems
+  //   };
+  // }
+
 }
 
 export const taskService = new TaskService();

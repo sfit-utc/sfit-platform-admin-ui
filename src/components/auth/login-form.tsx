@@ -6,6 +6,7 @@ import Facebook from "@/components/icons/facebook";
 import Google from "@/components/icons/google";
 import { LoaderCircle } from "lucide-react";
 import { authService } from "@/services/auth-service";
+import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
@@ -17,6 +18,7 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -59,11 +61,9 @@ export default function LoginForm() {
     setIsLoading(true);
 
     try {
-      // TODO: Implement actual login logic
-      // Simulate API call
-      const response = await authService.login(formData);
+      await login(formData.email, formData.password, formData.rememberMe);
       console.log("login success");
-      router.push("/");
+      router.push("/home");
       console.log("Login attempt:", formData);
     } catch (error) {
       console.error("Login error:", error);

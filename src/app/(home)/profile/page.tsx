@@ -1,8 +1,8 @@
-import Course from "@/components/course/course";
+import Profile from "@/components/profile/profile";
 export default function page() {
   return (
     <div className="mt-4">
-      <Course />
+      <Profile />
     </div>
   );
 }

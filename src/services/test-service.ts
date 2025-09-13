@@ -1,4 +1,4 @@
-import { Test } from "@/types/class";
+import { Test } from "@/types/course";
 
 export const mockTests: Test[] = [
   {

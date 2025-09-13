@@ -1,10 +1,11 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import { useClassManagement } from "@/hooks/use-class-service";
+import { useCourseService } from "@/hooks/use-course-service";
 import Line from "@/components/ui/line";
 import Modal from "@/components/ui/modal";
+import { CreateCourseRequest, CourseLevel } from "@/types/course";
 
-interface CreateClassFormProps {
+interface CreateCourseFormProps {
   state: boolean;
   funcClickToBack: (b: boolean) => void;
   onCancel: () => void;
@@ -23,19 +24,37 @@ export default function CreateClassForm({
   funcClickToBack,
   onCancel,
   onSuccess,
-}: CreateClassFormProps) {
-  const { createClass, loading } = useClassManagement();
+}: CreateCourseFormProps) {
+  const { createCourse, loading } = useCourseService();
+  // const [formData, setFormData] = useState({
+  //   title: "",
+  //   description: "",
+  //   teacher: "",
+  //   startDate: "",
+  //   endDate: "",
+  //   scheduleStartTime: "",
+  //   scheduleEndTime: "",
+  //   scheduleDays: [] as string[],
+  //   address: "",
+  //   status: "upcoming" as "ongoing" | "upcoming" | "past",
+  // });
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    teacher: "",
+    teachers: "",
     startDate: "",
     endDate: "",
     scheduleStartTime: "",
     scheduleEndTime: "",
     scheduleDays: [] as string[],
     address: "",
-    status: "upcoming" as "ongoing" | "upcoming" | "past",
+    level: "Beginner" as CourseLevel,
+    language: "Vietnamese",
+    type: "",
+    certificate: false,
+    tags: "",
+    target: "",
+    require: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [dayDropdownOpen, setDayDropdownOpen] = useState(false);
@@ -92,10 +111,35 @@ export default function CreateClassForm({
     }
   };
 
+  // const validateForm = () => {
+  //   const newErrors: Record<string, string> = {};
+  //   if (!formData.title.trim()) newErrors.title = "Tên lớp là bắt buộc";
+  //   if (!formData.teacher.trim()) newErrors.teacher = "Giảng viên là bắt buộc";
+  //   if (!formData.startDate) newErrors.startDate = "Ngày bắt đầu là bắt buộc";
+  //   if (!formData.endDate) newErrors.endDate = "Ngày kết thúc là bắt buộc";
+  //   if (
+  //     formData.startDate &&
+  //     formData.endDate &&
+  //     formData.endDate < formData.startDate
+  //   ) {
+  //     newErrors.endDate = "Ngày kết thúc phải sau ngày bắt đầu";
+  //   }
+  //   if (!formData.scheduleStartTime)
+  //     newErrors.scheduleStartTime = "Giờ bắt đầu là bắt buộc";
+  //   if (!formData.scheduleEndTime)
+  //     newErrors.scheduleEndTime = "Giờ kết thúc là bắt buộc";
+  //   if (!formData.scheduleDays.length)
+  //     newErrors.scheduleDays = "Chọn ít nhất một ngày học";
+  //   if (!formData.address.trim()) newErrors.address = "Địa điểm là bắt buộc";
+  //   if (!formData.description.trim())
+  //     newErrors.description = "Mô tả là bắt buộc";
+  //   setErrors(newErrors);
+  //   return Object.keys(newErrors).length === 0;
+  // };
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.title.trim()) newErrors.title = "Tên lớp là bắt buộc";
-    if (!formData.teacher.trim()) newErrors.teacher = "Giảng viên là bắt buộc";
+    if (!formData.teachers.trim()) newErrors.teachers = "Giảng viên là bắt buộc";
     if (!formData.startDate) newErrors.startDate = "Ngày bắt đầu là bắt buộc";
     if (!formData.endDate) newErrors.endDate = "Ngày kết thúc là bắt buộc";
     if (
@@ -117,29 +161,64 @@ export default function CreateClassForm({
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
+    // Chuẩn hóa dữ liệu cho API (JSON)
+    const req: CreateCourseRequest = {
+      title: formData.title,
+      description: formData.description,
+      type: formData.type || "offline",
+      teachers: formData.teachers
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
+      language: formData.language,
+      certificate: formData.certificate,
+      level: formData.level,
+      tags: formData.tags
+        ? formData.tags.split(",").map((t) => t.trim()).filter(Boolean)
+        : [],
+      target: formData.target
+        ? formData.target.split(",").map((t) => t.trim()).filter(Boolean)
+        : [],
+      require: formData.require
+        ? formData.require.split(",").map((t) => t.trim()).filter(Boolean)
+        : [],
+    };
     try {
-      await createClass({
-        ...formData,
-        schedule: `${formData.scheduleDays.join(", ")} ${
-          formData.scheduleStartTime
-        }-${formData.scheduleEndTime}`,
-        time: `${formatDate(formData.startDate)} - ${formatDate(
-          formData.endDate
-        )}`,
-      });
+      await createCourse(req);
       alert("Tạo lớp học thành công!");
       onSuccess();
     } catch (error) {
       alert(
         "Tạo lớp học thất bại: " +
-          (error instanceof Error ? error.message : "Unknown error")
+        (error instanceof Error ? error.message : "Unknown error")
       );
     }
   };
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (!validateForm()) return;
+  //   try {
+  //     await createClass({
+  //       ...formData,
+  //       schedule: `${formData.scheduleDays.join(", ")} ${
+  //         formData.scheduleStartTime
+  //       }-${formData.scheduleEndTime}`,
+  //       time: `${formatDate(formData.startDate)} - ${formatDate(
+  //         formData.endDate
+  //       )}`,
+  //     });
+  //     alert("Tạo lớp học thành công!");
+  //     onSuccess();
+  //   } catch (error) {
+  //     alert(
+  //       "Tạo lớp học thất bại: " +
+  //         (error instanceof Error ? error.message : "Unknown error")
+  //     );
+  //   }
+  // };
 
   return (
     <Modal
@@ -311,7 +390,7 @@ export default function CreateClassForm({
                 type="text"
                 id="teacher"
                 name="teacher"
-                value={formData.teacher}
+                value={formData.teachers}
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 style={{

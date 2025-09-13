@@ -1,7 +1,10 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import SearchBar from "@/components/ui/search-bar";
 import { useTheme } from "@/context/theme-context";
+import { useAuth } from "@/hooks/use-auth";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface NavBarProps {
   activeTitle?: string;
@@ -10,12 +13,37 @@ interface NavBarProps {
 export default function NavBar({ activeTitle = "Trang chủ" }: NavBarProps) {
   // Use theme context
   const { theme, setTheme } = useTheme();
+  const { logout } = useAuth();
+  const router = useRouter();
+  const [openProfile, setOpenProfile] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   const toggleTheme = useCallback(() => {
     setTheme(theme === "dark" ? "light" : "dark");
   }, [theme, setTheme]);
 
   const handleSearch = useCallback((value: string) => {}, []);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
+        setOpenProfile(false);
+      }
+    }
+    if (openProfile) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [openProfile]);
+
+  const handleLogout = useCallback(async () => {
+    await logout();
+    setOpenProfile(false);
+    router.push("/login");
+  }, [logout, router]);
 
   return (
     <div
@@ -118,7 +146,11 @@ export default function NavBar({ activeTitle = "Trang chủ" }: NavBarProps) {
             </svg>
           )}
         </button>
-        <div className="text-black flex justify-center items-center mr-6">
+        <div
+          ref={profileRef}
+          className="text-black flex justify-center items-center mr-6 relative cursor-pointer select-none"
+          onClick={() => setOpenProfile((p) => !p)}
+        >
           <div className="flex flex-col text-right *:font-montserrat ">
             <div
               className="hidden xl:block text-base"
@@ -133,7 +165,7 @@ export default function NavBar({ activeTitle = "Trang chủ" }: NavBarProps) {
               Thành viên
             </div>
           </div>
-          <div className="ml-2">
+          <div className="ml-2 ">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="37"
@@ -161,6 +193,33 @@ export default function NavBar({ activeTitle = "Trang chủ" }: NavBarProps) {
               />
             </svg>
           </div>
+
+          {openProfile && (
+            <div
+              className="absolute right-0 top-full mt-2 w-48 rounded-md shadow-lg z-50 border"
+              style={{
+                backgroundColor: "var(--background)",
+                borderColor: "var(--sfit-gray-200)",
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Link
+                href="/profile"
+                className="block px-4 py-2 text-sm hover:bg-gray-100"
+                style={{ color: "var(--foreground)" }}
+                onClick={() => setOpenProfile(false)}
+              >
+                Go to profile
+              </Link>
+              <button
+                className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                style={{ color: "var(--foreground)" }}
+                onClick={handleLogout}
+              >
+                Log out
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

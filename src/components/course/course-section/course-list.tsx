@@ -1,23 +1,41 @@
 "use client";
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { useClasses } from "@/hooks/use-class-service";
-import ClassItem from "@/components/class/class-section/class-item";
+import { useCourseService } from "@/hooks/use-course-service";
 import Loading from "@/components/ui/loading";
+import { Course } from "@/types/course";
+import CourseItem from "./course-item";
 
-export default function ClassList({ searchTerm }: { searchTerm: string }) {
+const classesPerPage = 6;
+
+export default function CourseList({ searchTerm }: { searchTerm: string }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [classesPerPage, setClassesPerPage] = useState(6); // Show 6 classes per page (2 rows of 3)
+  // const [classesPerPage, setClassesPerPage] = useState(6); // Show 6 classes per page (2 rows of 3)
+  const {
+    loading,
+    error,
+    courses,
+    getListCourse,
+  } = useCourseService();
+  useEffect(() => {
+    getListCourse({
+      title: searchTerm || undefined,
+      page: currentPage,
+      page_size: classesPerPage,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm, currentPage]);
 
   // Use the hook to get classes with search
-  const { data: classes, loading, error } = useClasses(searchTerm);
-
+  // const { data: classes, loading, error } = useClasses(searchTerm);
   // Calculate pagination
-  const totalItems = classes.length;
+  // const totalItems = classes.length;
+  // const totalPages = Math.ceil(totalItems / classesPerPage);
+  // const startIdx = (currentPage - 1) * classesPerPage;
+  // const endIdx = startIdx + classesPerPage;
+  // const currentPageData = classes.slice(startIdx, endIdx);
+  const totalItems = courses && Array.isArray(courses.items) ? courses.items.length : 0;
   const totalPages = Math.ceil(totalItems / classesPerPage);
-  const startIdx = (currentPage - 1) * classesPerPage;
-  const endIdx = startIdx + classesPerPage;
-  const currentPageData = classes.slice(startIdx, endIdx);
-
+  const currentPageData = courses?.items || [];
   // Reset to first page when search term changes
   useEffect(() => {
     setCurrentPage(1);
@@ -68,7 +86,7 @@ export default function ClassList({ searchTerm }: { searchTerm: string }) {
   if (error) {
     return (
       <div className="text-red-500 text-center py-8">
-        Error: {error.message}
+        Error: {error}
       </div>
     );
   }
@@ -91,7 +109,7 @@ export default function ClassList({ searchTerm }: { searchTerm: string }) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {currentPageData.map((classItem) => (
-            <ClassItem key={classItem.id} classItem={classItem} />
+            <CourseItem key={classItem.id} course={classItem} />
           ))}
         </div>
       )}

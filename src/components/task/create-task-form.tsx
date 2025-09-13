@@ -87,7 +87,7 @@ export default function CreateTaskForm({
     try {
       await createTask({
         ...formData,
-        eventId: Number(formData.eventId), // Đảm bảo eventId là số
+        event_id: string(formData.eventId), // Đảm bảo event_id là số
       });
       alert("Tạo nhiệm vụ thành công!");
       onSuccess();

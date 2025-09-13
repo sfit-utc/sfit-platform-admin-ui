@@ -83,10 +83,14 @@ export default function RegisterForm() {
     setIsLoading(true);
 
     try {
-      // TODO: Implement actual registration logic
-      const response = await authService.login(formData);
+      const response = await authService.register({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+      });
       console.log("register success");
-      router.push("/");
+      router.push("/login");
       console.log("Registration attempt:", formData);
       // Redirect to email verification or login page
     } catch (error) {

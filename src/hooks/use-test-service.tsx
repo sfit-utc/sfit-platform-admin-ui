@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Test } from "@/types/class";
+import { Test } from "@/types/course";
 import { TestService } from "@/services/test-service";
 
 const testService = new TestService();
