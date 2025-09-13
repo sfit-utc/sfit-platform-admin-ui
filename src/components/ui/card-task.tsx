@@ -1,39 +1,19 @@
 import React, { useState } from "react";
-import Link from "next/link";
+import { UpdateTaskReq, Task } from "@/types/task";
 import { useTaskService } from "@/hooks/use-task-service";
 interface TaskCardProps {
-  id: number;
-  title: string;
-  tags: { label: string; color: string; textColor: string }[];
-  description: string;
-  startDate: string;
-  deadline: string;
-  assignee: string;
-  percentComplete: number;
+  task: Task;
+  onUpdated?: () => void;
 }
-
-export default function TaskCard({
-  id,
-  title,
-  tags,
-  description,
-  startDate,
-  deadline,
-  assignee,
-  percentComplete,
-  onUpdated,
-}: TaskCardProps & { onUpdated?: () => void }) {
+export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdated?: () => void }) {
   const { updateTask, deleteTask } = useTaskService();
   const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({
-    id,
-    title,
-    tags,
-    description,
-    startDate,
-    deadline,
-    assignee,
-    percentComplete,
+  const [form, setForm] = useState<UpdateTaskReq>({
+    name: task.Name,
+    description: task.Description || "",
+    percent_complete: task.percentComplete,
+    start_date: task.startDate,
+    deadline: task.deadline,
   });
   const handleEditClick = () => setEditing(true);
 
@@ -44,7 +24,7 @@ export default function TaskCard({
   };
 
   const handleSave = async () => {
-    await updateTask(id, form);
+    await updateTask(task.id, form);
     setEditing(false);
     if (onUpdated) onUpdated();
   };
@@ -61,7 +41,7 @@ export default function TaskCard({
           <h3 className="text-2xl font-bold  mb-2 flex justify-between">
             <input
               name="title"
-              value={form.title}
+              value={form.name}
               onChange={handleChange}
               className="mb-2 border p-1 w-full font-bold text-2xl"
               placeholder="Tên nhiệm vụ"
@@ -86,7 +66,7 @@ export default function TaskCard({
         </div>
         <div className="flex flex-wrap gap-2 mb-2">
           {/* Nếu muốn sửa tag thì render input, nếu không thì giữ nguyên */}
-          {form.tags.map((tag, index) => (
+          {/* {form.tags.map((tag, index) => (
             <span
               key={index}
               className="px-2 py-0.5 text-xs rounded-xl"
@@ -97,7 +77,7 @@ export default function TaskCard({
             >
               {tag.label}
             </span>
-          ))}
+          ))} */}
         </div>
         <textarea
           name="description"
@@ -139,7 +119,7 @@ export default function TaskCard({
               Thời gian diễn ra:{" "}
               <input
                 name="startDate"
-                value={form.startDate}
+                value={form.start_date}
                 onChange={handleChange}
                 className="ml-1 border p-1  font-normal"
                 placeholder="Ngày bắt đầu"
@@ -198,7 +178,7 @@ export default function TaskCard({
             </svg>
             <input
               name="assignee"
-              value={form.assignee}
+              // value={form.assignee}
               onChange={handleChange}
               className="ml-1 border p-1  font-normal"
               placeholder="Phụ trách"
@@ -211,7 +191,7 @@ export default function TaskCard({
             <input
               name="percentComplete"
               type="number"
-              value={form.percentComplete}
+              value={form.percent_complete}
               onChange={handleChange}
               className="text-sm font-semibold text-gray-700 border p-1 w-16 text-right"
               min={0}
@@ -221,7 +201,7 @@ export default function TaskCard({
           <div className="w-full h-2 bg-gray-200 rounded">
             <div
               className="h-2 bg-blue-500 rounded"
-              style={{ width: `${form.percentComplete}%` }}
+              style={{ width: `${form.percent_complete}%` }}
             ></div>
           </div>
         </div>
@@ -256,7 +236,7 @@ export default function TaskCard({
     <div className=" rounded-xl shadow border border-gray-200 p-6 mt-2">
       <div className="title">
         <h3 className="text-2xl font-bold  mb-2 flex justify-between">
-          {title}
+          {form.name}
           <div className="flex">
             <div
               className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full cursor-pointer"
@@ -295,7 +275,7 @@ export default function TaskCard({
               className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full cursor-pointer"
               onClick={async () => {
                 if (window.confirm("Bạn có chắc muốn xóa task này?")) {
-                  await deleteTask(id);
+                  await deleteTask(task.id);
                   if (onUpdated) onUpdated();
                 }
               }}
@@ -337,7 +317,7 @@ export default function TaskCard({
           </div>
         </h3>
       </div>
-      <div className="flex flex-wrap gap-2 mb-2">
+      {/* <div className="flex flex-wrap gap-2 mb-2">
         {tags.map((tag, index) => (
           <span
             key={index}
@@ -350,8 +330,8 @@ export default function TaskCard({
             {tag.label}
           </span>
         ))}
-      </div>
-      <p className=" text-sm mb-4">{description}</p>
+      </div> */}
+      <p className=" text-sm mb-4">{form.description}</p>
       <div className="flex flex-col gap-2 mb-2">
         <div className="flex flex-col gap-2 text-sm">
           <span className="text-green-600 font-semibold flex items-center">
@@ -383,7 +363,7 @@ export default function TaskCard({
               </defs>
             </svg>
             Thời gian diễn ra:{" "}
-            <span className="ml-1  font-normal">{startDate}</span>
+            <span className="ml-1  font-normal">{form.start_date}</span>
           </span>
           <span className="text-red-600 font-semibold flex items-center">
             <svg
@@ -413,7 +393,7 @@ export default function TaskCard({
                 />
               </defs>
             </svg>
-            Deadline: <span className="ml-1  font-normal">{deadline}</span>
+            Deadline: <span className="ml-1  font-normal">{form.deadline}</span>
           </span>
         </div>
         <div className="text-green-600 font-semibold flex items-center">
@@ -429,20 +409,20 @@ export default function TaskCard({
               d="M16 16a7 7 0 1 0 0-14a7 7 0 0 0 0 14m-8.5 2A3.5 3.5 0 0 0 4 21.5v.5c0 2.393 1.523 4.417 3.685 5.793C9.859 29.177 12.802 30 16 30s6.14-.823 8.315-2.207C26.477 26.417 28 24.393 28 22v-.5a3.5 3.5 0 0 0-3.5-3.5z"
             />
           </svg>
-          <span className="ml-1  font-normal">Phụ trách: {assignee}</span>
+          {/* <span className="ml-1  font-normal">Phụ trách: {assignee}</span> */}
         </div>
       </div>
       <div className="mb-2">
         <div className="flex items-center justify-between mb-1">
           <span className="text-sm font-semibold text-gray-700">Tiến độ</span>
           <span className="text-sm font-semibold text-gray-700">
-            {percentComplete}%
+            {form.percent_complete}%
           </span>
         </div>
         <div className="w-full h-2 bg-gray-200 rounded">
           <div
             className="h-2 bg-blue-500 rounded"
-            style={{ width: `${percentComplete}%` }}
+            style={{ width: `${form.percent_complete}%` }}
           ></div>
         </div>
       </div>

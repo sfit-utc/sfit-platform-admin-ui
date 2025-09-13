@@ -5,8 +5,8 @@ import EventList from "@/components/event/event-list";
 import CreateEventForm from "@/components/event/create-event-form";
 
 export default function Event() {
-  const [activeTab, setActiveTab] = useState<"ongoing" | "upcoming" | "past">(
-    "ongoing"
+  const [activeTab, setActiveTab] = useState<"ONGOING" | "UPCOMING" | "COMPLETED">(
+    "ONGOING"
   );
   const [searchTerm, setSearchTerm] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -36,9 +36,9 @@ export default function Event() {
           style={{
             backgroundColor: "var(--background)",
           }}
-          onClick={() => setActiveTab("ongoing")}
+          onClick={() => setActiveTab("ONGOING")}
           className={`text-xl font-semibold flex justify-center items-center cursor-pointer w-56 h-12 border-l border-r border-t transition-colors ${
-            activeTab === "ongoing"
+            activeTab === "ONGOING"
               ? "text-green-800 bg-white"
               : "text-gray-600 bg-gray-50"
           }`}
@@ -49,9 +49,9 @@ export default function Event() {
           style={{
             backgroundColor: "var(--background)",
           }}
-          onClick={() => setActiveTab("upcoming")}
+          onClick={() => setActiveTab("UPCOMING")}
           className={`text-xl font-semibold flex justify-center items-center cursor-pointer w-56 h-12 border-l border-r border-t transition-colors ${
-            activeTab === "upcoming"
+            activeTab === "UPCOMING"
               ? "text-green-800 bg-white"
               : "text-gray-600 bg-gray-50"
           }`}
@@ -62,9 +62,9 @@ export default function Event() {
           style={{
             backgroundColor: "var(--background)",
           }}
-          onClick={() => setActiveTab("past")}
+          onClick={() => setActiveTab("COMPLETED")}
           className={`text-xl font-semibold flex justify-center items-center cursor-pointer w-56 h-12 border-l border-r border-t transition-colors ${
-            activeTab === "past"
+            activeTab === "COMPLETED"
               ? "text-green-800 bg-white"
               : "text-gray-600 bg-gray-50"
           }`}

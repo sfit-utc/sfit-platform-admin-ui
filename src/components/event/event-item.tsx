@@ -1,10 +1,11 @@
 import { Event } from "@/types/event";
+import { useEffect } from "react";
 
 interface EventItemProps {
   event: Event;
-  onRegister?: (eventId: number) => void;
-  onInfo?: (eventId: number) => void;
-  onAttendance?: (eventId: number) => void;
+  onRegister?: (eventId: string) => void;
+  onInfo?: (eventId: string) => void;
+  onAttendance?: (eventId: string) => void;
 }
 
 export default function EventItem({
@@ -18,7 +19,22 @@ export default function EventItem({
       onRegister(event.id);
     }
   };
-
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString;
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    return (
+      pad(date.getHours()) +
+      ":" +
+      pad(date.getMinutes()) +
+      " " +
+      pad(date.getDate()) +
+      "/" +
+      pad(date.getMonth() + 1) +
+      "/" +
+      date.getFullYear()
+    );
+  };
   const handleInfo = () => {
     if (onInfo && event.id) {
       onInfo(event.id);
@@ -30,12 +46,11 @@ export default function EventItem({
       onAttendance(event.id);
     }
   };
-
-  const isOngoing = event.status === "ongoing";
-  const isPast = event.status === "past";
-  const isUpcoming = event.status === "upcoming";
+  const isOngoing = event.status === "ONGOING";
+  const isPast = event.status === "COMPLETED";
+  const isUpcoming = event.status === "UPCOMING";
   return (
-    <div
+    <div 
       className="px-11 py-6 m-2 w-full border-2 bg-white rounded-[5px] shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)]"
       style={{
         backgroundColor: "var(--search-bg)",
@@ -43,16 +58,16 @@ export default function EventItem({
     >
       <h1 className="text-3xl font-semibold font-inter">{event.title}</h1>
       <div className="text-red-600 text-xl font-normal font-inter">
-        Thời gian diễn ra: {event.date}
+        Thời gian diễn ra: {formatDateTime(event.begin_at)}
       </div>
       <div className="text-red-600 text-xl font-normal font-inter">
-        Địa điểm: {event.address}
+        Địa điểm: {event.location}
       </div>
       <div className="text-red-600 text-xl font-normal font-inter">
-        Số lượng tham dự: {event.participants}
+        Số lượng tham dự: {event.max_people}
       </div>
       <div className="text-red-600 text-xl font-normal font-inter">
-        Yêu cầu về sự kiện: {event.requirements}
+        Yêu cầu về sự kiện: {event.description}
       </div>
       <div className="flex justify-between gap-4 mt-4">
         {isOngoing && (

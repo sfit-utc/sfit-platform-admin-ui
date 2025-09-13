@@ -1,10 +1,13 @@
 import Line from "@/components/ui/line";
-import { Class } from "@/types/class";
-interface ClassItemProps {
-  classItem: Class;
+import { Course } from "@/types/course";
+import { useEffect } from "react";
+interface CourseItemProps {
+  course: Course;
 }
-
-export default function ClassItem({ classItem }: ClassItemProps) {
+export default function CourseItem({ course }: CourseItemProps) {
+  useEffect(()=>{
+    console.log(course);
+  })
   return (
     <div
       className="flex flex-col h-full p-4 bg-white rounded-[10px] shadow"
@@ -20,7 +23,7 @@ export default function ClassItem({ classItem }: ClassItemProps) {
           }}
         >
           <h1 className="min-h-[3.5rem]  font-inter text-lg font-bold mr-5 line-clamp-2">
-            {classItem.title}
+            {course.title}
           </h1>
 
           <div className="flex">
@@ -91,11 +94,34 @@ export default function ClassItem({ classItem }: ClassItemProps) {
         </div>
         <Line />
         <div className=" font-inter text-sm font-normal my-2 line-clamp-2">
-          {classItem.description}
+          {course.description}
         </div>
         <Line />
+        <div className="*:flex *:justify-start *:gap-2 my-2 *:line-clamp-2 *:truncate">
+          <div>
+            <b>Giảng viên:</b>
+            <span>{course.teachers?.join(", ") || "Chưa cập nhật"}</span>
+          </div>
+          <div>
+            <b>Tag:</b>
+            <span>{course.tags?.join(", ")}</span>
+          </div>
+          
+          {/* <div>
+            <b>Thời lượng:</b>
+            <span>{course.total_time} phút</span>
+          </div>
+          <div>
+            <b>Số bài học:</b>
+            <span>{course.total_lessons}</span>
+          </div>
+          <div>
+            <b>Cấp độ:</b>
+            <span>{course.level}</span>
+          </div> */}
+        </div>
         <div className=" *:flex *:justify-start *:gap-2 my-2 *:line-clamp-2 *:truncate">
-          <div className="">
+          {/* <div className="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -125,8 +151,8 @@ export default function ClassItem({ classItem }: ClassItemProps) {
             </svg>
             Giảng viên:
             <span>{classItem.teacher}</span>
-          </div>
-          <div className="">
+          </div> */}
+          {/* <div className="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -156,8 +182,8 @@ export default function ClassItem({ classItem }: ClassItemProps) {
             </svg>
             Thời gian:
             <span>{classItem.time}</span>
-          </div>
-          <div className="">
+          </div> */}
+          {/* <div className="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -187,8 +213,8 @@ export default function ClassItem({ classItem }: ClassItemProps) {
             </svg>
             Lịch học:
             <span>{classItem.schedule}</span>
-          </div>
-          <div className="">
+          </div> */}
+          {/* <div className="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -218,7 +244,7 @@ export default function ClassItem({ classItem }: ClassItemProps) {
             </svg>
             Địa điểm:
             <span>{classItem.address}</span>
-          </div>
+          </div> */}
         </div>
         <Line />
       </div>

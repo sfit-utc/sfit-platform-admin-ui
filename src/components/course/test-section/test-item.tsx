@@ -1,4 +1,4 @@
-import { Test } from "@/types/class";
+import { Test } from "@/types/course";
 import Line from "@/components/ui/line";
 
 interface TestItemProps {

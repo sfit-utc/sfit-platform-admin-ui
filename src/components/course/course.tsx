@@ -1,12 +1,10 @@
 "use client";
 import { useState } from "react";
 import SearchBar from "@/components/ui/search-bar";
-import ClassList from "@/components/class/class-section/class-list";
-import TestList from "@/components/class/test-section/test-list";
-import CreateClassForm from "@/components/class/class-section/create-class-form";
-import CreateTestForm from "@/components/class/test-section/create-test-form";
-
-export default function Class() {
+import CreateClassForm from "@/components/course/course-section/create-course-form";
+import CreateTestForm from "@/components/course/test-section/create-test-form";
+import CourseList from "@/components/course/course-section/course-list";
+export default function Course() {
   const [activeTab, setActiveTab] = useState<"class" | "test">("class");
   const [searchTerm, setSearchTerm] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -98,9 +96,9 @@ export default function Class() {
 
       {/* Content based on active tab */}
       {activeTab === "class" ? (
-        <ClassList searchTerm={searchTerm} />
+        <CourseList searchTerm={searchTerm} />
       ) : (
-        <TestList searchTerm={searchTerm} />
+        <CourseList searchTerm={searchTerm} />
       )}
       <>
         {activeTab === "class" ? (
