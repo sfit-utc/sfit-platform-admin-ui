@@ -1,6 +1,8 @@
-import { Event, EventStatus } from "@/types/event";
+import { Event, EventStatus, EventDetailRp, UpdateEventRequest } from "@/types/event";
+import { useState } from "react";
 import { useEffect } from "react";
 import { useEventService } from "@/hooks/use-event-service";
+import { useTaskService } from "@/hooks/use-task-service";
 interface EventItemProps {
   event: Event;
   status?: EventStatus;
@@ -9,9 +11,218 @@ interface EventItemProps {
   onRegister?: (eventId: string) => void;
   onInfo?: (eventId: string) => void;
   onAttendance?: (eventId: string) => void;
-  onChange?: ()=>void;
+  onChange?: () => void;
 }
 
+
+function EventDetailModal({
+  event,
+  onClose,
+  onEdit,
+  updateEvent,
+  onChange,
+}: {
+  event: EventDetailRp | null;
+  onClose: () => void;
+  onEdit?: (eventId: string) => void;
+  updateEvent: (data: UpdateEventRequest) => Promise<any>;
+  onChange?: () => void;
+}) {
+  const [editMode, setEditMode] = useState(false);
+  const [form, setForm] = useState<UpdateEventRequest | null>(null);
+  useEffect(() => {
+    if (event) {
+      setForm({
+        id: event.id,
+        title: event.Title,
+        type: event.Type,
+        description: event.Description,
+        priority: event.Priority,
+        location: event.Location ,
+        max_people: event.MaxPeople,
+        agency: event.Agency,
+        status: event.Status ,
+        begin_at: event.BeginAt ,
+        end_at: event.EndAt,
+      });
+    }
+  }, [event]);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (!form) return;
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  const handleSave = async () => {
+  if (form) {
+    try {
+      await updateEvent(form);
+      setEditMode(false);
+      if (onChange) onChange(); 
+      onClose();
+    } catch (e) {
+      alert("Cập nhật sự kiện thất bại!");
+    }
+  }
+};
+  if (!event) return null;
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50"
+      style={{
+        backdropFilter: "blur(4px)",
+        backgroundColor: "rgba(0,0,0,0.05)",
+      }}>
+      <div className="bg-white rounded-lg p-8 min-w-[400px] shadow-lg relative">
+        <button
+          className="absolute top-2 right-2 text-xl font-bold"
+          onClick={onClose}
+        >
+          ×
+        </button>
+        <h2 className="text-2xl font-bold mb-4">
+          {editMode ? (
+            <input
+              name="title"
+              value={form.title}
+              onChange={handleChange}
+              className="border px-2 py-1 w-full"
+            />
+          ) : (
+            event.Title || event.title
+          )}
+        </h2>
+        <div>
+          <b>Loại:</b>{" "}
+          {editMode ? (
+            <input name="type" value={form.type} onChange={handleChange} className="border px-2 py-1 w-full" />
+          ) : (
+            event.Type || event.type
+          )}
+        </div>
+        <div>
+          <b>Mô tả:</b>{" "}
+          {editMode ? (
+            <textarea name="description" value={form.description} onChange={handleChange} className="border px-2 py-1 w-full" />
+          ) : (
+            event.Description || event.description
+          )}
+        </div>
+        <div>
+          <b>Độ ưu tiên:</b>{" "}
+          {editMode ? (
+            <input name="priority" type="number" value={form.priority} onChange={handleChange} className="border px-2 py-1 w-full" />
+          ) : (
+            event.Priority || event.priority
+          )}
+        </div>
+        <div>
+          <b>Địa điểm:</b>{" "}
+          {editMode ? (
+            <input name="location" value={form.location} onChange={handleChange} className="border px-2 py-1 w-full" />
+          ) : (
+            event.Location || event.location
+          )}
+        </div>
+        <div>
+          <b>Số lượng tham dự:</b>{" "}
+          {editMode ? (
+            <input name="max_people" type="number" value={form.max_people} onChange={handleChange} className="border px-2 py-1 w-full" />
+          ) : (
+            event.MaxPeople || event.max_people
+          )}
+        </div>
+        <div>
+          <b>Đơn vị tổ chức:</b>{" "}
+          {editMode ? (
+            <input name="agency" value={form.agency} onChange={handleChange} className="border px-2 py-1 w-full" />
+          ) : (
+            event.Agency || event.agency
+          )}
+        </div>
+        <div>
+          <b>Trạng thái:</b>{" "}
+          {editMode ? (
+            <input name="status" value={form.status} onChange={handleChange} className="border px-2 py-1 w-full" />
+          ) : (
+            event.Status || event.status
+          )}
+        </div>
+        <div>
+          <b>Bắt đầu:</b>{" "}
+          {editMode ? (
+            <input name="begin_at" value={form.begin_at} onChange={handleChange} className="border px-2 py-1 w-full" />
+          ) : (
+            formatDateTime(event.BeginAt || event.begin_at)
+          )}
+        </div>
+        <div>
+          <b>Kết thúc:</b>{" "}
+          {editMode ? (
+            <input name="end_at" value={form.end_at} onChange={handleChange} className="border px-2 py-1 w-full" />
+          ) : (
+            formatDateTime(event.EndAt || event.endAt || event.end_at)
+          )}
+        </div>
+        <div>
+          <b>Ngày tạo:</b> {formatDateTime(event.CreatedAt || event.created_at)}
+        </div>
+        <div>
+          <b>Ngày cập nhật:</b> {formatDateTime(event.UpdatedAt || event.updated_at)}
+        </div>
+        <div>
+          <b>Tags:</b> {event.tags?.join(", ")}
+        </div>
+        <div className="flex gap-2 mt-6">
+          {editMode ? (
+            <>
+              <button
+                className="px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-800 font-bold"
+                onClick={handleSave}
+              >
+                Lưu
+              </button>
+              <button
+                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700 font-bold"
+                onClick={() => setEditMode(false)}
+              >
+                Hủy
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                className="px-4 py-2 bg-green-700 text-white rounded hover:bg-green-800 font-bold"
+                onClick={() => setEditMode(true)}
+              >
+                Sửa
+              </button>
+              <button
+                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700 font-bold"
+                onClick={onClose}
+              >
+                Đóng
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+const formatDateTime = (dateString: string) => {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return dateString;
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return (
+    pad(date.getHours()) +
+    ":" +
+    pad(date.getMinutes()) +
+    " " +
+    pad(date.getDate()) +
+    "/" +
+    pad(date.getMonth() + 1) +
+    "/" +
+    date.getFullYear()
+  );
+};
 export default function EventItem({
   event,
   status,
@@ -22,39 +233,40 @@ export default function EventItem({
   onDelete,
   onChange,
 }: EventItemProps) {
-  const {events, deleteEvent, updateEvent} = useEventService();
+  const [showDetail, setShowDetail] = useState(false);
+  const [detail, setDetail] = useState<EventDetailRp | null>(null);
+  const { events, deleteEvent, updateEvent, fetchEventDetail } = useEventService();
+  const { tasks, fetchTasksByEventID, deleteTask } = useTaskService();
+  const [loadingDetail, setLoadingDetail] = useState(false);
+
+
   const handleRegister = () => {
     if (onRegister && event.id) {
       onRegister(event.id);
     }
   };
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return dateString;
-    const pad = (n: number) => n.toString().padStart(2, "0");
-    return (
-      pad(date.getHours()) +
-      ":" +
-      pad(date.getMinutes()) +
-      " " +
-      pad(date.getDate()) +
-      "/" +
-      pad(date.getMonth() + 1) +
-      "/" +
-      date.getFullYear()
-    );
-  };
-  const handleInfo = () => {
-    if (onInfo && event.id) {
-      onInfo(event.id);
+  const handleInfo = async () => {
+    setLoadingDetail(true);
+    try {
+      const detailData = await fetchEventDetail(event.id);
+      setDetail(detailData);
+      setShowDetail(true);
+      if (onInfo && event.id) {
+        onInfo(event.id);
+      }
+    } catch (e) {
+      alert("Không thể tải chi tiết sự kiện.");
+    } finally {
+      setLoadingDetail(false);
     }
   };
-
   const handleAttendance = () => {
     if (onAttendance && event.id) {
       onAttendance(event.id);
     }
   };
+
+
   const handleEdit = () => {
     if (onEdit && event.id) {
       onEdit(event.id);
@@ -63,6 +275,12 @@ export default function EventItem({
 
   const handleDelete = async (eventId: string) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa sự kiện này?")) {
+      await fetchTasksByEventID(eventId, { page: 1, page_size: 10 });
+      if (tasks && tasks.length > 0) {
+        for (const task of tasks) {
+          await deleteTask(task.id);
+        }
+      }
       await deleteEvent(eventId);
       if (onDelete) onDelete(eventId);
       if (onChange) onChange();
@@ -97,12 +315,6 @@ export default function EventItem({
         </div>
         <div className="flex gap-2">
           <button
-            onClick={handleEdit}
-            className="cursor-pointer px-4 h-9 bg-green-700 rounded-[5px] flex items-center justify-center text-white text-base font-bold font-inter hover:bg-yellow-800 transition-colors"
-          >
-            Sửa
-          </button>
-          <button
             onClick={() => event.id && handleDelete(event.id)}
             className="cursor-pointer px-4 h-9 bg-red-600 rounded-[5px] flex items-center justify-center text-white text-base font-bold font-inter hover:bg-red-700 transition-colors"
           >
@@ -111,6 +323,12 @@ export default function EventItem({
         </div>
       </div>
       <div className="flex justify-between gap-4 mt-4">
+        <button
+          onClick={handleInfo}
+          className="cursor-pointer w-52 h-9 bg-gray-700 rounded-[20px] flex items-center justify-center text-white text-base font-bold font-inter hover:bg-gray-800 transition-colors"
+        >
+          Xem chi tiết
+        </button>
         {isOngoing && (
           <>
             <button
@@ -150,6 +368,16 @@ export default function EventItem({
           </>
         )}
       </div>
+      {showDetail && (
+        <EventDetailModal
+          event={detail}
+          onClose={() => setShowDetail(false)}
+          onEdit={onEdit}
+          updateEvent={updateEvent}
+          onChange={onChange}
+        />
+      )}
     </div>
+
   );
 }

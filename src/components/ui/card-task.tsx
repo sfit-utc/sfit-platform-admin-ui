@@ -5,18 +5,81 @@ interface TaskCardProps {
   task: Task;
   onUpdated?: () => void;
 }
+function formatDateTime(dateString: string) {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return dateString;
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return (
+    pad(date.getHours()) +
+    ":" +
+    pad(date.getMinutes()) +
+    " " +
+    pad(date.getDate()) +
+    "/" +
+    pad(date.getMonth() + 1) +
+    "/" +
+    date.getFullYear()
+  );
+}
+function TaskInfoModal({ task, onClose }: { task: Task; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+      <div className="bg-white rounded-lg shadow-lg p-6 min-w-[320px] max-w-[90vw]">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Thông tin nhiệm vụ</h2>
+          <button
+            className="text-gray-500 hover:text-red-500 text-xl"
+            onClick={onClose}
+            title="Đóng"
+          >
+            ×
+          </button>
+        </div>
+        <div className="space-y-2 text-sm">
+          <div>
+            <span className="font-semibold">Tên nhiệm vụ:</span> {task.Name}
+          </div>
+          <div>
+            <span className="font-semibold">Mô tả:</span> {task.Description || "Không có"}
+          </div>
+          <div>
+            <span className="font-semibold">Ngày bắt đầu:</span> {formatDateTime(task.StartDate)}
+          </div>
+          <div>
+            <span className="font-semibold">Deadline:</span> {formatDateTime(task.Deadline)}
+          </div>
+          <div>
+            <span className="font-semibold">Tiến độ:</span> {task.PercentComplete}%
+          </div>
+          {/* <div>
+            <span className="font-semibold">Người tạo:</span> {task.CreatedBy}
+          </div> */}
+          <div>
+            <span className="font-semibold">Ngày tạo:</span> {formatDateTime(task.CreatedAt)}
+          </div>
+          <div>
+            <span className="font-semibold">Ngày cập nhật:</span> {formatDateTime(task.UpdatedAt)}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdated?: () => void }) {
   const { updateTask, deleteTask } = useTaskService();
   const [editing, setEditing] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
   const [form, setForm] = useState<UpdateTaskReq>({
     name: task.Name,
     description: task.Description || "",
-    percent_complete: task.percentComplete,
-    start_date: task.startDate,
-    deadline: task.deadline,
+    percent_complete: task.PercentComplete,
+    start_date: formatDateTime(task.StartDate),
+    deadline: formatDateTime(task.Deadline),
   });
+  console.log(task);
   const handleEditClick = () => setEditing(true);
-
+  console.log(task);
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -62,9 +125,12 @@ export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdate
                 ❌
               </div>
             </div>
+
           </h3>
+
         </div>
         <div className="flex flex-wrap gap-2 mb-2">
+
           {/* Nếu muốn sửa tag thì render input, nếu không thì giữ nguyên */}
           {/* {form.tags.map((tag, index) => (
             <span
@@ -86,6 +152,7 @@ export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdate
           className="mb-4 border p-1 w-full text-gray-700 text-sm"
           placeholder="Mô tả"
         />
+
         <div className="flex flex-col gap-2 mb-2">
           <div className="flex flex-col gap-2 text-sm">
             <span className="text-green-600 font-semibold flex items-center">
@@ -116,6 +183,7 @@ export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdate
                   />
                 </defs>
               </svg>
+
               Thời gian diễn ra:{" "}
               <input
                 name="startDate"
@@ -239,6 +307,29 @@ export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdate
           {form.name}
           <div className="flex">
             <div
+              className="p-2 text-gray-500 hover:text-blue-600 hover:bg-gray-100 rounded-full cursor-pointer flex items-center"
+              onClick={() => setShowInfo(true)}
+              title="Thông tin task"
+              style={{ transition: "color 0.2s" }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-info-icon lucide-info"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <path d="M12 8h.01" />
+              </svg>
+            </div>
+            <div
               className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full cursor-pointer"
               onClick={handleEditClick}
               title="Chỉnh sửa task"
@@ -316,6 +407,7 @@ export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdate
             </div>
           </div>
         </h3>
+        {showInfo && <TaskInfoModal task={task} onClose={() => setShowInfo(false)} />}
       </div>
       {/* <div className="flex flex-wrap gap-2 mb-2">
         {tags.map((tag, index) => (
@@ -409,7 +501,7 @@ export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdate
               d="M16 16a7 7 0 1 0 0-14a7 7 0 0 0 0 14m-8.5 2A3.5 3.5 0 0 0 4 21.5v.5c0 2.393 1.523 4.417 3.685 5.793C9.859 29.177 12.802 30 16 30s6.14-.823 8.315-2.207C26.477 26.417 28 24.393 28 22v-.5a3.5 3.5 0 0 0-3.5-3.5z"
             />
           </svg>
-          {/* <span className="ml-1  font-normal">Phụ trách: {assignee}</span> */}
+          <span className="ml-1  font-normal">Phụ trách: </span>
         </div>
       </div>
       <div className="mb-2">
@@ -426,30 +518,7 @@ export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdate
           ></div>
         </div>
       </div>
-      <div className="text-green-600 font-semibold flex items-center">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-        >
-          <path
-            fill="rgb(20, 128, 0)"
-            d="M20 21H4V10h2v9h12v-9h2zM3 3h18v6H3zm6.5 8h5c.28 0 .5.22.5.5V13H9v-1.5c0-.28.22-.5.5-.5M5 5v2h14V5z"
-          />
-        </svg>
-        <span className="ml-1  font-normal">
-          Sản phẩm:{" "}
-          <a
-            href="https://drive.google.com/file/d/18SqIEhWmsUi0sTD9aCtEzOhlkzU7RsVT/view?usp=drive_link"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:underline"
-          >
-            https://drive.google.com/file/d/18SqIEhWmsUi0sTD9aCtEzOhlkzU7RsVT/view?usp=drive_link
-          </a>
-        </span>
-      </div>
+
     </div>
   );
 }

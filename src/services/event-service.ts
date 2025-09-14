@@ -32,8 +32,8 @@ class EventService {
     return response.data;
   }
 
-  async updateEvent(event: UpdateEventRequest): Promise<Event> {
-    const response = await apiClient.put(`/events/${event.id}`, event);
+  async updateEvent(event: UpdateEventRequest): Promise<EventDetailRp> {
+    const response = await apiClient.put(`/events`, event);
     return response.data;
   }
 
