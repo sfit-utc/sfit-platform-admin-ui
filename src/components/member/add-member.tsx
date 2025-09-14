@@ -152,18 +152,14 @@ export default function AddMember({
 
     // Clear previous errors
     setErrorAccount(null);
-    setErrorRole(null);
     setErrorTeam(null);
 
     // Validate selected account
     if (!selectedAccount) {
       setErrorAccount("Vui lòng chọn tài khoản để thêm");
       hasError = true;
-    }
-
-    // Validate role
-    if (!memberRole.trim()) {
-      setErrorRole("Vui lòng chọn chức vụ");
+    } else if (!selectedAccount.userId && !selectedAccount.id) {
+      setErrorAccount("Tài khoản được chọn không có ID hợp lệ");
       hasError = true;
     }
 
@@ -193,7 +189,6 @@ export default function AddMember({
 
       // Reset form
       clearSelectedAccount();
-      setMemberRole("");
       setSelectedTeams([]);
       setTeamRoles({});
 
@@ -213,10 +208,8 @@ export default function AddMember({
 
   const handleCancel = () => {
     clearSelectedAccount();
-    setMemberRole("");
     setSelectedTeams([]);
     setErrorAccount(null);
-    setErrorRole(null);
     setErrorTeam(null);
     funcClickToBack(false);
   };
@@ -264,7 +257,11 @@ export default function AddMember({
                   ) : searchResults.length > 0 ? (
                     searchResults.map((account, index) => (
                       <div
-                        key={account.id || account.userId || `account-${index}`}
+                        key={
+                          account.userId ||
+                          account.id.toString() ||
+                          `account-${index}`
+                        }
                         onClick={() => selectAccount(account)}
                         className="p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-200 last:border-b-0"
                       >
