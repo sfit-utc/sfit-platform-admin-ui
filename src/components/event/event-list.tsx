@@ -9,9 +9,9 @@ interface EventListProps {
   onChange?: ()=> void;
 }
 
-export default function EventList({ status, searchTerm }: EventListProps) {
-  const { events, loading, error, fetchEvents } = useEventService();
 export default function EventList({ status, searchTerm, onChange }: EventListProps) {
+  // const { events, loading, error, fetchEvents } = useEventServ ice();
+// export default function EventList({ status, searchTerm, onChange }: EventListProps) {
   const { events, loading, error, fetchEvents } =
     useEventService();
 
