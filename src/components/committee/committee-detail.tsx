@@ -21,7 +21,7 @@ import AddTarget from "./add-target";
 import { committeeDetailService } from "@/services/committee-detail-service";
 
 interface CommitteeDetailProp {
-  id: number;
+  id: string;
 }
 
 export default function CommitteeDetail({ id }: CommitteeDetailProp) {
@@ -38,7 +38,6 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
   const [binTarget, setBinTarget] = useState<number[]>([]);
 
   function handleDeleteTarget(id: number) {
-    console.log("delete target: ", id);
     setBinTarget([...binTarget, id]);
   }
 
@@ -240,10 +239,14 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
       <Panel title="Thành viên" className="mt-2.5">
         {loadMembers ? (
           <Loading className="m-auto w-fit" size={48} />
-        ) : (
+        ) : member && member.length > 0 ? (
           member.map((account) => (
             <MemberItem key={account.id} member={account} style="line" />
           ))
+        ) : (
+          <div className="text-center py-4 text-gray-500">
+            Không có thành viên nào trong ban này
+          </div>
         )}
       </Panel>
       <CommitteeEdit
@@ -255,7 +258,12 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
         state={addingMember}
         funcClickToBack={setAddingMember}
       />
-      <AddTarget state={addTarget} funcClickToBack={setAddTarget} />
+      <AddTarget
+        state={addTarget}
+        funcClickToBack={setAddTarget}
+        committeeId={id.toString()}
+        onTargetAdded={refetchTargets}
+      />
     </div>
   );
 }

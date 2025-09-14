@@ -1,7 +1,9 @@
 "use client";
 import Modal from "@/components/ui/modal";
 import { useMember } from "@/hooks/use-member-service";
+import { memberService } from "@/services/member-service";
 import Avatar from "@/assets/icons/user.svg";
+import { useState, useEffect } from "react";
 
 export default function DetailModal({
   open,
@@ -10,9 +12,51 @@ export default function DetailModal({
 }: {
   open: boolean;
   onClose: () => void;
-  memberId: number;
+  memberId: string;
 }) {
   const { data: member, loading } = useMember(memberId);
+  const [activeTeam, setActiveTeam] = useState<string>("");
+  const [displayRole, setDisplayRole] = useState<string>("");
+
+  const getRoleStyle = (role: string) => {
+    switch (role) {
+      case "Chủ nhiệm":
+        return "text-purple-600 font-bold bg-purple-100";
+      case "Phó CN":
+        return "text-pink-500 font-semibold bg-pink-100";
+      case "Trưởng ban":
+        return "text-red-600 font-bold bg-red-100";
+      case "Phó ban":
+        return "text-orange-500 font-semibold bg-orange-100";
+      case "Thành viên":
+        return "text-green-700 bg-green-100";
+      default:
+        return "text-gray-700 bg-gray-100";
+    }
+  };
+
+  useEffect(() => {
+    if (member && open) {
+      setActiveTeam(member.teams?.[0] || "");
+      setDisplayRole(member.role || "Thành viên");
+    }
+  }, [member, open]);
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      if (!activeTeam || !member) return;
+
+      const userId = member.userId || String(member.id);
+      if (!userId || userId === "undefined" || userId === "NaN") {
+        setDisplayRole("Thành viên");
+        return;
+      }
+
+      const role = await memberService.getTeamMemberRole(activeTeam, userId);
+      setDisplayRole(role);
+    };
+    fetchRole();
+  }, [activeTeam, member, memberId]);
   return (
     <Modal
       state={open}
@@ -38,13 +82,19 @@ export default function DetailModal({
               />
               <div>
                 <div className="text-lg font-bold">{member.name}</div>
-                <div className="text-sm opacity-80">Mã: {member.id}</div>
+                <div className="text-sm opacity-80">Mã: {member.userId}</div>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <div className="text-sm opacity-70">Chức vụ</div>
-                <div className="font-medium">{member.role}</div>
+                <div
+                  className={`text-center py-1 px-3 w-fit ${getRoleStyle(
+                    displayRole
+                  )} rounded-sm text-sm font-semibold`}
+                >
+                  {displayRole}
+                </div>
               </div>
               <div>
                 <div className="text-sm opacity-70">Lớp</div>
@@ -64,7 +114,28 @@ export default function DetailModal({
                   {member.teams?.map((t: string) => (
                     <span
                       key={t}
-                      className="bg-amber-100 text-amber-800 px-2 py-1 rounded text-sm"
+                      className={`bg-amber-100 text-amber-800 px-2 py-1 rounded text-sm cursor-pointer hover:bg-amber-200 transition-colors ${
+                        activeTeam === t ? "ring-2 ring-amber-300" : ""
+                      }`}
+                      onClick={async () => {
+                        setActiveTeam(t);
+
+                        const userId = member.userId || String(member.id);
+                        if (
+                          !userId ||
+                          userId === "undefined" ||
+                          userId === "NaN"
+                        ) {
+                          setDisplayRole("Thành viên");
+                          return;
+                        }
+
+                        const role = await memberService.getTeamMemberRole(
+                          t,
+                          userId
+                        );
+                        setDisplayRole(role);
+                      }}
                     >
                       {t}
                     </span>

@@ -1,6 +1,7 @@
 "use client";
 import { MemberListItem } from "@/types/member";
 import { useState, useRef, useEffect } from "react";
+import { memberService } from "@/services/member-service";
 import Avatar from "@/assets/icons/user.svg";
 import { SquarePen, Trash, User } from "lucide-react";
 import DetailModal from "@/components/ui/detail-modal";
@@ -10,9 +11,14 @@ import DeleteModal from "@/components/ui/delete-modal";
 interface MemberItemProps {
   member: MemberListItem;
   style?: string;
+  onMemberUpdated?: () => void;
 }
 
-export default function MemberItem({ member, style }: MemberItemProps) {
+export default function MemberItem({
+  member,
+  style,
+  onMemberUpdated,
+}: MemberItemProps) {
   // Early return if member is undefined
   if (!member) {
     return null;
@@ -26,16 +32,14 @@ export default function MemberItem({ member, style }: MemberItemProps) {
 
   const getRoleStyle = (role: string) => {
     switch (role) {
-      case "Chủ nhiệm":
-        return "text-purple-600 font-bold bg-purple-100";
-      case "Phó CN":
-        return "text-pink-500 font-semibold bg-pink-100";
       case "Trưởng ban":
-        return "text-red-600 font-bold bg-red-100";
+        return "text-purple-600 font-bold bg-purple-100";
       case "Phó ban":
-        return "text-orange-500 font-semibold bg-orange-100";
+        return "text-pink-500 font-semibold bg-pink-100";
       case "Thành viên":
         return "text-green-700 bg-green-100";
+      default:
+        return "text-gray-600 bg-gray-100";
     }
   };
 
@@ -56,8 +60,53 @@ export default function MemberItem({ member, style }: MemberItemProps) {
     };
   }, []);
 
-  const firstTeam = member?.teams?.[0] || "";
+  const [activeTeam, setActiveTeam] = useState<string>(
+    member?.teams?.[0] || ""
+  );
+  const [displayRole, setDisplayRole] = useState<string>(member.role);
+  const [teamRoles, setTeamRoles] = useState<Record<string, string>>({});
+  const firstTeam = activeTeam;
   const hasMultipleTeams = member?.teams && member.teams.length > 1;
+
+  useEffect(() => {
+    setActiveTeam(member?.teams?.[0] || "");
+    setDisplayRole(member.role);
+  }, [member]);
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      if (!activeTeam) return;
+      const role = await memberService.getTeamMemberRole(
+        activeTeam,
+        member.userId || String(member.id)
+      );
+      setDisplayRole(role);
+    };
+    fetchRole();
+  }, [activeTeam, member.id, member.userId]);
+
+  // Load all team roles for box view
+  useEffect(() => {
+    const loadAllTeamRoles = async () => {
+      if (!member?.teams) return;
+
+      const roles: Record<string, string> = {};
+      for (const team of member.teams) {
+        try {
+          const role = await memberService.getTeamMemberRole(
+            team,
+            member.userId || String(member.id)
+          );
+          roles[team] = role;
+        } catch (error) {
+          roles[team] = "Thành viên";
+        }
+      }
+      setTeamRoles(roles);
+    };
+
+    loadAllTeamRoles();
+  }, [member?.teams, member.userId, member.id]);
 
   const lineView = (
     <div
@@ -68,8 +117,11 @@ export default function MemberItem({ member, style }: MemberItemProps) {
       }}
     >
       <div className="flex-2 text-center font-bold text-2xl">{member.id}</div>
-      <div className="flex-5 text-left font-bold text-2xl whitespace-nowrap overflow-hidden text-ellipsis">
-        {member.name}
+      <div className="flex-5 text-left">
+        <div className="font-bold text-2xl whitespace-nowrap overflow-hidden text-ellipsis">
+          {member.name || "Unknown"}
+        </div>
+        <div className="text-sm text-gray-500">{member.email || "unknown"}</div>
       </div>
       <div className="flex-3 text-left relative" ref={dropdownRef}>
         <button
@@ -110,6 +162,15 @@ export default function MemberItem({ member, style }: MemberItemProps) {
                 <div
                   key={team}
                   className="py-1 px-3 hover:bg-amber-50 rounded text-sm cursor-pointer"
+                  onClick={async () => {
+                    setActiveTeam(team);
+                    setShowTeamsDropdown(false);
+                    const role = await memberService.getTeamMemberRole(
+                      team,
+                      member.userId || String(member.id)
+                    );
+                    setDisplayRole(role);
+                  }}
                 >
                   {team}
                 </div>
@@ -121,10 +182,10 @@ export default function MemberItem({ member, style }: MemberItemProps) {
       <div className="flex-3 flex justify-center items-center">
         <div
           className={`text-center py-1 px-4 w-fit ${getRoleStyle(
-            member.role
+            displayRole
           )} rounded-full text-sm font-semibold whitespace-nowrap`}
         >
-          {member.role}
+          {displayRole}
         </div>
       </div>
       <div className="flex-2 flex justify-center items-center">
@@ -180,19 +241,25 @@ export default function MemberItem({ member, style }: MemberItemProps) {
             className="w-24 h-24 rounded-full"
           />
           <h3 className="text-lg font-semibold mt-2 text-center">
-            {member.name}
+            {member.name || "Unknown"}
           </h3>
+          <span className="text-sm text-gray-500 mt-1">
+            {member.email || "unknown"}
+          </span>
+
+          {/* Display Selected Team's Role */}
+          <div className="mt-2"></div>
         </div>
 
         <div className="space-y-2">
           <div className="flex justify-between">
             <span className="font-medium">Chức vụ:</span>
             <span
-              className={`${getRoleStyle(
-                member.role
-              )} px-2 py-1 rounded text-sm`}
+              className={`text-center py-1 px-4 w-fit ${getRoleStyle(
+                displayRole
+              )} rounded-sm text-sm font-semibold`}
             >
-              {member.role}
+              {displayRole}
             </span>
           </div>
           <div className="flex justify-between">
@@ -207,7 +274,17 @@ export default function MemberItem({ member, style }: MemberItemProps) {
               {member?.teams?.map((team, index) => (
                 <span
                   key={index}
-                  className="bg-amber-100 text-amber-800 px-2 py-1 rounded text-sm"
+                  className={`bg-amber-100 text-amber-800 px-2 py-1 rounded text-sm cursor-pointer hover:bg-amber-200 transition-colors ${
+                    activeTeam === team ? "ring-2 ring-amber-300" : ""
+                  }`}
+                  onClick={async () => {
+                    setActiveTeam(team);
+                    const role = await memberService.getTeamMemberRole(
+                      team,
+                      member.userId || String(member.id)
+                    );
+                    setDisplayRole(role);
+                  }}
                 >
                   {team}
                 </span>
@@ -246,17 +323,48 @@ export default function MemberItem({ member, style }: MemberItemProps) {
       <DetailModal
         open={openView}
         onClose={() => setOpenView(false)}
-        memberId={member.id}
+        memberId={String(member.userId || member.id)}
       />
       <EditModal
         open={openEdit}
         onClose={() => setOpenEdit(false)}
-        memberId={member.id}
+        memberId={member.userId || member.id}
+        onSaved={() => {
+          // Refresh team roles when member is updated
+          const loadAllTeamRoles = async () => {
+            if (!member?.teams) return;
+
+            const roles: Record<string, string> = {};
+            for (const team of member.teams) {
+              try {
+                const role = await memberService.getTeamMemberRole(
+                  team,
+                  member.userId || String(member.id)
+                );
+                roles[team] = role;
+              } catch (error) {
+                roles[team] = "Thành viên";
+              }
+            }
+            setTeamRoles(roles);
+          };
+
+          loadAllTeamRoles();
+
+          if (onMemberUpdated) {
+            onMemberUpdated();
+          }
+        }}
       />
       <DeleteModal
         open={openDelete}
         onClose={() => setOpenDelete(false)}
-        memberId={member.id}
+        memberId={member.userId || member.id}
+        onDeleted={() => {
+          if (onMemberUpdated) {
+            onMemberUpdated();
+          }
+        }}
       />
     </>
   );

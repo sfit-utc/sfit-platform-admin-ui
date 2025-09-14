@@ -9,16 +9,15 @@ interface EventListProps {
 }
 
 export default function EventList({ status, searchTerm }: EventListProps) {
-  const { events, loading, error, fetchEvents } =
-    useEventService();
+  const { events, loading, error, fetchEvents } = useEventService();
 
-    useEffect(()=>{
-      fetchEvents({
-        page:1,
-        page_size:20,
-        status: status? status.toUpperCase() : undefined,
-      });
-    }, [status, fetchEvents]);
+  useEffect(() => {
+    fetchEvents({
+      page: 1,
+      page_size: 20,
+      status: status ? status.toUpperCase() : undefined,
+    });
+  }, [status, fetchEvents]);
   const handleRegister = async (eventId: string) => {
     try {
       // You would typically get userId from auth context
@@ -35,12 +34,10 @@ export default function EventList({ status, searchTerm }: EventListProps) {
 
   const handleInfo = (eventId: string) => {
     // Navigate to event details or show modal
-    console.log("Show info for event:", eventId);
   };
 
   const handleAttendance = (eventId: string) => {
     // Handle attendance logic
-    console.log("Mark attendance for event:", eventId);
   };
 
   // Filter events based on status and search term
@@ -52,7 +49,7 @@ export default function EventList({ status, searchTerm }: EventListProps) {
       event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.description?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return  matchesSearch ;
+    return matchesSearch;
   });
 
   if (loading) {

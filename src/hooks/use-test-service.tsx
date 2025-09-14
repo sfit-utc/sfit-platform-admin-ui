@@ -30,7 +30,6 @@ export function useTestManagement() {
       // For now, just simulate creating a test
       // In a real app, you'd call testService.createTest(testData)
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log("Creating test:", testData);
       return testData as Test;
     } catch (error) {
       throw error;

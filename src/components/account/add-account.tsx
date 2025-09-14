@@ -1,377 +1,349 @@
 import Modal from "@/components/ui/modal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { accountService } from "@/services/account-service";
 
 interface AddAccountProp {
   funcClickToBack: (b: boolean) => void;
   state: boolean;
+  onAccountAdded?: () => void; // Callback to refresh account list
 }
 
-export default function AddAccount({ state, funcClickToBack }: AddAccountProp) {
-  const [accountID, setAccountID] = useState<string>("");
-  const [accountName, setAccountName] = useState<string>("");
-  const [accountClass, setAccountClass] = useState<string>("");
-  const [accountTeam, setAccountTeam] = useState<string>("");
-  const [accountEmail, setAccountEmail] = useState<string>("");
-  const [accountRole, setAccountRole] = useState<string>("");
+export default function AddAccount({
+  state,
+  funcClickToBack,
+  onAccountAdded,
+}: AddAccountProp) {
+  // Form fields
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "user",
+    class: "",
+  });
 
-  //Sẽ sửa
-  const teamList = [
-    "Học tập",
-    "Hậu cần",
-    "Đối ngoại",
-    "Truyền thông",
-    "Kỹ thuật",
-    "Data & AI",
-    "IOT",
-    "Game",
-    "Web",
-    "Chuyên môn",
-    "Cán sự",
-    "Chủ nhiệm",
-  ];
-  const [errorID, setErrorID] = useState<string | null>(null);
-  const [errorName, setErrorName] = useState<string | null>(null);
-  const [errorEmail, setErrorEmail] = useState<string | null>(null);
-  const [errorClass, setErrorClass] = useState<string | null>(null);
-  const [errorRole, setErrorRole] = useState<string | null>(null);
-  const [errorTeam, setErrorTeam] = useState<string | null>(null);
-  const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  function handleCheckboxChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const { value, checked } = e.target;
-    if (checked) {
-      setSelectedTeams([...selectedTeams, value]);
-    } else {
-      setSelectedTeams(selectedTeams.filter((team) => team !== value));
+  // Reset form when modal closes
+  useEffect(() => {
+    if (!state) {
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        role: "user",
+        class: "",
+      });
+      setErrors({});
     }
-  }
+  }, [state]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    let hasError = false;
-    if (!accountID.trim()) {
-      setErrorID("Vui lòng nhập mã sinh viên");
-      hasError = true;
-    } else {
-      setErrorID(null);
+  // Handle input changes
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
     }
-    if (!accountName.trim()) {
-      setErrorName("Vui lòng nhập họ và tên");
-      hasError = true;
-    } else {
-      setErrorName(null);
-    }
-    if (!accountEmail.trim()) {
-      setErrorEmail("Vui lòng nhập email");
-      hasError = true;
-    } else {
-      setErrorEmail(null);
-    }
-    if (!accountClass.trim()) {
-      setErrorClass("Vui lòng nhập lớp - khoa");
-      hasError = true;
-    } else {
-      setErrorClass(null);
-    }
-    if (!accountRole.trim()) {
-      setErrorRole("Vui lòng chọn chức vụ");
-      hasError = true;
-    } else {
-      setErrorRole(null);
-    }
-    if (selectedTeams.length === 0) {
-      setErrorTeam("Vui lòng chọn ban trực thuộc");
-      hasError = true;
-    } else {
-      setErrorTeam(null);
-    }
-    if (hasError) return;
-    setAccountID("");
-    setAccountClass("");
-    setAccountEmail("");
-    setAccountRole("");
-    setAccountTeam("");
-    setAccountName("");
-    setSelectedTeams([]);
-    funcClickToBack(false);
   };
 
-  const handleCancel = () => {
-    setAccountID("");
-    setAccountName("");
-    setAccountClass("");
-    setAccountEmail("");
-    setAccountRole("");
-    setAccountTeam("");
-    setSelectedTeams([]);
-    setErrorID(null);
-    setErrorName(null);
-    setErrorEmail(null);
-    setErrorClass(null);
-    setErrorRole(null);
-    setErrorTeam(null);
-    funcClickToBack(false);
+  // Validate form
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Vui lòng nhập họ tên";
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Vui lòng nhập email";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Email không hợp lệ";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Vui lòng nhập mật khẩu";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+    }
+
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Vui lòng xác nhận mật khẩu";
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Mật khẩu xác nhận không khớp";
+    }
+
+    if (!formData.role) {
+      newErrors.role = "Vui lòng chọn vai trò";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Step 1: Register the user first
+      const registerData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+        class: formData.class,
+      };
+
+      const newUser = await accountService.createAccount(registerData);
+
+      // Step 2: Add role to the newly created user
+      if (newUser && newUser.id) {
+        await accountService.updateUserRole(newUser.id, formData.role);
+      }
+
+      // Success - close modal and refresh list
+      if (onAccountAdded) {
+        onAccountAdded();
+      }
+      funcClickToBack(false);
+    } catch (error: any) {
+      console.error("Error creating account:", error);
+
+      // Handle specific error cases
+      if (error.message?.includes("email already exists")) {
+        setErrors({ email: "Email đã tồn tại" });
+      } else if (error.message?.includes("Failed to update user role")) {
+        setErrors({
+          general:
+            "Tài khoản đã được tạo nhưng không thể cập nhật vai trò. Vui lòng thử lại.",
+        });
+      } else {
+        setErrors({ general: "Có lỗi xảy ra khi tạo tài khoản" });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <Modal className="w-1/2" state={state} funcClickToBack={funcClickToBack}>
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-4 p-6"
-        style={{
-          backgroundColor: "var(--background)",
-          color: "var(--foreground)",
-        }}
-      >
+    <Modal
+      state={state}
+      funcClickToBack={() => funcClickToBack(false)}
+      className="w-2/3"
+    >
+      <form onSubmit={handleSubmit} className="space-y-6 p-6">
         <h2
-          className="text-xl font-semibold"
+          className="text-xl font-semibold mb-6"
           style={{ color: "var(--sfit-green)" }}
         >
-          Thêm Người Dùng
+          Tạo tài khoản mới
         </h2>
-        <div className="flex justify-around">
-          <div className="*:my-2">
+
+        {errors.general && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-red-600 text-sm">{errors.general}</p>
+          </div>
+        )}
+
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left Column */}
+          <div className="space-y-4">
+            {/* Name Field */}
             <div>
-              <label
-                htmlFor="account-id"
-                className="block text-sm font-medium"
-                style={{ color: "var(--sfit-green)" }}
-              >
-                Mã sinh viên
+              <label htmlFor="name" className="block text-sm font-medium mb-2">
+                Họ và tên *
               </label>
               <input
                 type="text"
-                name="account-id"
-                id="account-id"
-                value={accountID}
-                onChange={(e) => setAccountID(e.target.value)}
-                className="mt-1 w-full p-2 border rounded-md focus:outline-none focus:ring-2"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                  errors.name ? "border-red-500" : "border-gray-300"
+                }`}
                 style={{
                   backgroundColor: "var(--background)",
                   color: "var(--foreground)",
-                  borderColor: "var(--sfit-gray-200)",
                 }}
-                placeholder="VD: 231238888"
-                aria-describedby={errorID ? "error-id-message" : undefined}
+                placeholder="Nhập họ và tên"
               />
-              {errorID && (
-                <p
-                  id="error-id-message"
-                  className="mt-1 text-sm"
-                  style={{ color: "var(--sfit-red-500)" }}
-                >
-                  {errorID}
-                </p>
+              {errors.name && (
+                <p className="mt-1 text-sm text-red-600">{errors.name}</p>
               )}
             </div>
+
+            {/* Email Field */}
             <div>
-              <label
-                htmlFor="account-name"
-                className="block text-sm font-medium"
-                style={{ color: "var(--sfit-green)" }}
-              >
-                Họ và tên
-              </label>
-              <input
-                type="text"
-                name="account-name"
-                id="account-name"
-                value={accountName}
-                onChange={(e) => setAccountName(e.target.value)}
-                className="mt-1 w-full p-2 border rounded-md focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: "var(--background)",
-                  color: "var(--foreground)",
-                  borderColor: "var(--sfit-gray-200)",
-                }}
-                placeholder="VD: Nguyễn Đức Mạnh"
-                aria-describedby={errorName ? "error-name-message" : undefined}
-              />
-              {errorName && (
-                <p
-                  id="error-name-message"
-                  className="mt-1 text-sm"
-                  style={{ color: "var(--sfit-red-500)" }}
-                >
-                  {errorName}
-                </p>
-              )}
-            </div>
-            <div>
-              <label
-                htmlFor="account-email"
-                className="block text-sm font-medium"
-                style={{ color: "var(--sfit-green)" }}
-              >
-                Email
+              <label htmlFor="email" className="block text-sm font-medium mb-2">
+                Email *
               </label>
               <input
                 type="email"
-                name="account-email"
-                id="account-email"
-                value={accountEmail}
-                onChange={(e) => setAccountEmail(e.target.value)}
-                className="mt-1 w-full p-2 border rounded-md focus:outline-none focus:ring-2"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                  errors.email ? "border-red-500" : "border-gray-300"
+                }`}
                 style={{
                   backgroundColor: "var(--background)",
                   color: "var(--foreground)",
-                  borderColor: "var(--sfit-gray-200)",
                 }}
-                placeholder="VD: nkdkhtl@gmail.com"
-                aria-describedby={
-                  errorEmail ? "error-email-message" : undefined
-                }
+                placeholder="Nhập email"
               />
-              {errorEmail && (
-                <p
-                  id="error-email-message"
-                  className="mt-1 text-sm"
-                  style={{ color: "var(--sfit-red-500)" }}
-                >
-                  {errorEmail}
-                </p>
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
               )}
             </div>
+
+            {/* Password Field */}
             <div>
               <label
-                htmlFor="account-class"
-                className="block text-sm font-medium"
-                style={{ color: "var(--sfit-green)" }}
+                htmlFor="password"
+                className="block text-sm font-medium mb-2"
               >
-                Lớp - Khoa
+                Mật khẩu *
               </label>
               <input
-                type="text"
-                name="account-class"
-                id="account-class"
-                value={accountClass}
-                onChange={(e) => setAccountClass(e.target.value)}
-                className="mt-1 w-full p-2 border rounded-md focus:outline-none focus:ring-2"
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                  errors.password ? "border-red-500" : "border-gray-300"
+                }`}
                 style={{
                   backgroundColor: "var(--background)",
                   color: "var(--foreground)",
-                  borderColor: "var(--sfit-gray-200)",
                 }}
-                placeholder="VD: CNTT2 - K64"
-                aria-describedby={
-                  errorClass ? "error-class-message" : undefined
-                }
+                placeholder="Nhập mật khẩu (ít nhất 6 ký tự)"
               />
-              {errorClass && (
-                <p
-                  id="error-class-message"
-                  className="mt-1 text-sm"
-                  style={{ color: "var(--sfit-red-500)" }}
-                >
-                  {errorClass}
-                </p>
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
               )}
             </div>
             <div>
               <label
-                htmlFor="account-role"
-                className="block text-sm font-medium"
-                style={{ color: "var(--sfit-green)" }}
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium mb-2"
               >
-                Chức vụ
+                Xác nhận mật khẩu *
               </label>
-              <select
-                name="account-role"
-                id="account-role"
-                value={accountRole}
-                onChange={(e) => setAccountRole(e.target.value)}
-                className="mt-1 w-full p-2 border rounded-md focus:outline-none focus:ring-2"
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                  errors.confirmPassword ? "border-red-500" : "border-gray-300"
+                }`}
                 style={{
                   backgroundColor: "var(--background)",
                   color: "var(--foreground)",
-                  borderColor: "var(--sfit-gray-200)",
                 }}
-                aria-describedby={errorRole ? "error-role-message" : undefined}
-              >
-                <option value="">Chọn chức vụ</option>
-                <option value="Thành viên">Thành viên</option>
-                <option value="Phó ban">Phó ban</option>
-                <option value="Trưởng ban">Trưởng ban</option>
-                <option value="Phó CN">Phó CN</option>
-                <option value="Chủ nhiệm">Chủ nhiệm</option>
-              </select>
-              {errorRole && (
-                <p
-                  id="error-role-message"
-                  className="mt-1 text-sm"
-                  style={{ color: "var(--sfit-red-500)" }}
-                >
-                  {errorRole}
+                placeholder="Nhập lại mật khẩu"
+              />
+              {errors.confirmPassword && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.confirmPassword}
                 </p>
               )}
             </div>
           </div>
-          <div className="">
-            <div
-              className="border rounded-md px-4 py-2"
-              style={{
-                borderColor: "var(--sfit-gray-200)",
-                backgroundColor: "var(--background)",
-              }}
-            >
-              <p
-                className="block text-sm font-medium"
-                style={{ color: "var(--sfit-green)" }}
+
+          {/* Right Column */}
+          <div className="space-y-4">
+            {/* Confirm Password Field */}
+
+            {/* Role Field */}
+            <div>
+              <label htmlFor="role" className="block text-sm font-medium mb-2">
+                Vai trò *
+              </label>
+              <select
+                id="role"
+                name="role"
+                value={formData.role}
+                onChange={handleInputChange}
+                className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                  errors.role ? "border-red-500" : "border-gray-300"
+                }`}
+                style={{
+                  backgroundColor: "var(--background)",
+                  color: "var(--foreground)",
+                }}
               >
-                Ban
-              </p>
-              <div className="flex flex-col flex-wrap h-64">
-                {teamList.map((team, index) => (
-                  <label
-                    key={index}
-                    className="flex items-center space-x-2 m-2"
-                  >
-                    <input
-                      type="checkbox"
-                      name="account-team"
-                      value={team}
-                      checked={selectedTeams.includes(team)}
-                      onChange={handleCheckboxChange}
-                      className="focus:ring-2"
-                      style={{ accentColor: "var(--sfit-green)" }}
-                    />
-                    <span style={{ color: "var(--foreground)" }}>{team}</span>
-                  </label>
-                ))}
-              </div>
-              {errorTeam && (
-                <p
-                  className="mt-1 text-sm"
-                  style={{ color: "var(--sfit-red-500)" }}
-                >
-                  {errorTeam}
-                </p>
+                <option value="user">Người dùng</option>
+                <option value="admin">Quản trị viên</option>
+              </select>
+              {errors.role && (
+                <p className="mt-1 text-sm text-red-600">{errors.role}</p>
               )}
+            </div>
+
+            {/* Class Field */}
+            <div>
+              <label htmlFor="class" className="block text-sm font-medium mb-2">
+                Lớp
+              </label>
+              <input
+                type="text"
+                id="class"
+                name="class"
+                value={formData.class}
+                onChange={handleInputChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                style={{
+                  backgroundColor: "var(--background)",
+                  color: "var(--foreground)",
+                }}
+                placeholder="Nhập lớp (tùy chọn)"
+              />
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end space-x-2">
+        {/* Submit Buttons */}
+        <div className="flex justify-end space-x-4 pt-6 border-t">
           <button
             type="button"
-            onClick={handleCancel}
-            className="px-4 py-2 rounded-md focus:outline-none focus:ring-2"
-            style={{
-              backgroundColor: "var(--sfit-gray-200)",
-              color: "var(--sfit-green)",
-            }}
+            onClick={() => funcClickToBack(false)}
+            className="px-6 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+            disabled={isSubmitting}
           >
             Hủy
           </button>
           <button
             type="submit"
-            className="px-4 py-2 rounded-md focus:outline-none focus:ring-2"
-            style={{
-              backgroundColor: "var(--sfit-green)",
-              color: "var(--background)",
-            }}
+            className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            disabled={isSubmitting}
           >
-            Thêm
+            {isSubmitting ? "Đang tạo tài khoản..." : "Tạo tài khoản"}
           </button>
         </div>
       </form>

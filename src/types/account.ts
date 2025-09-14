@@ -1,5 +1,6 @@
 export interface Account {
   id: number;
+  userId: string;
   name: string;
   teams: string[];
   role: string;
@@ -18,13 +19,14 @@ export interface AccountStats {
 }
 
 export interface AccountListItem {
-  id: number;
+  userId?: string;
   name: string;
   role: string;
   class: string;
   teams: string[];
   avatar?: string;
   lastActive?: string;
+  email?: string;
 }
 
 export interface AccountFilters {

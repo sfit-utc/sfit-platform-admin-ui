@@ -37,7 +37,6 @@ export default function CommitteeEdit({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Updated committee details:", formData);
     funcClickToBack(false);
   };
 

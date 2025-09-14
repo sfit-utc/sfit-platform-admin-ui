@@ -41,7 +41,9 @@ export default function CreateEventForm({
   const [showCreateForm, setShowCreateForm] = useState(false);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -57,15 +59,15 @@ export default function CreateEventForm({
     }
   };
   const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const tags = e.target.value
-    .split(",")
-    .map((t) => t.trim())
-    .filter((t) => t.length > 0);
-  setFormData((prev) => ({
-    ...prev,
-    tags,
-  }));
-};
+    const tags = e.target.value
+      .split(",")
+      .map((t) => t.trim())
+      .filter((t) => t.length > 0);
+    setFormData((prev) => ({
+      ...prev,
+      tags,
+    }));
+  };
 
   // const validateForm = () => {
   //   const newErrors: Record<string, string> = {};
@@ -99,7 +101,8 @@ export default function CreateEventForm({
     const newErrors: Record<string, string> = {};
 
     if (!formData.title.trim()) newErrors.title = "Tiêu đề sự kiện là bắt buộc";
-    if (!formData.begin_at) newErrors.begin_at = "Thời gian bắt đầu là bắt buộc";
+    if (!formData.begin_at)
+      newErrors.begin_at = "Thời gian bắt đầu là bắt buộc";
     if (!formData.end_at) newErrors.end_at = "Thời gian kết thúc là bắt buộc";
     if (formData.begin_at && formData.end_at) {
       if (new Date(formData.end_at) < new Date(formData.begin_at)) {
@@ -107,16 +110,15 @@ export default function CreateEventForm({
       }
     }
     if (!formData.location.trim()) newErrors.location = "Địa điểm là bắt buộc";
-    if (formData.max_people <= 0) newErrors.max_people = "Số lượng tham dự phải lớn hơn 0";
+    if (formData.max_people <= 0)
+      newErrors.max_people = "Số lượng tham dự phải lớn hơn 0";
     if (!formData.status) newErrors.status = "Trạng thái là bắt buộc";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-
-  };
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {};
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -131,14 +133,13 @@ export default function CreateEventForm({
         max_people: Number(formData.max_people),
         priority: Number(formData.priority),
       };
-      console.log(payload);
       await createEvent(payload);
       alert("Tạo sự kiện thành công!");
       onSuccess();
     } catch (error) {
       alert(
         "Tạo sự kiện thất bại: " +
-        (error instanceof Error ? error.message : "Unknown error")
+          (error instanceof Error ? error.message : "Unknown error")
       );
     }
   };
@@ -150,8 +151,19 @@ export default function CreateEventForm({
       className="max-w-2xl min-w-4/5"
     >
       <div style={{ color: "var(--foreground)" }}>
-        <div className="rounded-lg shadow-lg p-6" style={{ backgroundColor: "var(--background)", overflowY: "auto", maxHeight: "80vh" }}>
-          <form id="create-event-form" onSubmit={handleSubmit} className="space-y-6">
+        <div
+          className="rounded-lg shadow-lg p-6"
+          style={{
+            backgroundColor: "var(--background)",
+            overflowY: "auto",
+            maxHeight: "80vh",
+          }}
+        >
+          <form
+            id="create-event-form"
+            onSubmit={handleSubmit}
+            className="space-y-6"
+          >
             <div>
               <label htmlFor="title" className="block text-xl font-medium mb-2">
                 Tiêu đề sự kiện *
@@ -166,18 +178,26 @@ export default function CreateEventForm({
                 style={{
                   backgroundColor: "var(--background)",
                   color: "var(--foreground)",
-                  borderColor: errors.title ? "var(--sfit-red-500)" : "var(--sfit-gray-200)",
+                  borderColor: errors.title
+                    ? "var(--sfit-red-500)"
+                    : "var(--sfit-gray-200)",
                 }}
                 placeholder="Nhập tiêu đề sự kiện"
               />
               {errors.title && (
-                <p className="mt-1 text-sm" style={{ color: "var(--sfit-red-500)" }}>
+                <p
+                  className="mt-1 text-sm"
+                  style={{ color: "var(--sfit-red-500)" }}
+                >
                   {errors.title}
                 </p>
               )}
             </div>
             <div>
-              <label htmlFor="description" className="block text-sm font-medium mb-2">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium mb-2"
+              >
                 Mô tả sự kiện
               </label>
               <textarea
@@ -196,7 +216,10 @@ export default function CreateEventForm({
               />
             </div>
             <div>
-              <label htmlFor="location" className="block text-sm font-medium mb-2">
+              <label
+                htmlFor="location"
+                className="block text-sm font-medium mb-2"
+              >
                 Địa điểm *
               </label>
               <input
@@ -209,19 +232,27 @@ export default function CreateEventForm({
                 style={{
                   backgroundColor: "var(--background)",
                   color: "var(--foreground)",
-                  borderColor: errors.location ? "var(--sfit-red-500)" : "var(--sfit-gray-200)",
+                  borderColor: errors.location
+                    ? "var(--sfit-red-500)"
+                    : "var(--sfit-gray-200)",
                 }}
                 placeholder="Nhập địa điểm diễn ra sự kiện"
               />
               {errors.location && (
-                <p className="mt-1 text-sm" style={{ color: "var(--sfit-red-500)" }}>
+                <p
+                  className="mt-1 text-sm"
+                  style={{ color: "var(--sfit-red-500)" }}
+                >
                   {errors.location}
                 </p>
               )}
             </div>
             <div className="flex gap-4">
               <div className="flex-1">
-                <label htmlFor="begin_at" className="block text-sm font-medium mb-2">
+                <label
+                  htmlFor="begin_at"
+                  className="block text-sm font-medium mb-2"
+                >
                   Thời gian bắt đầu *
                 </label>
                 <input
@@ -234,17 +265,25 @@ export default function CreateEventForm({
                   style={{
                     backgroundColor: "var(--background)",
                     color: "var(--foreground)",
-                    borderColor: errors.begin_at ? "var(--sfit-red-500)" : "var(--sfit-gray-200)",
+                    borderColor: errors.begin_at
+                      ? "var(--sfit-red-500)"
+                      : "var(--sfit-gray-200)",
                   }}
                 />
                 {errors.begin_at && (
-                  <p className="mt-1 text-sm" style={{ color: "var(--sfit-red-500)" }}>
+                  <p
+                    className="mt-1 text-sm"
+                    style={{ color: "var(--sfit-red-500)" }}
+                  >
                     {errors.begin_at}
                   </p>
                 )}
               </div>
               <div className="flex-1">
-                <label htmlFor="end_at" className="block text-sm font-medium mb-2">
+                <label
+                  htmlFor="end_at"
+                  className="block text-sm font-medium mb-2"
+                >
                   Thời gian kết thúc *
                 </label>
                 <input
@@ -257,18 +296,26 @@ export default function CreateEventForm({
                   style={{
                     backgroundColor: "var(--background)",
                     color: "var(--foreground)",
-                    borderColor: errors.end_at ? "var(--sfit-red-500)" : "var(--sfit-gray-200)",
+                    borderColor: errors.end_at
+                      ? "var(--sfit-red-500)"
+                      : "var(--sfit-gray-200)",
                   }}
                 />
                 {errors.end_at && (
-                  <p className="mt-1 text-sm" style={{ color: "var(--sfit-red-500)" }}>
+                  <p
+                    className="mt-1 text-sm"
+                    style={{ color: "var(--sfit-red-500)" }}
+                  >
                     {errors.end_at}
                   </p>
                 )}
               </div>
             </div>
             <div>
-              <label htmlFor="max_people" className="block text-sm font-medium mb-2">
+              <label
+                htmlFor="max_people"
+                className="block text-sm font-medium mb-2"
+              >
                 Số lượng tham dự tối đa *
               </label>
               <input
@@ -282,12 +329,17 @@ export default function CreateEventForm({
                 style={{
                   backgroundColor: "var(--background)",
                   color: "var(--foreground)",
-                  borderColor: errors.max_people ? "var(--sfit-red-500)" : "var(--sfit-gray-200)",
+                  borderColor: errors.max_people
+                    ? "var(--sfit-red-500)"
+                    : "var(--sfit-gray-200)",
                 }}
                 placeholder="Nhập số lượng tham dự tối đa"
               />
               {errors.max_people && (
-                <p className="mt-1 text-sm" style={{ color: "var(--sfit-red-500)" }}>
+                <p
+                  className="mt-1 text-sm"
+                  style={{ color: "var(--sfit-red-500)" }}
+                >
                   {errors.max_people}
                 </p>
               )}
@@ -312,7 +364,10 @@ export default function CreateEventForm({
               />
             </div>
             <div>
-              <label htmlFor="priority" className="block text-sm font-medium mb-2">
+              <label
+                htmlFor="priority"
+                className="block text-sm font-medium mb-2"
+              >
                 Độ ưu tiên
               </label>
               <input
@@ -332,7 +387,10 @@ export default function CreateEventForm({
               />
             </div>
             <div>
-              <label htmlFor="agency" className="block text-sm font-medium mb-2">
+              <label
+                htmlFor="agency"
+                className="block text-sm font-medium mb-2"
+              >
                 Đơn vị tổ chức
               </label>
               <input
@@ -370,7 +428,10 @@ export default function CreateEventForm({
               />
             </div>
             <div>
-              <label htmlFor="status" className="block text-sm font-medium mb-2">
+              <label
+                htmlFor="status"
+                className="block text-sm font-medium mb-2"
+              >
                 Trạng thái sự kiện *
               </label>
               <select
@@ -382,14 +443,19 @@ export default function CreateEventForm({
                 style={{
                   backgroundColor: "var(--background)",
                   color: "var(--foreground)",
-                  borderColor: errors.status ? "var(--sfit-red-500)" : "var(--sfit-gray-200)",
+                  borderColor: errors.status
+                    ? "var(--sfit-red-500)"
+                    : "var(--sfit-gray-200)",
                 }}
               >
                 <option value="UPCOMING">Sắp diễn ra</option>
                 <option value="ONGOING">Đang diễn ra</option>
               </select>
               {errors.status && (
-                <p className="mt-1 text-sm" style={{ color: "var(--sfit-red-500)" }}>
+                <p
+                  className="mt-1 text-sm"
+                  style={{ color: "var(--sfit-red-500)" }}
+                >
                   {errors.status}
                 </p>
               )}

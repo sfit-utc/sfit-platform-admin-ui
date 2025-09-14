@@ -21,7 +21,7 @@ interface UseCommitteeServiceTypeRefreshAble<T> {
 }
 
 export function useCommitteeDetail(
-  id: number
+  id: string
 ): UseCommitteeServiceType<CommitteeDetail | undefined> {
   const [data, setData] = useState<CommitteeDetail>();
   const [loading, setLoading] = useState<boolean>(true);
@@ -39,7 +39,7 @@ export function useCommitteeDetail(
 }
 
 export function useListMembersOfCommittee(
-  id: number
+  id: string
 ): UseCommitteeServiceType<MemberOfCommittee[]> {
   const [data, setData] = useState<MemberOfCommittee[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -57,7 +57,7 @@ export function useListMembersOfCommittee(
 }
 
 export function useTasksOfCommittee(
-  id: number
+  id: string
 ): UseCommitteeServiceType<Task[]> {
   const [data, setData] = useState<Task[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -74,7 +74,7 @@ export function useTasksOfCommittee(
   return { data, loading, error };
 }
 
-export function usePeriod(id: number): UseCommitteeServiceType<string> {
+export function usePeriod(id: string): UseCommitteeServiceType<string> {
   const [data, setData] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
@@ -91,7 +91,7 @@ export function usePeriod(id: number): UseCommitteeServiceType<string> {
 }
 
 export function useCommitteeTarget(
-  id: number
+  id: string
 ): UseCommitteeServiceTypeRefreshAble<Target[]> {
   const [data, setData] = useState<Target[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -107,7 +107,7 @@ export function useCommitteeTarget(
   };
 
   useEffect(() => {
-    fetchData()
+    fetchData();
   }, [id]);
 
   return { data, loading, error, fetchData: fetchData };

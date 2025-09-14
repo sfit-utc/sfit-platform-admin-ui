@@ -1,5 +1,5 @@
 export interface CommitteeInfo {
-  id: number;
+  id: string;
   committeeName: string;
   headOfCommittee: string;
   description: string;
@@ -7,7 +7,7 @@ export interface CommitteeInfo {
 }
 
 export interface CommitteeDetail {
-  id: number;
+  id: string;
   committeeName: string;
   description: string;
   headOfCommittee: string;

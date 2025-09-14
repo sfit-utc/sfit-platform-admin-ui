@@ -1,174 +1,107 @@
 "use client";
-import { Account } from "@/types/account";
+import { AccountListItem } from "@/types/account";
 import { useState, useRef, useEffect } from "react";
+import { accountService } from "@/services/account-service";
 import Avatar from "@/assets/icons/user.svg";
 import { SquarePen, Trash, User } from "lucide-react";
-import DetailModal from "@/components/ui/detail-modal";
-import EditModal from "@/components/ui/edit-modal";
-import DeleteModal from "@/components/ui/delete-modal";
+import AccountDetailModal from "@/components/account/account-detail-modal";
+import AccountEditModal from "@/components/account/account-edit-modal";
+import AccountDeleteModal from "@/components/account/account-delete-modal";
+
 interface AccountItemProps {
-  account: Account;
+  account: AccountListItem;
+  index: number;
   style?: string;
+  onAccountUpdated?: () => void;
 }
 
-export default function AccountItem({ account, style }: AccountItemProps) {
-  const [showTeamsDropdown, setShowTeamsDropdown] = useState(false);
+export default function AccountItem({
+  account,
+  index,
+  style,
+  onAccountUpdated,
+}: AccountItemProps) {
+  // Early return if account is undefined
+  if (!account) {
+    return null;
+  }
+
   const [openView, setOpenView] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const getRoleStyle = (role: string) => {
     switch (role) {
-      case "Quản trị viên":
+      case "admin":
         return "text-purple-600 font-bold bg-purple-100";
-
-      case "Người kiểm duyệt":
-        return "text-red-600 font-bold bg-red-100";
-
-      case "Người dùng":
+      case "user":
         return "text-green-700 bg-green-100";
+      default:
+        return "text-gray-600 bg-gray-100";
     }
   };
-  // Close dropdown when clicking outside
+
+  const [displayRole, setDisplayRole] = useState<string>(account.role);
+
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setShowTeamsDropdown(false);
-      }
-    }
+    setDisplayRole(account.role);
+  }, [account]);
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const firstTeam = account.teams[0];
-  const hasMultipleTeams = account.teams.length > 1;
-
-  if (style === "line") {
-    return (
-      <div
-        className="flex justify-between items-center py-4 border-2 my-2"
-        style={{
-          color: "var(--foreground)",
-          backgroundColor: "var(--background)",
-        }}
-      >
-        <div className="flex-2 text-center font-bold text-2xl">
-          {account.id}
+  const lineView = (
+    <div
+      className="flex justify-between items-center py-4 border-2 my-2"
+      style={{
+        color: "var(--foreground)",
+        backgroundColor: "var(--background)",
+      }}
+    >
+      <div className="flex-2 text-center font-bold text-2xl">{index}</div>
+      <div className="flex-5 text-left">
+        <div className="font-bold text-2xl whitespace-nowrap overflow-hidden text-ellipsis">
+          {account.name || "Unknown"}
         </div>
-        <div className="flex-5 text-left font-bold text-2xl whitespace-nowrap overflow-hidden text-ellipsis">
-          {account.name}
+        <div className="text-sm text-gray-500">
+          {account.email || "unknown"}
         </div>
-        <div className="flex-3 text-left relative" ref={dropdownRef}>
-          {/* Styled Dropdown Button */}
-          <button
-            type="button"
-            className="w-full flex items-center justify-between px-4 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-semibold whitespace-nowrap"
-            onClick={() =>
-              hasMultipleTeams && setShowTeamsDropdown(!showTeamsDropdown)
-            }
-            disabled={!hasMultipleTeams}
-          >
-            <span>{firstTeam}</span>
-            {hasMultipleTeams && (
-              <svg
-                className="w-4 h-4 ml-2"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-            )}
-          </button>
-
-          {/* Teams Dropdown Popup */}
-          {showTeamsDropdown && hasMultipleTeams && (
-            <div
-              className="absolute top-full left-0 mt-1 border border-gray-200 rounded-md shadow-lg z-10 min-w-full"
-              style={{
-                backgroundColor: "var(--background)",
-                color: "var(--foreground)",
-              }}
-            >
-              <div className="p-1">
-                {account.teams.map((team) => (
-                  <div
-                    key={team}
-                    className="py-1 px-3 hover:bg-amber-50 rounded text-sm cursor-pointer"
-                  >
-                    {team}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-        <div className="flex-3 flex justify-center items-center">
-          <div
-            className={`text-center py-1 px-4 w-fit ${getRoleStyle(
-              account.role
-            )} rounded-full text-sm font-semibold whitespace-nowrap`}
-          >
-            {account.role}
-          </div>
-        </div>
-        <div className="flex-2 flex justify-center items-center">
-          <div className="text-center py-1 px-4 w-fit bg-blue-100 text-blue-600 rounded-full text-sm font-semibold whitespace-nowrap">
-            {account.class}
-          </div>
-        </div>
-        <div className="flex-1 flex items-center justify-center gap-1">
-          <button
-            className="p-1 rounded-full hover:text-green-400 hover:bg-gray-100"
-            onClick={() => setOpenView(true)}
-          >
-            <User />
-          </button>
-          <button
-            className="p-1 rounded-full hover:text-yellow-400 hover:bg-gray-100"
-            onClick={() => setOpenEdit(true)}
-          >
-            <SquarePen />
-          </button>
-          <button
-            className="p-1 rounded-full hover:text-red-400 hover:bg-gray-100"
-            onClick={() => setOpenDelete(true)}
-          >
-            <Trash />
-          </button>
-        </div>
-        {/* Modals */}
-        <DetailModal
-          open={openView}
-          onClose={() => setOpenView(false)}
-          memberId={account.id}
-        />
-        <EditModal
-          open={openEdit}
-          onClose={() => setOpenEdit(false)}
-          memberId={account.id}
-        />
-        <DeleteModal
-          open={openDelete}
-          onClose={() => setOpenDelete(false)}
-          memberId={account.id}
-        />
       </div>
-    );
-  }
+      <div className="flex-3 flex justify-center items-center">
+        <div
+          className={`text-center py-1 px-4 w-fit ${getRoleStyle(
+            displayRole
+          )} rounded-full text-sm font-semibold whitespace-nowrap`}
+        >
+          {displayRole}
+        </div>
+      </div>
+      <div className="flex-2 flex justify-center items-center">
+        <div className="text-center py-1 px-4 w-fit bg-blue-100 text-blue-600 rounded-full text-sm font-semibold whitespace-nowrap">
+          {account.class}
+        </div>
+      </div>
+      <div className="flex-1 flex items-center justify-center gap-1">
+        <button
+          className="p-1 rounded-full hover:text-green-400 hover:bg-gray-100"
+          onClick={() => setOpenView(true)}
+        >
+          <User />
+        </button>
+        <button
+          className="p-1 rounded-full hover:text-yellow-400 hover:bg-gray-100"
+          onClick={() => setOpenEdit(true)}
+        >
+          <SquarePen />
+        </button>
+        <button
+          className="p-1 rounded-full hover:text-red-400 hover:bg-gray-100"
+          onClick={() => setOpenDelete(true)}
+        >
+          <Trash />
+        </button>
+      </div>
+    </div>
+  );
 
-  // Box view
-  return (
+  const boxView = (
     <div
       className="rounded-lg shadow-md p-4 border flex flex-col justify-between"
       style={{
@@ -182,7 +115,7 @@ export default function AccountItem({ account, style }: AccountItemProps) {
             className="text-lg font-bold"
             style={{ color: "var(--foreground)" }}
           >
-            {account.id}
+            {index}
           </div>
         </div>
 
@@ -193,19 +126,25 @@ export default function AccountItem({ account, style }: AccountItemProps) {
             className="w-24 h-24 rounded-full"
           />
           <h3 className="text-lg font-semibold mt-2 text-center">
-            {account.name}
+            {account.name || "Unknown"}
           </h3>
+          <span className="text-sm text-gray-500 mt-1">
+            {account.email || "unknown"}
+          </span>
+
+          {/* Display Selected Team's Role */}
+          <div className="mt-2"></div>
         </div>
 
         <div className="space-y-2">
           <div className="flex justify-between">
             <span className="font-medium">Chức vụ:</span>
             <span
-              className={`${getRoleStyle(
-                account.role
-              )} px-2 py-1 rounded text-sm`}
+              className={`text-center py-1 px-4 w-fit ${getRoleStyle(
+                displayRole
+              )} rounded-sm text-sm font-semibold`}
             >
-              {account.role}
+              {displayRole}
             </span>
           </div>
           <div className="flex justify-between">
@@ -213,19 +152,6 @@ export default function AccountItem({ account, style }: AccountItemProps) {
             <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-sm">
               {account.class}
             </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-medium">Ban:</span>
-            <div className="flex flex-wrap gap-1">
-              {account?.teams?.map((team, index) => (
-                <span
-                  key={index}
-                  className="bg-amber-100 text-amber-800 px-2 py-1 rounded text-sm"
-                >
-                  {team}
-                </span>
-              ))}
-            </div>
           </div>
         </div>
       </div>
@@ -250,21 +176,39 @@ export default function AccountItem({ account, style }: AccountItemProps) {
           <Trash />
         </button>
       </div>
-      <DetailModal
+    </div>
+  );
+
+  return (
+    <>
+      {style === "line" ? lineView : boxView}
+      <AccountDetailModal
         open={openView}
         onClose={() => setOpenView(false)}
-        memberId={account.id}
+        accountId={account.userId || ""}
       />
-      <EditModal
+      <AccountEditModal
         open={openEdit}
         onClose={() => setOpenEdit(false)}
-        memberId={account.id}
+        accountId={account.userId || ""}
+        currentRole={account.role}
+        onSaved={() => {
+          if (onAccountUpdated) {
+            onAccountUpdated();
+          }
+        }}
       />
-      <DeleteModal
+      <AccountDeleteModal
         open={openDelete}
         onClose={() => setOpenDelete(false)}
-        memberId={account.id}
+        accountId={account.userId || ""}
+        accountName={account.name}
+        onDeleted={() => {
+          if (onAccountUpdated) {
+            onAccountUpdated();
+          }
+        }}
       />
-    </div>
+    </>
   );
 }

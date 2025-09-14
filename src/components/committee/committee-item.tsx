@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 interface CommitteeItemProp {
-  id: number;
+  id: string;
   committeeName: string;
   headOfCommittee: string;
   description: string;
@@ -18,7 +18,7 @@ export default function CommitteeItem({
   return (
     <Link
       href={`/team?id=${id}`}
-      className="text-center shadow rounded-b-md px-11 py-5 flex flex-col items-center border border-solid"
+      className="font-sans text-center shadow rounded-b-md px-11 py-5 flex flex-col items-center border border-solid"
       style={{
         color: "var(--foreground)",
         backgroundColor: "var(--search-bg)",

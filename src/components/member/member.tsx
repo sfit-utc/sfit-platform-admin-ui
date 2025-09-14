@@ -5,7 +5,7 @@ import { useMemberStats } from "@/hooks/use-member-service";
 import Loading from "@/components/ui/loading";
 
 export default function Member() {
-  const { data: stats, loading, error } = useMemberStats();
+  const { data: stats, loading, error, refetch } = useMemberStats();
 
   if (loading) {
     return <Loading />;
@@ -62,7 +62,7 @@ export default function Member() {
         })}
       </div>
 
-      <MemberList />
+      <MemberList onMemberUpdated={refetch} />
     </div>
   );
 }

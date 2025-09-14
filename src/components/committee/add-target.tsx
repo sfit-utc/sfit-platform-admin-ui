@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import Modal from "@/components/ui/modal";
+import { committeeDetailService } from "@/services/committee-detail-service";
 
 interface AddTargetProp {
   funcClickToBack: (b: boolean) => void;
   state: boolean;
+  committeeId: string;
+  onTargetAdded?: () => void;
 }
 
 interface FormData {
@@ -13,7 +16,12 @@ interface FormData {
   isSecretary: boolean;
 }
 
-export default function AddTarget({ funcClickToBack, state }: AddTargetProp) {
+export default function AddTarget({
+  funcClickToBack,
+  state,
+  committeeId,
+  onTargetAdded,
+}: AddTargetProp) {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     expired: "",
@@ -21,6 +29,7 @@ export default function AddTarget({ funcClickToBack, state }: AddTargetProp) {
     isSecretary: false,
   });
   const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -48,11 +57,40 @@ export default function AddTarget({ funcClickToBack, state }: AddTargetProp) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      console.log("Form submitted:", formData);
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+    try {
+      await committeeDetailService.createTarget(committeeId, {
+        title: formData.name,
+        expired: formData.expired,
+        headDo: formData.isHead,
+        secretaryDo: formData.isSecretary,
+      });
+
+      // Reset form
+      setFormData({
+        name: "",
+        expired: "",
+        isHead: false,
+        isSecretary: false,
+      });
+      setErrors({});
+
+      // Notify parent component to refresh targets
+      onTargetAdded?.();
+
+      // Close modal
       funcClickToBack(false);
+    } catch (error) {
+      console.error("Error creating target:", error);
+      setErrors({
+        name: "Có lỗi xảy ra khi tạo mục tiêu. Vui lòng thử lại.",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -144,15 +182,17 @@ export default function AddTarget({ funcClickToBack, state }: AddTargetProp) {
           <button
             type="button"
             onClick={() => funcClickToBack(false)}
-            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+            disabled={isSubmitting}
+            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50"
           >
             Hủy
           </button>
           <button
             type="submit"
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            disabled={isSubmitting}
+            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
           >
-            Thêm
+            {isSubmitting ? "Đang thêm..." : "Thêm"}
           </button>
         </div>
       </form>
