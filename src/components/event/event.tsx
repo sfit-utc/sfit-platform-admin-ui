@@ -3,13 +3,15 @@ import { useState } from "react";
 import SearchBar from "@/components/ui/search-bar";
 import EventList from "@/components/event/event-list";
 import CreateEventForm from "@/components/event/create-event-form";
+import { EventStatus } from "@/types/event";
+const TABS: EventStatus[] = ["ONGOING", "UPCOMING", "COMPLETED"];
 
 export default function Event() {
-  const [activeTab, setActiveTab] = useState<"ONGOING" | "UPCOMING" | "COMPLETED">(
-    "ONGOING"
-  );
+  const [activeTab, setActiveTab] = useState<EventStatus>("ONGOING"); // Sửa lại kiểu
   const [searchTerm, setSearchTerm] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+  const handleReload = () => setReloadKey((k) => k + 1);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
@@ -37,11 +39,10 @@ export default function Event() {
             backgroundColor: "var(--background)",
           }}
           onClick={() => setActiveTab("ONGOING")}
-          className={`text-xl font-semibold flex justify-center items-center cursor-pointer w-56 h-12 border-l border-r border-t transition-colors ${
-            activeTab === "ONGOING"
+          className={`text-xl font-semibold flex justify-center items-center cursor-pointer w-56 h-12 border-l border-r border-t transition-colors ${activeTab === "ONGOING"
               ? "text-green-800 bg-white"
               : "text-gray-600 bg-gray-50"
-          }`}
+            }`}
         >
           Sự kiện đang diễn ra
         </button>
@@ -50,11 +51,10 @@ export default function Event() {
             backgroundColor: "var(--background)",
           }}
           onClick={() => setActiveTab("UPCOMING")}
-          className={`text-xl font-semibold flex justify-center items-center cursor-pointer w-56 h-12 border-l border-r border-t transition-colors ${
-            activeTab === "UPCOMING"
+          className={`text-xl font-semibold flex justify-center items-center cursor-pointer w-56 h-12 border-l border-r border-t transition-colors ${activeTab === "UPCOMING"
               ? "text-green-800 bg-white"
               : "text-gray-600 bg-gray-50"
-          }`}
+            }`}
         >
           Sự kiện sắp diễn ra
         </button>
@@ -63,11 +63,10 @@ export default function Event() {
             backgroundColor: "var(--background)",
           }}
           onClick={() => setActiveTab("COMPLETED")}
-          className={`text-xl font-semibold flex justify-center items-center cursor-pointer w-56 h-12 border-l border-r border-t transition-colors ${
-            activeTab === "COMPLETED"
+          className={`text-xl font-semibold flex justify-center items-center cursor-pointer w-56 h-12 border-l border-r border-t transition-colors ${activeTab === "COMPLETED"
               ? "text-green-800 bg-white"
               : "text-gray-600 bg-gray-50"
-          }`}
+            }`}
         >
           Sự kiện đã qua
         </button>
@@ -92,7 +91,7 @@ export default function Event() {
 
       {/* Event List */}
       <div>
-        <EventList status={activeTab} searchTerm={searchTerm} />
+        <EventList status={activeTab} searchTerm={searchTerm} onChange={handleReload} key={reloadKey}/>
       </div>
       <CreateEventForm
         state={showCreateForm}

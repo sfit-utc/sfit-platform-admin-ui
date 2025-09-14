@@ -14,10 +14,9 @@ export const useEventService = () => {
   const [pagination, setPagination] = useState<PageListResp<EventDetailRp[]> | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [eventDetail, setEventDetail] = useState<EventDetailRp | null>(null);
 
   // Fetch events 
-  const fetchEvents = useCallback(async (params: ListEventReq = { page: 1, page_size: 20, status:"UPCOMING" }) => {
+  const fetchEvents = useCallback(async (params: ListEventReq = { page: 1, page_size: 20, status: "UPCOMING" }) => {
     setLoading(true);
     setError(null);
     try {
@@ -37,8 +36,7 @@ export const useEventService = () => {
     setError(null);
     try {
       const detail = await eventService.getEventDetail(eventId);
-      setEventDetail(detail.data);
-      return detail;
+      return detail.data;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch event detail");
       throw err;
@@ -64,7 +62,7 @@ export const useEventService = () => {
   }, [fetchEvents]);
 
   // Update event
-  const updateEvent = useCallback(async (eventData: UpdateEventRequest) => {
+    const updateEvent = useCallback(async (eventData: UpdateEventRequest) => {
     setLoading(true);
     setError(null);
     try {
@@ -84,8 +82,9 @@ export const useEventService = () => {
     setLoading(true);
     setError(null);
     try {
-      await eventService.deleteEvent(eventId);
+      const res = await eventService.deleteEvent(eventId);
       await fetchEvents();
+      return res;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete event");
       throw err;
@@ -98,6 +97,7 @@ export const useEventService = () => {
   // useEffect(() => {
   //   fetchEvents();
   // }, [fetchEvents]);
+
   return {
     events,
     pagination,
