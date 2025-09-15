@@ -274,18 +274,21 @@ export default function EventItem({
   };
 
   const handleDelete = async (eventId: string) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa sự kiện này?")) {
-      await fetchTasksByEventID(eventId, { page: 1, page_size: 10 });
-      if (tasks && tasks.length > 0) {
-        for (const task of tasks) {
-          await deleteTask(task.id);
-        }
+  if (window.confirm("Bạn có chắc chắn muốn xóa sự kiện này?")) {
+    // Lấy danh sách task mới nhất từ API
+    const res = await fetchTasksByEventID(eventId, { page: 1, page_size: -1 });
+    const taskList = res?.items || [];
+    console.log(taskList);
+    if (taskList.length > 0) {
+      for (const task of taskList) {
+        await deleteTask(task.ID);
       }
-      await deleteEvent(eventId);
-      if (onDelete) onDelete(eventId);
-      if (onChange) onChange();
     }
-  };
+    await deleteEvent(eventId);
+    if (onDelete) onDelete(eventId);
+    if (onChange) onChange();
+  }
+};
 
   const isOngoing = status === "ONGOING";
   const isPast = status === "COMPLETED";
