@@ -16,13 +16,13 @@ export const useEventService = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Fetch events 
-  const fetchEvents = useCallback(async (params: ListEventReq = { page: 1, page_size: 20, status: "UPCOMING" }) => {
+  const fetchEvents = useCallback(async (params: ListEventReq = { page: 1, page_size: 10, status: "UPCOMING" }) => {
     setLoading(true);
     setError(null);
     try {
       const res = await eventService.getEvents(params);
       setEvents(res.data.items);
-      setPagination(res.data.page);
+      setPagination(res.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch events");
     } finally {
