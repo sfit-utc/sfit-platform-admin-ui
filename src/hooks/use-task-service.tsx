@@ -212,7 +212,6 @@ export const useTaskService = () => {
     setError(null);
     try {
       await taskService.deleteTask(taskId);
-      setDeletedTaskId(taskId);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete task");
       throw err;
@@ -275,7 +274,6 @@ export const useTaskService = () => {
     setError(null);
     try {
       const result = await taskService.addUserTask(userId, data);
-      setAddUserTaskResult(result);
       return result;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to add user task");
@@ -308,7 +306,6 @@ export const useTaskService = () => {
     setError(null);
     try {
       const result = await taskService.updateTaskUserStatus(userId, taskId, data);
-      setUpdateTaskUserStatusResult(result);
       return result;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update user task status");
@@ -324,18 +321,11 @@ export const useTaskService = () => {
     pagination,
     loading,
     error,
-    taskDetail,
-    createdTask,
-    deletedTaskId,
-    addUserTaskResult,
-    deleteUserTaskResult,
-    updateTaskUserStatusResult,
     fetchTasks,
     fetchAllTasks,
     fetchTasksByEventID,
     fetchTasksByEventId,
     fetchTasksByUserID,
-    fetchTasksByUserId,
     fetchTaskDetail,
     fetchTaskById,
     fetchUserTasksByEvent,

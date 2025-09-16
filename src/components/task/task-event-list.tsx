@@ -17,25 +17,23 @@ const getTaskStatus = (task: any) => {
 };
 
 
-export default function TaskEventList({ status = "ALL", onTaskChanged }: TaskEventListProps) {
-    const { events, fetchEvents, loading: loadingEvents } = useEventService();
-    const { fetchTasksByEventID, loading, error } = useTaskService();
-    const [eventTasks, setEventTasks] = useState<{ event: any, tasks: any[] }[]>([]);
-    const [editingEventId, setEditingEventId] = useState<string | null>(null);
-    const [editingTitle, setEditingTitle] = useState<string>("");
-    const inputRef = useRef<HTMLInputElement>(null);
-    useEffect(() => {
-        fetchEvents({ page: 1, page_size: 10 });
-    }, [fetchEvents]);
+// export default function TaskEventList({ status = "ALL", onTaskChanged }: TaskEventListProps) {
+//     const { events, fetchEvents, loading: loadingEvents } = useEventService();
+//     const { fetchTasksByEventID, loading, error } = useTaskService();
+//     const [eventTasks, setEventTasks] = useState<{ event: any, tasks: any[] }[]>([]);
+//     const [editingEventId, setEditingEventId] = useState<string | null>(null);
+//     const [editingTitle, setEditingTitle] = useState<string>("");
+//     const inputRef = useRef<HTMLInputElement>(null);
+//     useEffect(() => {
+//         fetchEvents({ page: 1, page_size: 10 });
+//     }, [fetchEvents]);
 export default function TaskEventList({
   status = "ALL",
   onTaskChanged,
 }: TaskEventListProps) {
   const { events, fetchEvents, loading: loadingEvents } = useEventService();
   const { fetchTasksByEventID, loading, error } = useTaskService();
-  const [eventTasks, setEventTasks] = useState<{ event: any; tasks: any[] }[]>(
-    []
-  );
+  const [eventTasks, setEventTasks] = useState<{ event: any; tasks: any[] }[]>([]);
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
