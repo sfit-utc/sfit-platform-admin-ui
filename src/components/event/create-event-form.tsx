@@ -11,6 +11,16 @@ interface CreateEventFormProps {
   onCancel: () => void;
   onSuccess: () => void;
 }
+const getStatusByTime = (begin_at: string, end_at: string) => {
+  const now = new Date();
+  const begin = begin_at ? new Date(begin_at) : null;
+  const end = end_at ? new Date(end_at) : null;
+  if (begin && now < begin) return "UPCOMING";
+  if (begin && end && now >= begin && now <= end) return "ONGOING";
+  if (end && now > end) return "COMPLETED";
+  return "UPCOMING";
+};
+
 const defaultFormData: NewEventRequest = {
   title: "",
   type: "",
@@ -44,28 +54,36 @@ export default function CreateEventForm({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]:
-        name === "max_people" || name === "priority"
-          ? parseInt(value) || ""
-          : value,
-    }));
-
+    setFormData((prev) => {
+      let updated = {
+        ...prev,
+        [name]:
+          name === "max_people" || name === "priority"
+            ? parseInt(value) || ""
+            : value,
+      };
+      if (name === "begin_at" || name === "end_at") {
+        updated.status = getStatusByTime(
+          name === "begin_at" ? value : updated.begin_at,
+          name === "end_at" ? value : updated.end_at
+        );
+      }
+      return updated;
+    });
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
   const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const tags = e.target.value
-    .split(",")
-    .map((t) => t.trim())
-    .filter((t) => t.length > 0);
-  setFormData((prev) => ({
-    ...prev,
-    tags,
-  }));
-};
+    const tags = e.target.value
+      .split(",")
+      .map((t) => t.trim())
+      .filter((t) => t.length > 0);
+    setFormData((prev) => ({
+      ...prev,
+      tags,
+    }));
+  };
 
   // const validateForm = () => {
   //   const newErrors: Record<string, string> = {};
@@ -115,8 +133,14 @@ export default function CreateEventForm({
   };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-
-  };
+  setFormData((prev) => ({
+    ...prev,
+    status: e.target.value as typeof prev.status,
+  }));
+  if (errors.status) {
+    setErrors((prev) => ({ ...prev, status: "" }));
+  }
+};
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;

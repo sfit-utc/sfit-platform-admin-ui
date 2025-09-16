@@ -12,8 +12,10 @@ function getTaskStatus(task: Task): TaskStatus {
 
 class TaskService {
   async createTask(data: CreateTaskReq): Promise<Task> {
-    const res = await apiClient.post<{ data: Task }>("/tasks", data);
-    return res.data.data;
+    // const res = await apiClient.post<{ data: Task }>("/tasks", data);
+    // return res.data;
+    const res = await apiClient.post("/tasks", data);
+    return res.data;
   }
 
   async getTaskDetail(taskId: string): Promise<Task> {
@@ -25,8 +27,9 @@ class TaskService {
     await apiClient.put(`/tasks/${taskId}`, data);
   }
 
-  async deleteTask(taskId: string): Promise<void> {
+  async deleteTask(taskId: string): Promise< {message: string} > {
     await apiClient.delete(`/tasks/${taskId}`);
+    return { message: "Deleted successfully" };
   }
 
   async getTasks(query: ListTaskQuery): Promise<PageListResp<Task[]>> {

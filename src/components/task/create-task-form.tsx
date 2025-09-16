@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Line from "@/components/ui/line";
 import { useEventService } from "@/hooks/use-event-service";
 import { useTaskService } from "@/hooks/use-task-service";
 import Modal from "@/components/ui/modal";
+import { CreateTaskReq } from "@/types/task";
 interface CreateTaskFormProps {
   state: boolean;
   funcClickToBack: (b: boolean) => void;
@@ -23,60 +24,42 @@ export default function CreateTaskForm({
   onCancel,
   onSuccess,
 }: CreateTaskFormProps) {
-  const { events, loading: loadingEvents } = useEventService();
+  const { events, fetchEvents, loading: loadingEvents } = useEventService();
   const { createTask, loading } = useTaskService();
-  const [formData, setFormData] = useState({
-    eventId: "",
-    title: "",
-    tags: [] as typeof initialTags,
+  const [createTaskReq, setCreateTaskReq] = useState<CreateTaskReq>({
+    name: "",
     description: "",
-    startDate: "",
-    deadline: "",
-    assignee: "",
-    percentComplete: 0,
+    event_id: "",
+    startTime: "",
+    dateline: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   // const [loading, setLoading] = useState(false);
-
+  useEffect(() => {
+  if (!events || events.length === 0) {
+    fetchEvents({ page: 1, page_size: -1 });
+  }
+}, []);
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setCreateTaskReq((prev) => ({
       ...prev,
-      [name]:
-        name === "percentComplete"
-          ? Math.max(0, Math.min(100, Number(value)))
-          : value,
+      [name]: value,
     }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const handleTagToggle = (tag: (typeof initialTags)[0]) => {
-    setFormData((prev) => {
-      const exists = prev.tags.find((t) => t.label === tag.label);
-      return {
-        ...prev,
-        tags: exists
-          ? prev.tags.filter((t) => t.label !== tag.label)
-          : [...prev.tags, tag],
-      };
-    });
-  };
-
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.eventId) newErrors.eventId = "Vui lòng chọn sự kiện";
-    if (!formData.title.trim())
-      newErrors.title = "Tiêu đề nhiệm vụ là bắt buộc";
-    if (!formData.startDate) newErrors.startDate = "Ngày bắt đầu là bắt buộc";
-    if (!formData.deadline) newErrors.deadline = "Hạn chót là bắt buộc";
-    if (!formData.assignee.trim())
-      newErrors.assignee = "Người thực hiện là bắt buộc";
-    if (formData.percentComplete < 0 || formData.percentComplete > 100)
-      newErrors.percentComplete = "Phần trăm hoàn thành phải từ 0 đến 100";
+    if (!createTaskReq.event_id) newErrors.event_id = "Vui lòng chọn sự kiện";
+    if (!createTaskReq.name.trim())
+      newErrors.name = "Tiêu đề nhiệm vụ là bắt buộc";
+    if (!createTaskReq.startTime) newErrors.startTime = "Ngày bắt đầu là bắt buộc";
+    if (!createTaskReq.dateline) newErrors.dateline = "Hạn chót là bắt buộc";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -85,20 +68,23 @@ export default function CreateTaskForm({
     e.preventDefault();
     if (!validateForm()) return;
     try {
+      // Chỉ truyền đúng các trường cần thiết cho API
       await createTask({
-        ...formData,
-        event_id: string(formData.eventId), // Đảm bảo event_id là số
+        name: createTaskReq.name,
+        description: createTaskReq.description,
+        event_id: createTaskReq.event_id,
+        startTime: createTaskReq.startTime,
+        dateline: createTaskReq.dateline,
       });
       alert("Tạo nhiệm vụ thành công!");
       onSuccess();
     } catch (error) {
       alert(
         "Tạo nhiệm vụ thất bại: " +
-          (error instanceof Error ? error.message : "Unknown error")
+        (error instanceof Error ? error.message : "Unknown error")
       );
     }
   };
-
   return (
     <Modal
       state={state}
@@ -142,22 +128,22 @@ export default function CreateTaskForm({
                   {/* Event */}
                   <div>
                     <label
-                      htmlFor="eventId"
+                      htmlFor="event_id"
                       className="block text-xl font-medium mb-2"
                       style={{ color: "var(--foreground)" }}
                     >
                       Chọn sự kiện *
                     </label>
                     <select
-                      id="eventId"
-                      name="eventId"
-                      value={formData.eventId}
+                      id="event_id"
+                      name="event_id"
+                      value={createTaskReq.event_id}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       style={{
                         backgroundColor: "var(--background)",
                         color: "var(--foreground)",
-                        borderColor: errors.eventId
+                        borderColor: errors.event_id
                           ? "var(--sfit-red-500)"
                           : "var(--sfit-gray-200)",
                       }}
@@ -170,19 +156,19 @@ export default function CreateTaskForm({
                         </option>
                       ))}
                     </select>
-                    {errors.eventId && (
+                    {errors.event_id && (
                       <p
                         className="mt-1 text-sm"
                         style={{ color: "var(--sfit-red-500)" }}
                       >
-                        {errors.eventId}
+                        {errors.event_id}
                       </p>
                     )}
                   </div>
-                  {/* Title */}
+                  {/* Name */}
                   <div>
                     <label
-                      htmlFor="title"
+                      htmlFor="name"
                       className="block text-xl font-medium mb-2"
                       style={{ color: "var(--foreground)" }}
                     >
@@ -190,66 +176,28 @@ export default function CreateTaskForm({
                     </label>
                     <input
                       type="text"
-                      id="title"
-                      name="title"
-                      value={formData.title}
+                      id="name"
+                      name="name"
+                      value={createTaskReq.name}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       style={{
                         backgroundColor: "var(--background)",
                         color: "var(--foreground)",
-                        borderColor: errors.title
+                        borderColor: errors.name
                           ? "var(--sfit-red-500)"
                           : "var(--sfit-gray-200)",
                       }}
                       placeholder="Nhập tiêu đề nhiệm vụ"
                     />
-                    {errors.title && (
+                    {errors.name && (
                       <p
                         className="mt-1 text-sm"
                         style={{ color: "var(--sfit-red-500)" }}
                       >
-                        {errors.title}
+                        {errors.name}
                       </p>
                     )}
-                  </div>
-                  {/* Tags */}
-                  <div>
-                    <label
-                      className="block text-sm font-medium mb-2"
-                      style={{ color: "var(--foreground)" }}
-                    >
-                      Nhãn nhiệm vụ
-                    </label>
-                    <div className="flex gap-2">
-                      {initialTags.map((tag) => (
-                        <button
-                          type="button"
-                          key={tag.label}
-                          onClick={() => handleTagToggle(tag)}
-                          className={`px-3 py-1 rounded-full text-sm font-medium border ${
-                            formData.tags.find((t) => t.label === tag.label)
-                              ? "border-transparent"
-                              : "border-gray-300"
-                          }`}
-                          style={{
-                            background: formData.tags.find(
-                              (t) => t.label === tag.label
-                            )
-                              ? tag.color
-                              : "var(--search-bg)",
-                            color: formData.tags.find(
-                              (t) => t.label === tag.label
-                            )
-                              ? tag.textColor
-                              : "var(--foreground)",
-                            borderColor: "var(--sfit-gray-200)",
-                          }}
-                        >
-                          {tag.label}
-                        </button>
-                      ))}
-                    </div>
                   </div>
                   {/* Description */}
                   <div>
@@ -263,7 +211,7 @@ export default function CreateTaskForm({
                     <textarea
                       id="description"
                       name="description"
-                      value={formData.description}
+                      value={createTaskReq.description}
                       onChange={handleInputChange}
                       rows={3}
                       className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -280,7 +228,7 @@ export default function CreateTaskForm({
                   {/* Start Date */}
                   <div>
                     <label
-                      htmlFor="startDate"
+                      htmlFor="startTime"
                       className="block text-sm font-medium mb-2"
                       style={{ color: "var(--foreground)" }}
                     >
@@ -288,33 +236,32 @@ export default function CreateTaskForm({
                     </label>
                     <input
                       type="datetime-local"
-                      id="startDate"
-                      name="startDate"
-                      value={formData.startDate}
+                      id="startTime"
+                      name="startTime"
+                      value={createTaskReq.startTime}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       style={{
                         backgroundColor: "var(--background)",
                         color: "var(--foreground)",
-                        borderColor: errors.startDate
+                        borderColor: errors.startTime
                           ? "var(--sfit-red-500)"
                           : "var(--sfit-gray-200)",
                       }}
                     />
-                    {errors.startDate && (
+                    {errors.startTime && (
                       <p
                         className="mt-1 text-sm"
                         style={{ color: "var(--sfit-red-500)" }}
                       >
-                        {errors.startDate}
+                        {errors.startTime}
                       </p>
                     )}
                   </div>
-
-                  {/* Deadline */}
+                  {/* dateline */}
                   <div>
                     <label
-                      htmlFor="deadline"
+                      htmlFor="dateline"
                       className="block text-sm font-medium mb-2"
                       style={{ color: "var(--foreground)" }}
                     >
@@ -322,95 +269,25 @@ export default function CreateTaskForm({
                     </label>
                     <input
                       type="datetime-local"
-                      id="deadline"
-                      name="deadline"
-                      value={formData.deadline}
+                      id="dateline"
+                      name="dateline"
+                      value={createTaskReq.dateline}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       style={{
                         backgroundColor: "var(--background)",
                         color: "var(--foreground)",
-                        borderColor: errors.deadline
+                        borderColor: errors.dateline
                           ? "var(--sfit-red-500)"
                           : "var(--sfit-gray-200)",
                       }}
                     />
-                    {errors.deadline && (
+                    {errors.dateline && (
                       <p
                         className="mt-1 text-sm"
                         style={{ color: "var(--sfit-red-500)" }}
                       >
-                        {errors.deadline}
-                      </p>
-                    )}
-                  </div>
-                  {/* Assignee */}
-                  <div>
-                    <label
-                      htmlFor="assignee"
-                      className="block text-sm font-medium mb-2"
-                      style={{ color: "var(--foreground)" }}
-                    >
-                      Người thực hiện *
-                    </label>
-                    <input
-                      type="text"
-                      id="assignee"
-                      name="assignee"
-                      value={formData.assignee}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      style={{
-                        backgroundColor: "var(--background)",
-                        color: "var(--foreground)",
-                        borderColor: errors.assignee
-                          ? "var(--sfit-red-500)"
-                          : "var(--sfit-gray-200)",
-                      }}
-                      placeholder="Nhập tên người thực hiện"
-                    />
-                    {errors.assignee && (
-                      <p
-                        className="mt-1 text-sm"
-                        style={{ color: "var(--sfit-red-500)" }}
-                      >
-                        {errors.assignee}
-                      </p>
-                    )}
-                  </div>
-                  {/* Percent Complete */}
-                  <div>
-                    <label
-                      htmlFor="percentComplete"
-                      className="block text-sm font-medium mb-2"
-                      style={{ color: "var(--foreground)" }}
-                    >
-                      Phần trăm hoàn thành (%)
-                    </label>
-                    <input
-                      type="number"
-                      id="percentComplete"
-                      name="percentComplete"
-                      value={formData.percentComplete}
-                      onChange={handleInputChange}
-                      min={0}
-                      max={100}
-                      className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      style={{
-                        backgroundColor: "var(--background)",
-                        color: "var(--foreground)",
-                        borderColor: errors.percentComplete
-                          ? "var(--sfit-red-500)"
-                          : "var(--sfit-gray-200)",
-                      }}
-                      placeholder="0 - 100"
-                    />
-                    {errors.percentComplete && (
-                      <p
-                        className="mt-1 text-sm"
-                        style={{ color: "var(--sfit-red-500)" }}
-                      >
-                        {errors.percentComplete}
+                        {errors.dateline}
                       </p>
                     )}
                   </div>
@@ -429,49 +306,31 @@ export default function CreateTaskForm({
               <div className="text-sm my-1">
                 Tiêu đề:{" "}
                 <span style={{ color: "var(--sfit-green)" }}>
-                  {formData.title}
+                  {createTaskReq.name}
                 </span>
-              </div>
-              <div className="text-sm my-1">
-                Nhãn:{" "}
-                {formData.tags.map((tag) => (
-                  <span
-                    key={tag.label}
-                    className="inline-block px-2 py-1 rounded-full mx-1"
-                    style={{ background: tag.color, color: tag.textColor }}
-                  >
-                    {tag.label}
-                  </span>
-                ))}
               </div>
               <div className="text-sm my-1">
                 Người thực hiện:{" "}
                 <span style={{ color: "var(--sfit-green)" }}>
-                  {formData.assignee}
+                  {/* Nếu có trường assignee thì hiển thị ở đây */}
                 </span>
               </div>
               <div className="text-sm my-1">
                 Ngày bắt đầu:{" "}
                 <span style={{ color: "var(--sfit-green)" }}>
-                  {formData.startDate}
+                  {createTaskReq.startTime}
                 </span>
               </div>
               <div className="text-sm my-1">
                 Hạn chót:{" "}
                 <span style={{ color: "var(--sfit-green)" }}>
-                  {formData.deadline}
-                </span>
-              </div>
-              <div className="text-sm my-1">
-                Hoàn thành:{" "}
-                <span style={{ color: "var(--sfit-green)" }}>
-                  {formData.percentComplete}%
+                  {createTaskReq.dateline}
                 </span>
               </div>
               <div className="text-sm my-1">
                 Mô tả:{" "}
                 <span style={{ color: "var(--sfit-green)" }}>
-                  {formData.description}
+                  {createTaskReq.description}
                 </span>
               </div>
               <Line />
@@ -496,6 +355,7 @@ export default function CreateTaskForm({
                     backgroundColor: "var(--sfit-green)",
                     color: "var(--background)",
                   }}
+                  disabled={loading}
                 >
                   Tạo nhiệm vụ
                 </button>
