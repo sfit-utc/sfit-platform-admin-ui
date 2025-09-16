@@ -23,8 +23,10 @@ class TaskService {
 
   // Create task (apiClient version)
   async createTask(data: CreateTaskReq): Promise<Task> {
-    const res = await apiClient.post<{ data: Task }>("/tasks", data);
-    return res.data.data;
+    // const res = await apiClient.post<{ data: Task }>("/tasks", data);
+    // return res.data;
+    const res = await apiClient.post("/tasks", data);
+    return res.data;
   }
 
   // Get task detail
@@ -44,9 +46,9 @@ class TaskService {
     await apiClient.put(`/tasks/${taskId}`, data);
   }
 
-  // Delete task (apiClient version)
-  async deleteTask(taskId: string): Promise<void> {
+  async deleteTask(taskId: string): Promise< {message: string} > {
     await apiClient.delete(`/tasks/${taskId}`);
+    return { message: "Deleted successfully" };
   }
 
   // Get tasks with pagination (apiClient version)

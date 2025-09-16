@@ -21,13 +21,6 @@ export const useTaskService = () => {
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [taskDetail, setTaskDetail] = useState<Task | null>(null);
-  const [createdTask, setCreatedTask] = useState<Task | null>(null);
-  const [deletedTaskId, setDeletedTaskId] = useState<string | null>(null);
-  const [addUserTaskResult, setAddUserTaskResult] = useState<any>(null);
-  const [deleteUserTaskResult, setDeleteUserTaskResult] = useState<any>(null);
-  const [updateTaskUserStatusResult, setUpdateTaskUserStatusResult] =
-    useState<any>(null);
 
   // List all tasks with pagination
   const fetchTasks = useCallback(async (query: ListTaskQuery) => {
@@ -95,35 +88,16 @@ export const useTaskService = () => {
     }
   }, []);
 
-  // List tasks by user ID with pagination
-  const fetchTasksByUserID = useCallback(
-    async (userId: string, query: ListTaskOfUserReq) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await taskService.listTasksByUserID(userId, query);
-        setUserTasks(res.items);
-        // Optionally set pagination if needed
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to fetch user tasks"
-        );
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
-
-  // Get tasks by user ID without pagination
-  const fetchTasksByUserId = useCallback(async (userId: string) => {
+  // List tasks by user ID
+  const fetchTasksByUserID = useCallback(async (userId: string, query: ListTaskOfUserReq) => {
     setLoading(true);
     setError(null);
     try {
-      return await taskService.getTasksByUserId(userId);
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch tasks by user");
-      throw err;
+      const res = await taskService.listTasksByUserID(userId, query);
+      setUserTasks(res.items);
+      // Optionally set pagination if needed
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch user tasks");
     } finally {
       setLoading(false);
     }
@@ -135,7 +109,6 @@ export const useTaskService = () => {
     setError(null);
     try {
       const detail = await taskService.getTaskDetail(taskId);
-      setTaskDetail(detail);
       return detail;
     } catch (err) {
       setError(
@@ -208,7 +181,6 @@ export const useTaskService = () => {
     setError(null);
     try {
       const task = await taskService.createTask(data);
-      setCreatedTask(task);
       return task;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create task");
@@ -289,7 +261,6 @@ export const useTaskService = () => {
     setError(null);
     try {
       await taskService.deleteTask(taskId);
-      setDeletedTaskId(taskId);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete task");
       throw err;
@@ -299,25 +270,20 @@ export const useTaskService = () => {
   }, []);
 
   // Add user task
-  const addUserTask = useCallback(
-    async (userId: string, data: AddUserTaskReq) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const result = await taskService.addUserTask(userId, data);
-        setAddUserTaskResult(result);
-        return result;
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to add user task"
-        );
-        throw err;
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
+  const addUserTask = useCallback(async (userId: string, data: AddUserTaskReq) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await taskService.addUserTask(userId, data);
+      setAddUserTaskResult(result);
+      return result;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add user task");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   // Delete user task
   const deleteUserTask = useCallback(async (userId: string, taskId: string) => {
@@ -325,7 +291,6 @@ export const useTaskService = () => {
     setError(null);
     try {
       const result = await taskService.deleteUserTask(userId, taskId);
-      setDeleteUserTaskResult(result);
       return result;
     } catch (err) {
       setError(
@@ -338,32 +303,21 @@ export const useTaskService = () => {
   }, []);
 
   // Update user task status
-  const updateTaskUserStatus = useCallback(
-    async (userId: string, taskId: string, data: UpdateTaskUserStatusReq) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const result = await taskService.updateTaskUserStatus(
-          userId,
-          taskId,
-          data
-        );
-        setUpdateTaskUserStatusResult(result);
-        return result;
-      } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Failed to update user task status"
-        );
-        throw err;
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
-
+  const updateTaskUserStatus = useCallback(async (userId: string, taskId: string, data: UpdateTaskUserStatusReq) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await taskService.updateTaskUserStatus(userId, taskId, data);
+      setUpdateTaskUserStatusResult(result);
+      return result;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update user task status");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  
   return {
     tasks,
     userTasks,
@@ -376,7 +330,6 @@ export const useTaskService = () => {
     addUserTaskResult,
     deleteUserTaskResult,
     updateTaskUserStatusResult,
-    setTasks,
     fetchTasks,
     fetchAllTasks,
     fetchTasksByEventID,

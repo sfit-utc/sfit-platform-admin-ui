@@ -77,14 +77,13 @@ export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdate
     start_date: formatDateTime(task.StartDate),
     deadline: formatDateTime(task.Deadline),
   });
-  console.log(task);
   const handleEditClick = () => setEditing(true);
-  console.log(task);
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+
 
   const handleSave = async () => {
     await updateTask(task.id, form);
@@ -231,7 +230,7 @@ export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdate
               />
             </span>
           </div>
-          <div className="text-green-600 font-semibold flex items-center">
+          {/* <div className="text-green-600 font-semibold flex items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18"
@@ -251,9 +250,9 @@ export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdate
               className="ml-1 border p-1  font-normal"
               placeholder="Phụ trách"
             />
-          </div>
+          </div> */}
         </div>
-        <div className="mb-2">
+        {/* <div className="mb-2">
           <div className="flex items-center justify-between mb-1">
             <span className="text-sm font-semibold text-gray-700">Tiến độ</span>
             <input
@@ -272,8 +271,8 @@ export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdate
               style={{ width: `${form.percent_complete}%` }}
             ></div>
           </div>
-        </div>
-        <div className="text-green-600 font-semibold flex items-center">
+        </div> */}
+        {/* <div className="text-green-600 font-semibold flex items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -296,7 +295,7 @@ export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdate
               https://drive.google.com/file/d/18SqIEhWmsUi0sTD9aCtEzOhlkzU7RsVT/view?usp=drive_link
             </a>
           </span>
-        </div>
+        </div> */}
       </div>
     );
   }
@@ -366,8 +365,15 @@ export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdate
               className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full cursor-pointer"
               onClick={async () => {
                 if (window.confirm("Bạn có chắc muốn xóa task này?")) {
-                  await deleteTask(task.id);
-                  if (onUpdated) onUpdated();
+                  try {
+                    await deleteTask(task.ID);
+                    if (onUpdated) onUpdated();
+                  } catch (err) {
+                    alert(
+                      "Xóa task thất bại: " +
+                        (err instanceof Error ? err.message : "Unknown error")
+                    );
+                  }
                 }
               }}
               title="Xóa task"
@@ -489,7 +495,7 @@ export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdate
           </span>
         </div>
         <div className="text-green-600 font-semibold flex items-center">
-          <svg
+          {/* <svg
             xmlns="http://www.w3.org/2000/svg"
             width="18"
             height="18"
@@ -500,8 +506,8 @@ export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdate
               fill="rgb(20, 128, 0)"
               d="M16 16a7 7 0 1 0 0-14a7 7 0 0 0 0 14m-8.5 2A3.5 3.5 0 0 0 4 21.5v.5c0 2.393 1.523 4.417 3.685 5.793C9.859 29.177 12.802 30 16 30s6.14-.823 8.315-2.207C26.477 26.417 28 24.393 28 22v-.5a3.5 3.5 0 0 0-3.5-3.5z"
             />
-          </svg>
-          <span className="ml-1  font-normal">Phụ trách: </span>
+          </svg> */}
+          {/* <span className="ml-1  font-normal">Phụ trách: </span> */}
         </div>
       </div>
       <div className="mb-2">
