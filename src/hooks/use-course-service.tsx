@@ -20,7 +20,6 @@ import { PageListResp } from "@/types/pagination";
 import { LessonInfo } from "@/types/course";
 
 export function useCourseService() {
-  // Example: loading and error state for async actions
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [courses, setCourses] = useState<PageListResp<Course[]> | null>(null);

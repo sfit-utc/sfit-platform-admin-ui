@@ -1,12 +1,44 @@
 import Line from "@/components/ui/line";
 import { Course } from "@/types/course";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useCourseService } from "@/hooks/use-course-service";
 interface CourseItemProps {
   course: Course;
 }
+const formatDateTime = (dateString: string) => {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return dateString;
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return (
+    pad(date.getHours()) +
+    ":" +
+    pad(date.getMinutes()) +
+    " " +
+    pad(date.getDate()) +
+    "/" +
+    pad(date.getMonth() + 1) +
+    "/" +
+    date.getFullYear()
+  );
+};
 export default function CourseItem({ course }: CourseItemProps) {
-  useEffect(()=>{
+  const [showModal, setShowModal] = useState(false);
+  const [detail, setDetail] = useState<any>(null);
+  const { getCourseDetailByID, loading } = useCourseService();
+  useEffect(() => {
     console.log(course);
+  })
+  const handleShowDetail = async () => {
+    setShowModal(true);
+    const resp = await getCourseDetailByID(course.id);
+    setDetail(resp);
+  };
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setDetail(null);
+  };
+  useEffect(() => {
+    console.log(detail);
   })
   return (
     <div
@@ -106,7 +138,7 @@ export default function CourseItem({ course }: CourseItemProps) {
             <b>Tag:</b>
             <span>{course.tags?.join(", ")}</span>
           </div>
-          
+
           {/* <div>
             <b>Thời lượng:</b>
             <span>{course.total_time} phút</span>
@@ -255,11 +287,65 @@ export default function CourseItem({ course }: CourseItemProps) {
           }}
           className=" w-full cursor-pointer p-2.5 bg-slate-50 rounded-[5px]  outline-1 outline-offset-[-1px] outline-blue-600 inline-flex justify-center items-center gap-2.5"
         >
-          <div className="text-center justify-center text-blue-600 text-base font-normal font-inter">
-            Thông tin chi tiết
+          <div
+            
+            className="text-center justify-center text-blue-600 text-base font-normal font-inter"
+            onClick={handleShowDetail}>
+            Thông tin khóa học
           </div>
         </div>
       </div>
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30"
+          style={{
+              backdropFilter: "blur(6px)",
+              backgroundColor: "rgba(0,0,0,0.05",
+            }}>
+          <div className="bg-white rounded-lg p-6 min-w-[350px] max-w-[90vw] shadow-lg relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-black"
+              onClick={handleCloseModal}
+            >
+              &times;
+            </button>
+            {loading && <div>Đang tải...</div>}
+            {!loading && detail && (
+              <div>
+                <h2 className="text-xl font-bold mb-2">{detail.title}</h2>
+                <div><b>Mô tả:</b> {detail.description}</div>
+                <div><b>Loại:</b> {detail.type}</div>
+                <div><b>Cấp độ:</b> {detail.level}</div>
+                <div><b>Giảng viên:</b> {detail.teachers?.join(", ")}</div>
+                <div><b>Tag:</b> {detail.tags?.join(", ")}</div>
+                <div><b>Thời lượng:</b> {detail.total_time} phút</div>
+                <div><b>Số bài học:</b> {detail.total_lessons}</div>
+                <div><b>Ngôn ngữ:</b> {detail.language}</div>
+                <div><b>Đã đăng ký:</b> {detail.like ? "Đã đăng ký" : "Chưa đăng ký"}</div>
+                <div><b>Số người đăng ký:</b> {detail.total_registered}</div>
+                <div><b>Điểm đánh giá:</b> {detail.star}</div>
+                <div><b>Yêu cầu:</b> {detail.require?.join(", ")}</div>
+                <div><b>Đối tượng:</b> {detail.target?.join(", ")}</div>
+                <div><b>Cập nhật lúc:</b> {formatDateTime(detail.updated_at)}</div>
+                {/* Thêm các trường khác nếu muốn */}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      <div className="mt-4 hover:grayscale-50">
+        <div
+          style={{
+            backgroundColor: "var(--search-bg)",
+          }}
+          className=" w-full cursor-pointer p-2.5 bg-slate-50 rounded-[5px]  outline-1 outline-offset-[-1px] outline-green-600 inline-flex justify-center items-center gap-2.5"
+        >
+          <div className="text-center justify-center text-green-600 text-base font-normal font-inter">
+            Thông tin bài giảng
+          </div>
+        </div>
+      </div>
+
     </div>
+
   );
 }
