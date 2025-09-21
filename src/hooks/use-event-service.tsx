@@ -62,13 +62,13 @@ export const useEventService = () => {
   }, [fetchEvents]);
 
   // Update event
-    const updateEvent = useCallback(async (eventData: UpdateEventRequest) => {
+  const updateEvent = useCallback(async (eventId: string, eventData: UpdateEventRequest) => {
     setLoading(true);
     setError(null);
     try {
-      const updatedEvent = await eventService.updateEvent(eventData);
+      const updated = await eventService.updateEvent(eventId, eventData);
       await fetchEvents();
-      return updatedEvent;
+      return updated;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update event");
       throw err;

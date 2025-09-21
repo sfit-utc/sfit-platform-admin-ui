@@ -19,30 +19,29 @@ function EventDetailModal({
   event,
   onClose,
   onEdit,
-  updateEvent,
   onChange,
 }: {
   event: EventDetailRp | null;
   onClose: () => void;
   onEdit?: (eventId: string) => void;
-  updateEvent: (data: UpdateEventRequest) => Promise<any>;
   onChange?: () => void;
 }) {
+  const { updateEvent } = useEventService();
   const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState<UpdateEventRequest | null>(null);
   useEffect(() => {
+    console.log(event);
     if (event) {
       setForm({
-        id: event.id,
         title: event.Title,
         type: event.Type,
         description: event.Description,
         priority: event.Priority,
-        location: event.Location ,
+        location: event.Location,
         max_people: event.MaxPeople,
         agency: event.Agency,
-        status: event.Status ,
-        begin_at: event.BeginAt ,
+        status: event.Status,
+        begin_at: event.BeginAt,
         end_at: event.EndAt,
       });
     }
@@ -52,17 +51,15 @@ function EventDetailModal({
     setForm({ ...form, [e.target.name]: e.target.value });
   };
   const handleSave = async () => {
-  if (form) {
     try {
-      await updateEvent(form);
+      await updateEvent(event.ID, form);
       setEditMode(false);
-      if (onChange) onChange(); 
+      onChange && onChange();
       onClose();
-    } catch (e) {
+    } catch {
       alert("Cập nhật sự kiện thất bại!");
     }
-  }
-};
+  };
   if (!event) return null;
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50"
@@ -274,21 +271,21 @@ export default function EventItem({
   };
 
   const handleDelete = async (eventId: string) => {
-  if (window.confirm("Bạn có chắc chắn muốn xóa sự kiện này?")) {
-    // Lấy danh sách task mới nhất từ API
-    const res = await fetchTasksByEventID(eventId, { page: 1, page_size: -1 });
-    const taskList = res?.items || [];
-    console.log(taskList);
-    if (taskList.length > 0) {
-      for (const task of taskList) {
-        await deleteTask(task.ID);
+    if (window.confirm("Bạn có chắc chắn muốn xóa sự kiện này?")) {
+      // Lấy danh sách task mới nhất từ API
+      const res = await fetchTasksByEventID(eventId, { page: 1, page_size: -1 });
+      const taskList = res?.items || [];
+      console.log(taskList);
+      if (taskList.length > 0) {
+        for (const task of taskList) {
+          await deleteTask(task.ID);
+        }
       }
+      await deleteEvent(eventId);
+      if (onDelete) onDelete(eventId);
+      if (onChange) onChange();
     }
-    await deleteEvent(eventId);
-    if (onDelete) onDelete(eventId);
-    if (onChange) onChange();
-  }
-};
+  };
 
   const isOngoing = status === "ONGOING";
   const isPast = status === "COMPLETED";
@@ -376,7 +373,6 @@ export default function EventItem({
           event={detail}
           onClose={() => setShowDetail(false)}
           onEdit={onEdit}
-          updateEvent={updateEvent}
           onChange={onChange}
         />
       )}

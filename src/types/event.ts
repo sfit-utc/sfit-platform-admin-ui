@@ -34,18 +34,18 @@ export interface NewEventRequest {
 }
 
 export interface UpdateEventRequest {
-  id: string;
-  title: string;
-  type: string;
-  description: string;
-  priority: number;
-  location: string;
-  max_people: number;
-  agency: string;
-  status: EventStatus;
-  begin_at: string; 
-  end_at: string;   
+  title?: string;
+  type?: string;
+  description?: string;
+  priority?: number;
+  location?: string;
+  max_people?: number;
+  agency?: string;
+  status?: EventStatus;
+  begin_at?: string; 
+  end_at?: string;   
 }
+
 
 export interface EventDetailRp extends Event {
   tags: string[];
