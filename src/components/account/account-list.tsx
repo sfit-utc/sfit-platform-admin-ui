@@ -1,9 +1,8 @@
 "use client";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { AccountListItem, AccountFilters } from "@/types/account";
+import { AccountFilters } from "@/types/account";
 import { useAccounts } from "@/hooks/use-account-service";
 import AccountItem from "@/components/account/account-item";
-import Loading from "@/components/ui/loading";
 import SearchBar from "@/components/ui/search-bar";
 import AddAccount from "@/components/account/add-account";
 import { Rows2 } from "lucide-react";

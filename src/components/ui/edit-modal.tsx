@@ -1,9 +1,11 @@
 "use client";
 import Modal from "@/components/ui/modal";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMember, useMemberManagement } from "@/hooks/use-member-service";
 import { memberService } from "@/services/member-service";
 import { teamService } from "@/services/team-service";
+import { useAuth } from "@/hooks/use-auth";
+import { useUserTeams } from "@/hooks/use-team-service";
 export default function EditModal({
   open,
   onClose,
@@ -42,6 +44,33 @@ export default function EditModal({
     Array<{ id: string; name: string }>
   >([]);
   const [error, setError] = useState<string | null>(null);
+
+  // Current user permissions
+  const { user } = useAuth();
+  const currentUserId = user?.id || "";
+  const { userTeams: myTeams } = useUserTeams(currentUserId);
+
+  const isCNAdmin = useMemo(() => {
+    // User is HEADER or VICE in team "Chủ nhiệm"
+    const cn = myTeams.find(
+      (t: any) => (t?.name || "").toLowerCase() === "chủ nhiệm"
+    );
+    if (!cn) return false;
+    const roles = Array.isArray(cn.role) ? cn.role : [cn.role];
+    const upper = roles.map((r: any) => String(r).toUpperCase());
+    return upper.includes("HEADER") || upper.includes("VICE");
+  }, [myTeams]);
+
+  const canEditTeamByName = (teamName: string) => {
+    if (isCNAdmin) return true;
+    const t = myTeams.find(
+      (x: any) => (x?.name || "").toLowerCase() === teamName.toLowerCase()
+    );
+    if (!t) return false;
+    const roles = Array.isArray(t.role) ? t.role : [t.role];
+    const upper = roles.map((r: any) => String(r).toUpperCase());
+    return upper.includes("HEADER");
+  };
 
   useEffect(() => {
     if (member && open) {
@@ -104,6 +133,12 @@ export default function EditModal({
   }, [open]);
 
   const toggleTeam = (team: string) => {
+    if (!canEditTeamByName(team)) {
+      setError(
+        "Bạn không có quyền chỉnh sửa ban này. Chỉ Chủ nhiệm/Phó CN hoặc Chủ nhiệm của chính ban đó mới được phép."
+      );
+      return;
+    }
     setTeams((prev: string[]) =>
       prev.includes(team)
         ? prev.filter((t: string) => t !== team)
@@ -138,6 +173,16 @@ export default function EditModal({
           teamRoles[team] &&
           teamRoles[team] !== (member.teamRoles?.[team] || "Thành viên")
       );
+
+      // Permission checks: ensure user can modify each target team
+      const allTouchedTeams = Array.from(
+        new Set([...teamsToAdd, ...teamsToUpdate])
+      );
+      for (const teamName of allTouchedTeams) {
+        if (!canEditTeamByName(teamName)) {
+          throw new Error(`Bạn không có quyền cập nhật ban "${teamName}".`);
+        }
+      }
 
       // Add user to new teams
       for (const teamName of teamsToAdd) {
@@ -261,13 +306,19 @@ export default function EditModal({
                 }}
               >
                 {teamList.map((team) => (
-                  <div key={team} className="flex items-center gap-2 text-sm">
+                  <div
+                    key={team}
+                    className="flex items-center gap-2 text-sm opacity-100"
+                  >
                     <input
                       type="checkbox"
                       checked={teams.includes(team)}
                       onChange={() => toggleTeam(team)}
+                      disabled={!canEditTeamByName(team)}
                     />
-                    <span className="min-w-[100px]">{team}</span>
+                    <span className="min-w-[100px] { !canEditTeamByName(team) ? 'text-gray-400' : '' }">
+                      {team}
+                    </span>
                     {teams.includes(team) && (
                       <select
                         value={teamRoles[team] || role}
@@ -278,14 +329,13 @@ export default function EditModal({
                           }))
                         }
                         className="ml-auto p-1 border rounded"
+                        disabled={!canEditTeamByName(team)}
                         style={{
                           backgroundColor: "var(--background)",
                           color: "var(--foreground)",
                           borderColor: "var(--sfit-gray-200)",
                         }}
                       >
-                        <option value="Chủ nhiệm">Chủ nhiệm</option>
-                        <option value="Phó CN">Phó CN</option>
                         <option value="Trưởng ban">Trưởng ban</option>
                         <option value="Phó ban">Phó ban</option>
                         <option value="Thành viên">Thành viên</option>

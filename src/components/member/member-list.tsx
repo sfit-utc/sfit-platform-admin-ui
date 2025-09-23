@@ -1,9 +1,8 @@
 "use client";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { MemberListItem, MemberFilters } from "@/types/member";
+import { MemberFilters } from "@/types/member";
 import { useMembers } from "@/hooks/use-member-service";
 import MemberItem from "@/components/member/member-item";
-import Loading from "@/components/ui/loading";
 import SearchBar from "@/components/ui/search-bar";
 import AddMember from "@/components/member/add-member";
 import { Rows2 } from "lucide-react";

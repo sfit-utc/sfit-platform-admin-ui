@@ -213,7 +213,6 @@ class AuthService {
       return accessToken
     } catch (error) {
       console.error('Token refresh error:', error)
-      // If refresh fails, logout user
       this.logout()
       throw error
     }

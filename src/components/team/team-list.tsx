@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { teamService } from "@/services/team-service";
 import { Team } from "@/types/team";
+import Modal from "@/components/ui/modal";
+import { MoreHorizontal } from "lucide-react";
 
 interface TeamListProps {
   onTeamSelect?: (team: Team) => void;
@@ -16,6 +18,10 @@ export default function TeamList({
   const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [openMenuTeamId, setOpenMenuTeamId] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [teamToDelete, setTeamToDelete] = useState<Team | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -34,6 +40,36 @@ export default function TeamList({
 
     fetchTeams();
   }, []);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (
+        openMenuTeamId &&
+        menuRef.current &&
+        !menuRef.current.contains(e.target as Node)
+      ) {
+        setOpenMenuTeamId(null);
+      }
+    };
+    if (openMenuTeamId) {
+      document.addEventListener("mousedown", handleClick);
+    }
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [openMenuTeamId]);
+
+  async function handleDeleteTeam(teamId: string) {
+    try {
+      await teamService.deleteTeam(teamId);
+      setTeams((prev) => prev.filter((t) => t.id !== teamId));
+    } catch (err: any) {
+      console.error("Delete team error:", err);
+      setError(err.message || "Failed to delete team");
+    } finally {
+      setConfirmOpen(false);
+      setOpenMenuTeamId(null);
+      setTeamToDelete(null);
+    }
+  }
 
   if (loading) {
     return (
@@ -108,11 +144,11 @@ export default function TeamList({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 relative">
         {teams.map((team) => (
           <div
             key={team.id}
-            className={`p-4 rounded-lg border transition-all duration-200 ${
+            className={`p-4 rounded-lg border transition-all duration-200 relative ${
               onTeamSelect
                 ? "cursor-pointer hover:shadow-md hover:scale-105"
                 : ""
@@ -141,32 +177,82 @@ export default function TeamList({
                 )}
                 <div className="flex items-center text-xs text-gray-500">
                   <span>
-                    Created: {new Date(team.created_at).toLocaleDateString()}
+                    Created: {new Date(team.createdAt).toLocaleDateString()}
                   </span>
                 </div>
               </div>
-              {onTeamSelect && (
-                <div className="ml-2">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    style={{ color: "var(--sfit-green)" }}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </div>
-              )}
+              <div className="ml-2">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenMenuTeamId((prev) =>
+                      prev === team.id ? null : team.id
+                    );
+                  }}
+                  className="p-1 rounded hover:bg-gray-100"
+                  aria-label="More options"
+                >
+                  <MoreHorizontal className="w-5 h-5" />
+                </button>
+              </div>
             </div>
+            {openMenuTeamId === team.id && (
+              <div
+                ref={menuRef}
+                className="absolute right-2 top-10 bg-white border rounded shadow z-20"
+                style={{ borderColor: "var(--sfit-gray-200)" }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-50 text-red-600"
+                  onClick={() => {
+                    setTeamToDelete(team);
+                    setConfirmOpen(true);
+                  }}
+                >
+                  Xóa nhóm
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>
+
+      <Modal
+        state={confirmOpen}
+        funcClickToBack={() => {
+          setConfirmOpen(false);
+          setOpenMenuTeamId(null);
+          setTeamToDelete(null);
+        }}
+        className="w-full max-w-md"
+      >
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold">Xác nhận xóa</h3>
+          <p>
+            Bạn có chắc chắn muốn xóa nhóm <b>{teamToDelete?.name}</b> không?
+            Hành động này không thể hoàn tác.
+          </p>
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => setConfirmOpen(false)}
+              className="px-4 py-2 border rounded-md hover:bg-gray-50"
+              style={{ borderColor: "var(--sfit-gray-200)" }}
+            >
+              Hủy
+            </button>
+            <button
+              type="button"
+              onClick={() => teamToDelete && handleDeleteTeam(teamToDelete.id)}
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+            >
+              Xóa
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

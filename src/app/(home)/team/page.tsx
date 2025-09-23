@@ -10,7 +10,7 @@ export default function CommitteePage() {
 
   return (
     <div className="mt-4">
-      {id ? <CommitteeDetail id={Number.parseInt(id)} /> : <Committee />}
+      {id ? <CommitteeDetail id={id} /> : <Committee />}
     </div>
   );
 }
