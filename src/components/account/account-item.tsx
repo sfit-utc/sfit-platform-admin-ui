@@ -75,7 +75,7 @@ export default function AccountItem({
       </div>
       <div className="flex-2 flex justify-center items-center">
         <div className="text-center py-1 px-4 w-fit bg-blue-100 text-blue-600 rounded-full text-sm font-semibold whitespace-nowrap">
-          {account.class}
+          {account.class || "Chưa phân lớp"}
         </div>
       </div>
       <div className="flex-1 flex items-center justify-center gap-1">
@@ -150,7 +150,7 @@ export default function AccountItem({
           <div className="flex justify-between">
             <span className="font-medium">Lớp:</span>
             <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-sm">
-              {account.class}
+              {account.class || "Chưa phân lớp"}
             </span>
           </div>
         </div>

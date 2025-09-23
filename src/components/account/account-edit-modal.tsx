@@ -4,6 +4,7 @@ import {
   useAccountManagement,
   useAvailableRoles,
 } from "@/hooks/use-account-service";
+import { useAuth } from "@/hooks/use-auth";
 
 interface AccountEditModalProps {
   open: boolean;
@@ -22,8 +23,10 @@ export default function AccountEditModal({
 }: AccountEditModalProps) {
   const [selectedRole, setSelectedRole] = useState<string>(currentRole);
   const [error, setError] = useState<string | null>(null);
-  const { updateAccountRole, loading } = useAccountManagement();
+  const { updateAccountRole, removeAccountRole, loading } =
+    useAccountManagement();
   const { data: availableRoles, loading: rolesLoading } = useAvailableRoles();
+  const { user } = useAuth();
 
   // Update selected role when currentRole changes
   useEffect(() => {
@@ -39,19 +42,23 @@ export default function AccountEditModal({
   }, [open, currentRole]);
 
   const handleSave = async () => {
-    if (!selectedRole) {
-      setError("Vui lòng chọn vai trò");
-      return;
-    }
-
-    if (selectedRole === currentRole) {
-      onClose();
+    // Enforce admin-only editing
+    if (!user || user.role !== "admin") {
+      setError(
+        "Chỉ quản trị viên (ADMIN) mới được chỉnh sửa thông tin tài khoản."
+      );
       return;
     }
 
     try {
       setError(null);
-      await updateAccountRole(String(accountId), selectedRole);
+      const uid = String(accountId);
+      if (selectedRole === "admin") {
+        await updateAccountRole(uid, "admin");
+      } else {
+        // Switch to user: ensure admin role is removed
+        await removeAccountRole(uid, "admin");
+      }
 
       if (onSaved) {
         onSaved();

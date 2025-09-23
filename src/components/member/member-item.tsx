@@ -265,7 +265,7 @@ export default function MemberItem({
           <div className="flex justify-between">
             <span className="font-medium">Lớp:</span>
             <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-sm">
-              {member.class}
+              {member.class || "Chưa phân lớp"}
             </span>
           </div>
           <div className="flex justify-between">
