@@ -21,7 +21,7 @@ export interface TeamUser {
   role: TeamRole[];
 }
 
-export type TeamRole = 'head' | 'vice' | 'member';
+export type TeamRole = 'HEADER' | 'VICE' | 'MEMBER';
 
 // API Request/Response types
 export interface CreateTeamRequest {

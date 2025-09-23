@@ -23,7 +23,7 @@ export default function MemberActions({
   const [showDeleteFromTeam, setShowDeleteFromTeam] = useState(false);
   const [showDeleteMember, setShowDeleteMember] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<string>("");
-  const [selectedRole, setSelectedRole] = useState<TeamRole>("member");
+  const [selectedRole, setSelectedRole] = useState<TeamRole>("MEMBER");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,7 +32,14 @@ export default function MemberActions({
     member.userId || String(member.id)
   );
 
-  const availableRoles: TeamRole[] = ["head", "vice", "member"];
+  const availableRoles: TeamRole[] = ["HEADER", "VICE", "MEMBER"];
+  const canEditTeam = (teamId: string) => {
+    const team = userTeams.find((t) => t.team_id === teamId);
+    if (!team) return false;
+    const roles = Array.isArray(team.role) ? team.role : [team.role];
+    const upperRoles = roles.map((r: any) => String(r).toUpperCase());
+    return upperRoles.includes("HEADER");
+  };
 
   const handleAddToTeam = async () => {
     if (!selectedTeam || !member.userId) return;
@@ -112,16 +119,20 @@ export default function MemberActions({
           onClick={() => setShowEditRole(true)}
           className="p-2 text-purple-600 hover:bg-purple-50 rounded-md"
           title="Change Role"
-          disabled={!userTeams.length || loading}
+          disabled={
+            !userTeams.length ||
+            loading ||
+            (!!selectedTeam && !canEditTeam(selectedTeam))
+          }
         >
           <UserCheck className="w-4 h-4" />
         </button>
 
-        {/* Delete Member */}
+        {/* Clear roles & teams */}
         <button
           onClick={() => setShowDeleteMember(true)}
           className="p-2 text-red-600 hover:bg-red-50 rounded-md"
-          title="Delete Member"
+          title="Clear roles & teams"
           disabled={loading}
         >
           <Trash2 className="w-4 h-4" />
@@ -163,7 +174,7 @@ export default function MemberActions({
                   >
                     {availableRoles.map((role) => (
                       <option key={role} value={role}>
-                        {role.charAt(0).toUpperCase() + role.slice(1)}
+                        {role}
                       </option>
                     ))}
                   </select>
@@ -241,11 +252,10 @@ export default function MemberActions({
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg w-96">
               <h3 className="text-lg font-semibold mb-4 text-red-600">
-                Delete Member
+                Clear member's roles & teams
               </h3>
               <p className="text-gray-600 mb-4">
-                Are you sure you want to permanently delete {member.name}? This
-                action cannot be undone.
+                This will remove {member.name} from all teams and clear roles.
               </p>
 
               <div className="flex gap-3">
@@ -254,7 +264,7 @@ export default function MemberActions({
                   disabled={loading}
                   className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
                 >
-                  {loading ? "Deleting..." : "Delete Member"}
+                  {loading ? "Clearing..." : "Clear"}
                 </button>
                 <button
                   onClick={() => setShowDeleteMember(false)}

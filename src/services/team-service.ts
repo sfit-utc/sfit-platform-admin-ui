@@ -81,7 +81,7 @@ class TeamService {
       
       const url = `/teams/${teamId}/users${params.toString() ? `?${params.toString()}` : ''}`;
       const response = await apiClient.get<any>(url);
-      
+        
       const users = extractItems(response.data);
       
       return {
@@ -135,12 +135,13 @@ class TeamService {
   }
 
   async updateMemberRole(
-    teamId: string, 
-    userId: string, 
+    teamId: string,
+    userId: string,
     roleData: UpdateMemberRoleRequest
   ): Promise<UpdateMemberRoleResponse> {
     try {
-      const response = await apiClient.put<any>(`/team/${teamId}/users/${userId}`, roleData);
+      // Corrected path to plural teams
+      const response = await apiClient.put<any>(`/teams/${teamId}/users/${userId}`, roleData);
       return response.data.data || response.data;
     } catch (error) {
       console.error('Error updating member role:', error);

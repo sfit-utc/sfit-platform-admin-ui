@@ -23,11 +23,18 @@ class CommitteeDetailService {
       const membersResponse = await teamService.getTeamMembers(team.id, { page: 1, pageSize: 100 });
       const members = membersResponse.users || [];
       
-      const headMember = members.find(member => member.role === 'head');
+      // Detect roles using backend values: HEADER / VICE / MEMBER (case-insensitive)
+      const normalized = members.map(m => ({
+        ...m,
+        __role: (m.role || '').toString().trim().toUpperCase(),
+      }));
+
+      const headMember = normalized.find(member => member.__role === 'HEADER');
       const headName = headMember ? headMember.username : "Chưa xác định";
-      
-      const viceHeadMembers = members.filter(member => member.role === 'vice');
-      const viceHeadNames = viceHeadMembers.map(member => member.username);
+
+      const viceHeadNames = normalized
+        .filter(member => member.__role === 'VICE')
+        .map(member => member.username);
 
       return {
         id: team.id,
@@ -95,18 +102,13 @@ class CommitteeDetailService {
       const members = membersResponse.users || [];
       
       const committeeMembers: MemberOfCommittee[] = members.map((member, index) => {
-        let roleName = "Thành viên";
-        const role = member.role?.toLowerCase();
-        if (role === "head" || role === "header") {
-          roleName = "Trưởng ban";
-        } else if (role === "vice") {
-          roleName = "Phó ban";
-        } else if (role === "member") {
-          roleName = "Thành viên";
-        }
+        const roleUpper = (member.role || '').toString().trim().toUpperCase();
+        const roleName = roleUpper === 'HEADER' ? 'Trưởng ban'
+          : roleUpper === 'VICE' ? 'Phó ban'
+          : 'Thành viên';
 
         return {
-          id: parseInt(member.id) || index + 1,
+          id: index + 1,
           name: member.username,
           role: roleName,
           class: "CNTT-K65",

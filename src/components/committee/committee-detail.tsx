@@ -3,13 +3,11 @@
 import HighlightBox from "@/components/ui/highlight-box";
 import Loading from "@/components/ui/loading";
 import Panel from "@/components/ui/panel";
-import TaskItem from "@/components/ui/task-item";
 import {
   useCommitteeDetail,
   useCommitteeTarget,
   useListMembersOfCommittee,
   usePeriod,
-  useTasksOfCommittee,
 } from "@/hooks/use-committee-detail-service";
 import { ArrowLeft, Check, Pen, Plus, Trash2, UsersRound } from "lucide-react";
 import Link from "next/link";
@@ -28,7 +26,6 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
   const { data: period } = usePeriod(id);
   const { data: committeeInfor } = useCommitteeDetail(id);
   const { data: targets, fetchData: refetchTargets } = useCommitteeTarget(id);
-  const { data: taskItems } = useTasksOfCommittee(id);
   const { data: member, loading: loadMembers } = useListMembersOfCommittee(id);
 
   const [teamEditing, setTeamEditing] = useState<boolean>(false);
@@ -98,39 +95,6 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
       <Panel
         className="mt-2.5"
         title={
-          <div className="flex justify-between">
-            <div>Nhiệm vụ</div>
-            <Link
-              href="/add-task"
-              className="flex gap-2 items-center text-sm px-3 py-1.5 rounded-2xl"
-              style={{
-                backgroundColor: "var(--sfit-primary-dark)",
-                color: "var(--background)",
-              }}
-            >
-              <Plus size={18} />
-              Tạo nhiệm vụ mới
-            </Link>
-          </div>
-        }
-      >
-        {taskItems.map(({ label, items }, index) => (
-          <Panel key={index} title={label}>
-            {items.map(({ title, expired, percentComplete }, inerIndex) => (
-              <TaskItem
-                className="mb-2"
-                key={inerIndex}
-                title={title}
-                expired={expired}
-                percentComplete={percentComplete}
-              />
-            ))}
-          </Panel>
-        ))}
-      </Panel>
-      <Panel
-        className="mt-2.5"
-        title={
           <div className="flex items-center">
             <div>Mục tiêu</div>
             <HighlightBox className="w-fit text-sm ml-5" color="blue">
@@ -168,14 +132,7 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
       >
         <div>
           <table>
-            <thead>
-              <tr>
-                <th></th>
-                <th></th>
-                <th className="text-center px-4 ">trưởng/phó ban</th>
-                <th className="text-center">Thư ký</th>
-              </tr>
-            </thead>
+            <thead></thead>
             <tbody>
               {targets.map(({ id, title, expired, headDo, secretaryDo }) => (
                 <tr
@@ -240,9 +197,39 @@ export default function CommitteeDetail({ id }: CommitteeDetailProp) {
         {loadMembers ? (
           <Loading className="m-auto w-fit" size={48} />
         ) : member && member.length > 0 ? (
-          member.map((account) => (
-            <MemberItem key={account.id} member={account} style="line" />
-          ))
+          <div className="space-y-2">
+            {member.map((user) => (
+              <div
+                key={user.id}
+                className="flex items-center justify-between p-3 border rounded-lg"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-medium text-gray-600">
+                      {user.name?.charAt(0)?.toUpperCase() || "U"}
+                    </span>
+                  </div>
+                  <div>
+                    <div className="font-medium">{user.name}</div>
+                    <div className="text-sm text-gray-500">{user.class}</div>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      user.role === "Trưởng ban"
+                        ? "bg-purple-100 text-purple-800"
+                        : user.role === "Phó ban"
+                        ? "bg-blue-100 text-blue-800"
+                        : "bg-green-100 text-green-800"
+                    }`}
+                  >
+                    {user.role}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
         ) : (
           <div className="text-center py-4 text-gray-500">
             Không có thành viên nào trong ban này

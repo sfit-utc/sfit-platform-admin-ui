@@ -119,7 +119,7 @@ export default function MemberItem({
       <div className="flex-2 text-center font-bold text-2xl">{member.id}</div>
       <div className="flex-5 text-left">
         <div className="font-bold text-2xl whitespace-nowrap overflow-hidden text-ellipsis">
-          {member.name || "Unknown"}
+          {member.name || "Chưa có tên"}
         </div>
         <div className="text-sm text-gray-500">{member.email || "unknown"}</div>
       </div>
@@ -132,7 +132,7 @@ export default function MemberItem({
           }
           disabled={!hasMultipleTeams}
         >
-          <span>{firstTeam}</span>
+          <span>{firstTeam || "Chưa phân ban"}</span>
           {hasMultipleTeams && (
             <svg
               className="w-4 h-4 ml-2"
@@ -190,7 +190,7 @@ export default function MemberItem({
       </div>
       <div className="flex-2 flex justify-center items-center">
         <div className="text-center py-1 px-4 w-fit bg-blue-100 text-blue-600 rounded-full text-sm font-semibold whitespace-nowrap">
-          {member.class}
+          {member.class || "Chưa phân lớp"}
         </div>
       </div>
       <div className="flex-1 flex items-center justify-center gap-1">
@@ -271,24 +271,28 @@ export default function MemberItem({
           <div className="flex justify-between">
             <span className="font-medium">Ban:</span>
             <div className="flex flex-wrap gap-1">
-              {member?.teams?.map((team, index) => (
-                <span
-                  key={index}
-                  className={`bg-amber-100 text-amber-800 px-2 py-1 rounded text-sm cursor-pointer hover:bg-amber-200 transition-colors ${
-                    activeTeam === team ? "ring-2 ring-amber-300" : ""
-                  }`}
-                  onClick={async () => {
-                    setActiveTeam(team);
-                    const role = await memberService.getTeamMemberRole(
-                      team,
-                      member.userId || String(member.id)
-                    );
-                    setDisplayRole(role);
-                  }}
-                >
-                  {team}
-                </span>
-              ))}
+              {(member?.teams?.length ? member.teams : ["Chưa phân ban"]).map(
+                (team, index) => (
+                  <span
+                    key={index}
+                    className={`bg-amber-100 text-amber-800 px-2 py-1 rounded text-sm cursor-pointer hover:bg-amber-200 transition-colors ${
+                      activeTeam === team ? "ring-2 ring-amber-300" : ""
+                    }`}
+                    onClick={async () => {
+                      if (team !== "Chưa phân ban") {
+                        setActiveTeam(team);
+                        const role = await memberService.getTeamMemberRole(
+                          team,
+                          member.userId || String(member.id)
+                        );
+                        setDisplayRole(role);
+                      }
+                    }}
+                  >
+                    {team}
+                  </span>
+                )
+              )}
             </div>
           </div>
         </div>

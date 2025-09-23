@@ -385,8 +385,6 @@ export default function AddMember({
                               borderColor: "var(--sfit-gray-200)",
                             }}
                           >
-                            <option value="Chủ nhiệm">Chủ nhiệm</option>
-                            <option value="Phó CN">Phó CN</option>
                             <option value="Trưởng ban">Trưởng ban</option>
                             <option value="Phó ban">Phó ban</option>
                             <option value="Thành viên">Thành viên</option>
