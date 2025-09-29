@@ -88,6 +88,11 @@ export default function LoginForm() {
               Đăng nhập vào tài khoản của bạn
             </p>
           </div>
+          {errors.general && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+              {errors.general}
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label
@@ -101,11 +106,16 @@ export default function LoginForm() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="bg-white mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 py-2 px-3 h-10"
+                className={`bg-white mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 py-2 px-3 h-10 ${
+                  errors.email ? "border-red-500" : ""
+                }`}
                 placeholder="example@gmail.com"
                 required
                 type="email"
               />
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+              )}
             </div>
             <div className="space-y-2">
               <label
@@ -119,10 +129,15 @@ export default function LoginForm() {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="bg-white mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 py-2 px-3 h-10"
+                className={`bg-white mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 py-2 px-3 h-10 ${
+                  errors.password ? "border-red-500" : ""
+                }`}
                 required
                 type="password"
               />
+              {errors.password && (
+                <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+              )}
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center">

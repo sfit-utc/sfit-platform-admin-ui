@@ -252,14 +252,25 @@ class AccountService {
     password: string;
     role: string;
     class?: string;
+    studentId?: string;
+    phone?: string;
+    khoa?: string;
   }): Promise<any> {
     try {
       // Step 1: Register the user
-      const registerResponse = await apiClient.post('/auth/register', {
+      const payload = {
         username: accountData.name,
         email: accountData.email,
         password: accountData.password,
-      });
+        full_name: accountData.name, 
+        phone: accountData.phone || '',
+        class_name: accountData.class || '', 
+        khoa: accountData.khoa || '',
+        msv: accountData.studentId || '', 
+      };
+      
+      console.log('Sending register payload:', payload);
+      const registerResponse = await apiClient.post('/auth/register', payload);
 
       const userData = registerResponse.data;
       const userId = userData.id || userData.user_id || userData.userId;
@@ -272,6 +283,7 @@ class AccountService {
             full_name: accountData.name,
             email: accountData.email,
             class_name: accountData.class || '',
+            student_id: accountData.studentId || '',
             // Add any other required fields for user profile
           });
         } catch (profileError: any) {

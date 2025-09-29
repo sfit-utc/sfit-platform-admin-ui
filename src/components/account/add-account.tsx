@@ -21,6 +21,9 @@ export default function AddAccount({
     confirmPassword: "",
     role: "user",
     class: "",
+    studentId: "",
+    phone: "",
+    khoa: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -36,6 +39,9 @@ export default function AddAccount({
         confirmPassword: "",
         role: "user",
         class: "",
+        studentId: "",
+        phone: "",
+        khoa: "",
       });
       setErrors({});
     }
@@ -90,6 +96,22 @@ export default function AddAccount({
       newErrors.role = "Vui lòng chọn vai trò";
     }
 
+    if (!formData.studentId.trim()) {
+      newErrors.studentId = "Vui lòng nhập mã sinh viên";
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Vui lòng nhập số điện thoại";
+    }
+
+    if (!formData.khoa.trim()) {
+      newErrors.khoa = "Vui lòng nhập khoa";
+    }
+
+    if (!formData.class.trim()) {
+      newErrors.class = "Vui lòng nhập lớp";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -112,6 +134,9 @@ export default function AddAccount({
         password: formData.password,
         role: formData.role,
         class: formData.class,
+        studentId: formData.studentId,
+        phone: formData.phone,
+        khoa: formData.khoa,
       };
 
       const newUser = await accountService.createAccount(registerData);
@@ -278,7 +303,117 @@ export default function AddAccount({
 
           {/* Right Column */}
           <div className="space-y-4">
-            {/* Confirm Password Field */}
+            {/* Student ID Field */}
+            <div>
+              <label
+                htmlFor="studentId"
+                className="block text-sm font-medium mb-2"
+              >
+                Mã sinh viên *
+              </label>
+              <input
+                type="text"
+                id="studentId"
+                name="studentId"
+                value={formData.studentId}
+                onChange={handleInputChange}
+                className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                  errors.studentId ? "border-red-500" : "border-gray-300"
+                }`}
+                style={{
+                  backgroundColor: "var(--background)",
+                  color: "var(--foreground)",
+                }}
+                placeholder="Nhập mã sinh viên"
+              />
+              {errors.studentId && (
+                <p className="mt-1 text-sm text-red-600">{errors.studentId}</p>
+              )}
+            </div>
+
+            {/* Phone Field */}
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium mb-2">
+                Số điện thoại *
+              </label>
+              <input
+                type="text"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                  errors.phone ? "border-red-500" : "border-gray-300"
+                }`}
+                style={{
+                  backgroundColor: "var(--background)",
+                  color: "var(--foreground)",
+                }}
+                placeholder="Nhập số điện thoại"
+              />
+              {errors.phone && (
+                <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+              )}
+            </div>
+
+            {/* Class and Khoa Fields in One Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Class Field */}
+              <div>
+                <label
+                  htmlFor="class"
+                  className="block text-sm font-medium mb-2"
+                >
+                  Lớp *
+                </label>
+                <input
+                  type="text"
+                  id="class"
+                  name="class"
+                  value={formData.class}
+                  onChange={handleInputChange}
+                  className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                    errors.class ? "border-red-500" : "border-gray-300"
+                  }`}
+                  style={{
+                    backgroundColor: "var(--background)",
+                    color: "var(--foreground)",
+                  }}
+                  placeholder="Nhập lớp"
+                />
+                {errors.class && (
+                  <p className="mt-1 text-sm text-red-600">{errors.class}</p>
+                )}
+              </div>
+
+              {/* Khoa Field */}
+              <div>
+                <label
+                  htmlFor="khoa"
+                  className="block text-sm font-medium mb-2"
+                >
+                  Khoa *
+                </label>
+                <input
+                  type="text"
+                  id="khoa"
+                  name="khoa"
+                  value={formData.khoa}
+                  onChange={handleInputChange}
+                  className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                    errors.khoa ? "border-red-500" : "border-gray-300"
+                  }`}
+                  style={{
+                    backgroundColor: "var(--background)",
+                    color: "var(--foreground)",
+                  }}
+                  placeholder="Nhập khoa"
+                />
+                {errors.khoa && (
+                  <p className="mt-1 text-sm text-red-600">{errors.khoa}</p>
+                )}
+              </div>
+            </div>
 
             {/* Role Field */}
             <div>
@@ -290,7 +425,7 @@ export default function AddAccount({
                 name="role"
                 value={formData.role}
                 onChange={handleInputChange}
-                className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                className={`w-full p-3.5 border rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                   errors.role ? "border-red-500" : "border-gray-300"
                 }`}
                 style={{
@@ -304,26 +439,6 @@ export default function AddAccount({
               {errors.role && (
                 <p className="mt-1 text-sm text-red-600">{errors.role}</p>
               )}
-            </div>
-
-            {/* Class Field */}
-            <div>
-              <label htmlFor="class" className="block text-sm font-medium mb-2">
-                Lớp
-              </label>
-              <input
-                type="text"
-                id="class"
-                name="class"
-                value={formData.class}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                style={{
-                  backgroundColor: "var(--background)",
-                  color: "var(--foreground)",
-                }}
-                placeholder="Nhập lớp (tùy chọn)"
-              />
             </div>
           </div>
         </div>

@@ -6,6 +6,7 @@ interface CreateProfileRequest {
   class_name: string;
   khoa: string;
   phone: string;
+  msv: string;
   introduction: string;
   social_link: {
     [key: string]: string;
@@ -19,6 +20,7 @@ interface UpdateProfileRequest {
   khoa: string;
   email: string;
   phone: string;
+  msv: string;
   introduction: string;
   social_link: {
     [key: string]: string;

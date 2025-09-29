@@ -1,7 +1,7 @@
 import { LoginRequest, RegisterRequest, AuthResponse, ApiError, User, ChangePasswordRequest } from '@/types/auth'
 import apiClient from '@/libs/http'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api'
 
 class AuthService {
   private extractAccessToken(resp: any): string | null {
@@ -28,14 +28,14 @@ class AuthService {
     }
   }
 
-  private toUiRole(roles: string[] | undefined, fallback?: string): 'admin' | 'moderator' | 'user' {
+  private toUiRole(roles: string[] | undefined, fallback?: string): 'admin' | 'teacher' | 'student' {
     const rs = (roles || []).map((r) => r.toLowerCase());
     if (rs.includes('admin')) return 'admin';
-    if (rs.includes('moderator')) return 'moderator';
+    if (rs.includes('teacher')) return 'teacher';
     const fb = (fallback || '').toLowerCase();
     if (fb === 'admin') return 'admin';
-    if (fb === 'moderator') return 'moderator';
-    return 'user';
+    if (fb === 'teacher') return 'teacher';
+    return 'student';
   }
 
   async login(credentials: LoginRequest): Promise<AuthResponse> {
@@ -92,22 +92,33 @@ class AuthService {
       localStorage.setItem('user', JSON.stringify(user))
 
       return { user: user as any, accessToken, refreshToken: '' }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error)
+      // Handle specific error cases
+      if (error.response?.status === 401) {
+        throw new Error('Email hoặc mật khẩu không đúng')
+      } else if (error.response?.status === 400) {
+        throw new Error('Thông tin đăng nhập không hợp lệ')
+      } else if (error.response?.status >= 500) {
+        throw new Error('Lỗi server. Vui lòng thử lại sau')
+      } else if (error.message.includes('Network Error')) {
+        throw new Error('Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng')
+      }
       throw error
     }
   }
 
   async register(userData: RegisterRequest): Promise<AuthResponse> {
     try {
-      const usernameFromEmail = userData.email?.split('@')[0] || ''
-      const fallbackUsername = `${userData.firstName || ''}${userData.lastName || ''}`.replace(/\s+/g, '')
       const payload = {
-        username: (userData as any).username || usernameFromEmail || fallbackUsername,
+        username: userData.username,
         email: userData.email,
         password: userData.password,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
+        full_name: userData.full_name,
+        phone: userData.phone,
+        class_name: userData.class_name,
+        khoa: userData.khoa,
+        msv: userData.msv,
       }
       
       // Register user
@@ -124,32 +135,32 @@ class AuthService {
       
       if (userId) {
         try {
-          // Fetch user profile
           const profileRes = await apiClient.get<any>(`/user-profiles/${userId}`)
           const p = profileRes.data.data || profileRes.data
           user = {
             id: userId,
             email: p?.email || userData.email,
-            firstName: p?.firstName || userData.firstName,
-            lastName: p?.lastName || userData.lastName,
+            firstName: p?.full_name?.split(' ')?.slice(0, -1)?.join(' ') || '',
+            lastName: p?.full_name?.split(' ')?.slice(-1)?.join(' ') || '',
             role: this.toUiRole(rolesFromJwt, p?.role),
             avatar: p?.avatar,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           }
-          
-          
+
           try {
-            await apiClient.post('/members', {
-              userId: userId,
-              name: `${userData.firstName} ${userData.lastName}`,
-              email: userData.email,
-              role: 'Thành viên',
-              class: 'Chưa phân lớp',
-              teams: ['Chưa phân ban'],
-              status: 'active',
-              joinDate: new Date().toISOString()
-            })
+            if (process.env.NEXT_PUBLIC_CREATE_MEMBER_ON_REGISTER === 'true') {
+              await apiClient.post('/members', {
+                userId: userId,
+                name: userData.full_name,
+                email: userData.email,
+                role: 'Thành viên',
+                class: userData.class_name,
+                teams: ['Chưa phân ban'],
+                status: 'active',
+                joinDate: new Date().toISOString()
+              })
+            }
           } catch (memberError) {
             console.warn('Failed to create member record:', memberError)
           }
@@ -162,8 +173,8 @@ class AuthService {
         user = {
           id: userId || '',
           email: payload.email,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
+          firstName: '',
+          lastName: '',
           role: this.toUiRole(rolesFromJwt),
           avatar: undefined,
           createdAt: new Date().toISOString(),
@@ -173,8 +184,19 @@ class AuthService {
       localStorage.setItem('user', JSON.stringify(user))
 
       return { user: user as any, accessToken, refreshToken: '' }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Register error:', error)
+      // Handle specific error cases
+      if (error.response?.status === 400) {
+        const message = error.response?.data?.message || 'Thông tin đăng ký không hợp lệ'
+        throw new Error(message)
+      } else if (error.response?.status === 409) {
+        throw new Error('Email hoặc tên đăng nhập đã được sử dụng')
+      } else if (error.response?.status >= 500) {
+        throw new Error('Lỗi server. Vui lòng thử lại sau')
+      } else if (error.message.includes('Network Error')) {
+        throw new Error('Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng')
+      }
       throw error
     }
   }

@@ -3,7 +3,7 @@ export interface User {
   email: string
   firstName: string
   lastName: string
-  role: 'user' | 'admin' | 'moderator'
+  role: 'student' | 'teacher' | 'admin'
   avatar?: string
   createdAt: string
   updatedAt: string
@@ -16,10 +16,14 @@ export interface LoginRequest {
 }
 
 export interface RegisterRequest {
-  firstName: string
-  lastName: string
+  username: string
   email: string
   password: string
+  full_name: string
+  phone: string
+  class_name: string
+  khoa: string
+  msv: string
 }
 
 export interface AuthResponse {

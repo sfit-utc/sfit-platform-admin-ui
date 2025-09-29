@@ -1,7 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 
-const baseURL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
+const baseURL = "";
 
 const apiClient: AxiosInstance = axios.create({
   baseURL,
@@ -56,6 +55,17 @@ apiClient.interceptors.response.use(
         }
         return Promise.reject(refreshError);
       }
+    }
+    
+    // Handle other error cases
+    if (error.response?.status === 403) {
+      error.message = 'Bạn không có quyền thực hiện hành động này';
+    } else if (error.response?.status === 404) {
+      error.message = 'Không tìm thấy tài nguyên yêu cầu';
+    } else if (error.response?.status >= 500) {
+      error.message = 'Lỗi server. Vui lòng thử lại sau';
+    } else if (error.message.includes('Network Error')) {
+      error.message = 'Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng';
     }
     
     return Promise.reject(error);
