@@ -93,11 +93,11 @@ export default function SideBar({ onActiveItemChange }: SideBarProps) {
           onClick={() => handleItemClick("event")}
         />
         <SideItem
-          name={"LỚP HỌC"}
+          name={"KHÓA HỌC"}
           icon={ClassIcon.src}
-          nav={"class"}
-          isActive={activeItem === "class"}
-          onClick={() => handleItemClick("class")}
+          nav={"course"}
+          isActive={activeItem === "course"}
+          onClick={() => handleItemClick("course")}
         />
         <SideItem
           name={"NHIỆM VỤ"}

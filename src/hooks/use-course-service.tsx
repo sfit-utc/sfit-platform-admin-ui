@@ -20,14 +20,12 @@ import { PageListResp } from "@/types/pagination";
 import { LessonInfo } from "@/types/course";
 
 export function useCourseService() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [courses, setCourses] = useState<PageListResp<Course[]> | null>(null);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [courseDetail, setCourseDetail] = useState<CourseDetailResponse | null>(null);
-  const [lessons, setLessons] = useState<LessonInfo[] | null>(null);
-  const [registeredUsers, setRegisteredUsers] = useState<RegisteredUsersResponse | null>(null);
-  const [registeredCourses, setRegisteredCourses] = useState<PageListResp<CourseGeneralInformationResponse[]> | null>(null);
+  const [lessons, setLessons] = useState<LessonInfo[]>([]);
   const [userProgress, setUserProgress] = useState<GetUserProgressInCourseResponse | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   // List courses
   const getListCourse = useCallback(async (query: CourseQuery): Promise<PageListResp<Course[]> | undefined> => {
@@ -70,6 +68,7 @@ export function useCourseService() {
       setLoading(false);
     }
   }, []);
+
 
   // Update course
   const updateCourse = useCallback(async (course_id: string, req: UpdateCourseRequest): Promise<UpdateCourseResponse | undefined> => {
@@ -163,7 +162,7 @@ export function useCourseService() {
     setError(null);
     try {
       const resp = await courseService.getRegisteredUsers(course_id, page, pageSize);
-      setRegisteredUsers(resp);
+      // setRegisteredUsers(resp);
       return resp;
     } catch (err: any) {
       setError(err?.message || "Failed to fetch registered users");
@@ -193,7 +192,7 @@ export function useCourseService() {
     setError(null);
     try {
       const resp = await courseService.getRegisteredCourses(user_id, page, page_size);
-      setRegisteredCourses(resp);
+      // setRegisteredCourses(resp);
       return resp;
     } catch (err: any) {
       setError(err?.message || "Failed to fetch registered courses");
@@ -231,19 +230,30 @@ export function useCourseService() {
       setLoading(false);
     }
   }, []);
-
+  const deleteModule = useCallback(async (moduleId: string): Promise<boolean> => {
+    setLoading(true);
+    setError(null);
+    try {
+      await courseService.deleteModule(moduleId);
+      return true;
+    } catch (err: any) {
+      setError(err?.message || "Failed to delete module");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
   return {
-    loading,
-    error,
     courses,
     courseDetail,
     lessons,
-    registeredUsers,
-    registeredCourses,
     userProgress,
+    loading,
+    error,
     getListCourse,
     getCourseDetailByID,
     createCourse,
+    deleteModule,
     updateCourse,
     deleteCourse,
     markCourseAsFavourite,

@@ -28,7 +28,7 @@ export default function Course() {
   return (
     <div className="space-y-6">
       {/* Tab Navigation */}
-      <div className="flex items-center">
+      {/* <div className="flex items-center">
         <button
           style={{
             backgroundColor: "var(--background)",
@@ -55,14 +55,14 @@ export default function Course() {
         >
           Bài kiểm tra
         </button>
-      </div>
+      </div> */}
 
       {/* Search and Add Class & Contest */}
       <div className="flex justify-between items-center">
         {activeTab === "class" ? (
           <>
             <SearchBar
-              placeholder="Tìm lớp học"
+              placeholder="Tìm khóa học"
               className="w-96"
               onSearch={handleSearch}
             />
@@ -71,7 +71,7 @@ export default function Course() {
               className="cursor-pointer w-52 h-9 bg-green-700 rounded-[20px] flex justify-center items-center hover:bg-green-800 transition-colors"
             >
               <span className="text-white text-base font-bold font-inter">
-                + Tạo lớp học mới
+                + Tạo khóa học mới
               </span>
             </button>
           </>

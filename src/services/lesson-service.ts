@@ -9,7 +9,7 @@ class LessonService {
   }
 
   async createLesson(moduleId: string, lesson: LessonRequest): Promise<Lesson> {
-    const { data } = await apiClient.post(`/modules/${moduleId}/lessons`, lesson);
+    const { data } = await apiClient.post(`/modules/${moduleId}/lessons/`, lesson);
     return data.data;
   }
 
@@ -17,8 +17,8 @@ class LessonService {
     await apiClient.put(`/modules/${moduleId}/lessons/${lessonId}`, lesson);
   }
 
-  async deleteLesson(lessonId: string): Promise<void> {
-    await apiClient.delete(`/lessons/${lessonId}`);
+  async deleteLesson(moduleId: string, lessonId: string): Promise<void> {
+    await apiClient.delete(`/modules/${moduleId}/lessons/${lessonId}`);
   }
 
   async updateStatusLessonAttendance(

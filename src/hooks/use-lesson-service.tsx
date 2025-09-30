@@ -49,11 +49,11 @@ export function useLessonService() {
     }
   }, []);
 
-  const deleteLesson = useCallback(async (lessonId: string): Promise<boolean> => {
+  const deleteLesson = useCallback(async (moduleId: string, lessonId: string): Promise<boolean> => {
     setLoading(true);
     setError(null);
     try {
-      await lessonService.deleteLesson(lessonId);
+      await lessonService.deleteLesson(moduleId, lessonId);
       return true;
     } catch (err: any) {
       setError(err);
