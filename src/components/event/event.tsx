@@ -4,7 +4,7 @@ import SearchBar from "@/components/ui/search-bar";
 import EventList from "@/components/event/event-list";
 import CreateEventForm from "@/components/event/create-event-form";
 import { EventStatus } from "@/types/event";
-const TABS: EventStatus[] = ["ONGOING", "UPCOMING", "COMPLETED"];
+// const TABS: EventStatus[] = ["ONGOING", "UPCOMING", "COMPLETED"];
 
 export default function Event() {
   const [activeTab, setActiveTab] = useState<EventStatus>("ONGOING"); // Sửa lại kiểu

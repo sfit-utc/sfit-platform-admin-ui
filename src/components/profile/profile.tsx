@@ -8,7 +8,7 @@ import AvatarIcon from "@/assets/icons/user.svg";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { profileService } from "@/services/profile-service";
-
+import Image from "next/image";
 export default function Profile() {
   const { user, isLoading, logout } = useAuth();
   const { userProfile, profileLoading, profileError, refetch } =
@@ -493,7 +493,7 @@ export default function Profile() {
           <>
             {/* Profile Header */}
             <div className="flex items-center gap-6 py-4">
-              <img
+              <Image
                 src={user.avatar || AvatarIcon.src}
                 alt={displayName}
                 className="w-24 h-24 rounded-full border"

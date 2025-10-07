@@ -1,6 +1,6 @@
 "use client";
 import Modal from "@/components/ui/modal";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMember, useMemberManagement } from "@/hooks/use-member-service";
 import { memberService } from "@/services/member-service";
 import { teamService } from "@/services/team-service";
@@ -18,7 +18,7 @@ export default function EditModal({
   onSaved?: () => void;
 }) {
   const { data: member, loading } = useMember(memberId);
-  const { updateMemberInfo, loading: saving } = useMemberManagement();
+  const { loading: saving } = useMemberManagement();
   const teamList = [
     "Học tập",
     "Hậu cần",
@@ -72,20 +72,38 @@ export default function EditModal({
     return upper.includes("HEADER");
   };
 
-  useEffect(() => {
-    if (member && open) {
-      setName(member.name || "");
-      setEmail(member.email || "");
-      setRole(member.role || "");
-      setClassNameField(member.class || "");
-      setTeams(member.teams || []);
+  // const loadMemberTeamRoles = async () => {
+  //   if (!member) return;
 
-      // Load actual team-specific roles
-      loadMemberTeamRoles();
-    }
-  }, [member, open]);
+  //   try {
+  //     // Get detailed member info with team roles
+  //     const memberInfo = await memberService.getMemberInfo(
+  //       member.userId || String(memberId)
+  //     );
 
-  const loadMemberTeamRoles = async () => {
+  //     // Initialize team role map with actual roles from backend
+  //     const init: Record<string, string> = {};
+  //     if (memberInfo.teamRoles) {
+  //       // Use the actual team-specific roles from the API
+  //       Object.assign(init, memberInfo.teamRoles);
+  //     } else if (memberInfo.teams && memberInfo.teams.length > 0) {
+  //       // Fallback: use primary role for all teams
+  //       memberInfo.teams.forEach((teamName: string) => {
+  //         init[teamName] = memberInfo.role || "Thành viên";
+  //       });
+  //     }
+  //     setTeamRoles(init);
+  //   } catch (error) {
+  //     console.error("Error loading member team roles:", error);
+  //     // Fallback to default roles
+  //     const init: Record<string, string> = {};
+  //     (member.teams || []).forEach((t) => {
+  //       init[t] = member.role || "Thành viên";
+  //     });
+  //     setTeamRoles(init);
+  //   }
+  // };
+  const loadMemberTeamRoles = useCallback(async () => {
     if (!member) return;
 
     try {
@@ -115,7 +133,20 @@ export default function EditModal({
       });
       setTeamRoles(init);
     }
-  };
+  }, [member, memberId]);
+
+  useEffect(() => {
+    if (member && open) {
+      setName(member.name || "");
+      setEmail(member.email || "");
+      setRole(member.role || "");
+      setClassNameField(member.class || "");
+      setTeams(member.teams || []);
+
+      // Load actual team-specific roles
+      loadMemberTeamRoles();
+    }
+  }, [member, open, loadMemberTeamRoles]);
 
   // Load available teams when modal opens
   useEffect(() => {

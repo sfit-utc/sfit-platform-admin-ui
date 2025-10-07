@@ -1,9 +1,8 @@
 import Line from "@/components/ui/line";
 import { Course, UpdateCourseRequest } from "@/types/course";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useCourseService } from "@/hooks/use-course-service";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useLessonService } from "@/hooks/use-lesson-service";
 
 interface CourseItemProps {
@@ -32,7 +31,7 @@ export default function CourseItem({ course, onCourseDeleted }: CourseItemProps 
   const [editMode, setEditMode] = useState(false);
   const [editData, setEditData] = useState<UpdateCourseRequest>({});
   const [detail, setDetail] = useState<any>(null);
-  const { getCourseDetailByID, loading, deleteCourse, getCourseLessons, updateCourse, deleteModule } = useCourseService();
+  const { getCourseDetailByID, loading, deleteCourse, updateCourse, deleteModule } = useCourseService();
   const { deleteLesson } = useLessonService();
   const handleShowDetail = async () => {
     setShowModal(true);
@@ -52,7 +51,7 @@ export default function CourseItem({ course, onCourseDeleted }: CourseItemProps 
       alert("Cập nhật khóa học thành công!");
       setEditMode(false); // Tắt chế độ chỉnh sửa sau khi lưu
       setDetail(editData); // Cập nhật thông tin hiển thị
-    } catch (error) {
+    } catch {
       alert("Cập nhật khóa học thất bại!");
     }
   };
@@ -61,6 +60,37 @@ export default function CourseItem({ course, onCourseDeleted }: CourseItemProps 
     setDetail(null);
     setEditMode(false);
   };
+  // const handleDeleteCourse = async (courseId: string) => {
+  //   if (window.confirm("Bạn có chắc chắn muốn xóa khóa học này?")) {
+  //     try {
+  //       // Lấy chi tiết khóa học để truy cập course_content
+  //       const courseDetail = await getCourseDetailByID(courseId);
+
+  //       if (courseDetail && courseDetail.course_content) {
+  //         // Lặp qua từng module trong course_content
+  //         for (const module of courseDetail.course_content) {
+  //           // Lặp qua từng bài học trong module và xóa
+  //           for (const lesson of module.lessons || []) {
+  //             await deleteLesson(module.id, lesson.id);
+  //           }
+
+  //           // Xóa module sau khi xóa hết bài học
+  //           await deleteModule(module.id);
+  //         }
+  //       } else {
+  //       }
+
+  //       // Xóa khóa học
+  //       await deleteCourse(courseId);
+
+  //       onCourseDeleted(); // Gọi lại hàm sau khi xóa thành công
+  //       alert("Xóa khóa học thành công!");
+  //     } catch (error) {
+  //       console.error("Lỗi khi xóa khóa học:", error);
+  //       alert("Xóa khóa học thất bại!");
+  //     }
+  //   }
+  // };
   const handleDeleteCourse = async (courseId: string) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa khóa học này?")) {
       try {
@@ -69,16 +99,15 @@ export default function CourseItem({ course, onCourseDeleted }: CourseItemProps 
 
         if (courseDetail && courseDetail.course_content) {
           // Lặp qua từng module trong course_content
-          for (const module of courseDetail.course_content) {
+          for (const courseModule of courseDetail.course_content) {
             // Lặp qua từng bài học trong module và xóa
-            for (const lesson of module.lessons || []) {
-              await deleteLesson(module.id, lesson.id);
+            for (const lesson of courseModule.lessons || []) {
+              await deleteLesson(courseModule.id, lesson.id);
             }
 
             // Xóa module sau khi xóa hết bài học
-            await deleteModule(module.id);
+            await deleteModule(courseModule.id);
           }
-        } else {
         }
 
         // Xóa khóa học

@@ -1,4 +1,4 @@
-import { Task, CreateTaskReq, UpdateTaskReq, ListTaskQuery, AddUserTaskReq, ListTaskOfUserReq, ListTasksByEventID, UpdateTaskUserStatusReq, ResponseTasksOfUser, ApiError } from "@/types/task";
+import { Task, CreateTaskReq, UpdateTaskReq, ListTaskQuery, AddUserTaskReq, ListTaskOfUserReq, ListTasksByEventID, UpdateTaskUserStatusReq, ResponseTasksOfUser} from "@/types/task";
 import { PageListResp } from "@/types/pagination";
 import apiClient from "@/libs/http";
 

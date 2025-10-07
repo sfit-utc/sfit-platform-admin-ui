@@ -1,14 +1,11 @@
 import apiClient from "@/libs/http";
 import {
-  Event,
-  EventStatus,
   ListEventReq,
   NewEventRequest,
   UpdateEventRequest,
   EventDetailRp,
   QueryUsersInEvent,
   UpdateUserAttendanceReq,
-  ApiError,
 } from "@/types/event";
 import { PageListResp } from "@/types/pagination";
 

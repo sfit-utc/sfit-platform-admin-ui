@@ -1,13 +1,14 @@
 "use client"
 import LessonList from "@/components/course/lesson/lesson-list";
 import { useCourseService } from "@/hooks/use-course-service";
+import { CourseDetailResponse } from "@/types/course";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function LessonsPage() {
   const { id } = useParams();
   const { getCourseDetailByID } = useCourseService();
-  const [courseDetail, setCourseDetail] = useState(null);
+  const [courseDetail, setCourseDetail] = useState<CourseDetailResponse | undefined>(undefined);
 
   useEffect(() => {
     async function fetchDetail() {

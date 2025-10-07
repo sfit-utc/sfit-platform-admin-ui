@@ -1,11 +1,11 @@
 import { CourseDetailResponse } from "@/types/course";
 import { useCourseService } from "@/hooks/use-course-service";
 import { useLessonService } from "@/hooks/use-lesson-service";
-import { LessonRequest, LessonType, QuizContentStruct, OnlineContentStruct, OfflineContentStruct, ReadingContentStruct } from "@/types/lesson";
+import { LessonRequest } from "@/types/lesson";
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import CreateLessonForm from "./create-lesson-form";
-import { AddModuleToCourseRequest, AddModuleToCourseResponse } from "@/types/course";
+import { AddModuleToCourseRequest} from "@/types/course";
 import AddModuleForm from "./create-module-form";
 
 
@@ -114,8 +114,8 @@ export default function LessonList({
     selectedCourse,
     onBack,
 }: LessonListProps) {
-    const { addModuleToCourse, updateCourse, deleteCourse, getCourseDetailByID, deleteModule } = useCourseService();
-    const { createLesson, updateLesson, deleteLesson } = useLessonService();
+    const { addModuleToCourse, getCourseDetailByID, deleteModule } = useCourseService();
+    const { createLesson, deleteLesson } = useLessonService();
     const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
     const [isLessonModalOpen, setLessonModalOpen] = useState(false);
     const [isModuleModalOpen, setModuleModalOpen] = useState(false);

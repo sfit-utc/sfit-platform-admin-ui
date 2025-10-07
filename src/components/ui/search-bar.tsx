@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 
 interface SearchBarProps {
   placeholder?: string;
@@ -19,21 +19,31 @@ export default function SearchBar({
   showIcon = true,
 }: SearchBarProps) {
   const [searchTerm, setSearchTerm] = useState(initialValue);
-
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   // Debounced search function
+  // const debouncedSearch = useCallback(
+  //   (() => {
+  //     let timeoutId: NodeJS.Timeout;
+  //     return (value: string) => {
+  //       clearTimeout(timeoutId);
+  //       timeoutId = setTimeout(() => {
+  //         onSearch(value);
+  //       }, debounceMs);
+  //     };
+  //   })(),
+  //   [onSearch, debounceMs]
+  // );
   const debouncedSearch = useCallback(
-    (() => {
-      let timeoutId: NodeJS.Timeout;
-      return (value: string) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          onSearch(value);
-        }, debounceMs);
-      };
-    })(),
+    (value: string) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => {
+        onSearch(value);
+      }, debounceMs);
+    },
     [onSearch, debounceMs]
   );
-
   const handleInputChange = (value: string) => {
     setSearchTerm(value);
     debouncedSearch(value);

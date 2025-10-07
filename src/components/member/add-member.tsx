@@ -17,7 +17,7 @@ export default function AddMember({
   onMemberAdded,
 }: AddMemberProp) {
   // Search functionality
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  // const [searchTerm, setSearchTerm] = useState<string>("");
   const [searchResults, setSearchResults] = useState<AccountListItem[]>([]);
   const [selectedAccount, setSelectedAccount] =
     useState<AccountListItem | null>(null);
@@ -25,7 +25,7 @@ export default function AddMember({
   const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
 
   // Member assignment fields
-  const [memberRole, setMemberRole] = useState<string>("");
+  // const [memberRole, setMemberRole] = useState<string>("");
   const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
   const [teamRoles, setTeamRoles] = useState<Record<string, string>>({});
   const [availableTeams, setAvailableTeams] = useState<
@@ -33,7 +33,7 @@ export default function AddMember({
   >([]);
   const [loadingTeams, setLoadingTeams] = useState<boolean>(false);
   const [errorAccount, setErrorAccount] = useState<string | null>(null);
-  const [errorRole, setErrorRole] = useState<string | null>(null);
+  // const [errorRole, setErrorRole] = useState<string | null>(null);
   const [errorTeam, setErrorTeam] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -84,7 +84,7 @@ export default function AddMember({
   // Handle search input change
   const handleSearchChange = useCallback(
     (value: string) => {
-      setSearchTerm(value);
+      // setSearchTerm(value);
       searchAccounts(value);
     },
     [searchAccounts]
@@ -93,7 +93,7 @@ export default function AddMember({
   // Select an account from search results
   const selectAccount = (account: AccountListItem) => {
     setSelectedAccount(account);
-    setSearchTerm(account.name);
+    // setSearchTerm(account.name);
     setShowSearchResults(false);
     setErrorAccount(null);
   };
@@ -101,7 +101,7 @@ export default function AddMember({
   // Clear selected account
   const clearSelectedAccount = () => {
     setSelectedAccount(null);
-    setSearchTerm("");
+    // setSearchTerm("");
     setSearchResults([]);
     setShowSearchResults(false);
   };

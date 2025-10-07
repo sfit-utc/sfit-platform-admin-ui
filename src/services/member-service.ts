@@ -1,7 +1,7 @@
-import { Member, MemberStats, MemberListItem, MemberFilters, ApiError } from "@/types/member";
+import { Member, MemberStats, MemberListItem, MemberFilters} from "@/types/member";
 import apiClient from '@/libs/http';
 import { teamService } from "./team-service";
-import { Team, AddMemberToTeamRequest } from "@/types/team";
+import {  AddMemberToTeamRequest } from "@/types/team";
 
 class MemberService {
   async getMemberStats(): Promise<MemberStats> {
@@ -353,30 +353,30 @@ class MemberService {
    * @param teamId - ID of the team
    * @returns Promise<string> - Name of the team head
    */
-  async getTeamHead(teamId: string): Promise<string> {
-    try {
-      // Get all members and filter for the specific team
-      const result = await this.getMembers({}, 1, 1000); // Get all members
-      const members = result.members;
+  // async getTeamHead(teamId: string): Promise<string> {
+  //   try {
+  //     // Get all members and filter for the specific team
+  //     const result = await this.getMembers({}, 1, 1000); // Get all members
+  //     const members = result.members;
       
-      // Find members who are heads of the specific team
-      const teamHead = members.find(member => {
-        // Check if member is in the team and has HEADER role
-        return member.teamRoles && 
-               Object.values(member.teamRoles).includes('Trưởng ban') &&
-               member.teams.some(teamName => {
-                 // We need to match by team name, but we have team ID
-                 // This is a limitation - we'd need team ID to name mapping
-                 return true; // For now, return first HEADER we find
-               });
-      });
+  //     // Find members who are heads of the specific team
+  //     const teamHead = members.find(member => {
+  //       // Check if member is in the team and has HEADER role
+  //       return member.teamRoles && 
+  //              Object.values(member.teamRoles).includes('Trưởng ban') &&
+  //              member.teams.some(teamName => {
+  //                // We need to match by team name, but we have team ID
+  //                // This is a limitation - we'd need team ID to name mapping
+  //                return true; // For now, return first HEADER we find
+  //              });
+  //     });
       
-      return teamHead ? teamHead.name : "Chưa xác định";
-    } catch (error) {
-      console.error('Error getting team head:', error);
-      return "Chưa xác định";
-    }
-  }
+  //     return teamHead ? teamHead.name : "Chưa xác định";
+  //   } catch (error) {
+  //     console.error('Error getting team head:', error);
+  //     return "Chưa xác định";
+  //   }
+  // }
 
   /**
    * Get team heads for multiple teams efficiently

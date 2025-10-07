@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 interface sideItem {
   name: string;
   icon: string;
@@ -44,7 +45,7 @@ export default function SideItem({
         onClick={onClick}
         style={isActive ? { backgroundColor: "var(--background)" } : {}}
       >
-        <img
+        <Image
           src={icon}
           alt="logo"
           className={`w-6 h-6 ${isActive ? "w-8 h-8" : ""}`}

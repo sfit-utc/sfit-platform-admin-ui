@@ -5,7 +5,7 @@ import {
   Target,
   Task,
 } from "@/types/committee";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface UseCommitteeServiceType<T> {
   data: T;
@@ -97,18 +97,27 @@ export function useCommitteeTarget(
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchData = () => {
+  // const fetchData = () => {
+  //   setLoading(true);
+  //   committeeDetailService
+  //     .getCommitteeTarget(id)
+  //     .then(setData)
+  //     .catch(setError)
+  //     .finally(() => setLoading(false));
+  // };
+  const fetchData = useCallback(() => {
     setLoading(true);
     committeeDetailService
       .getCommitteeTarget(id)
       .then(setData)
       .catch(setError)
       .finally(() => setLoading(false));
-  };
+  }, [id]);
+
 
   useEffect(() => {
     fetchData();
-  }, [id]);
+  }, [id, fetchData]);
 
   return { data, loading, error, fetchData: fetchData };
 }

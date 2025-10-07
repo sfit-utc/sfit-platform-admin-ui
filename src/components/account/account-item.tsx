@@ -1,13 +1,12 @@
 "use client";
 import { AccountListItem } from "@/types/account";
-import { useState, useRef, useEffect } from "react";
-import { accountService } from "@/services/account-service";
+import { useState,  useEffect } from "react";
 import Avatar from "@/assets/icons/user.svg";
 import { SquarePen, Trash, User } from "lucide-react";
 import AccountDetailModal from "@/components/account/account-detail-modal";
 import AccountEditModal from "@/components/account/account-edit-modal";
 import AccountDeleteModal from "@/components/account/account-delete-modal";
-
+import Image from "next/image";
 interface AccountItemProps {
   account: AccountListItem;
   index: number;
@@ -22,13 +21,17 @@ export default function AccountItem({
   onAccountUpdated,
 }: AccountItemProps) {
   // Early return if account is undefined
-  if (!account) {
-    return null;
-  }
-
   const [openView, setOpenView] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  const [displayRole, setDisplayRole] = useState<string>(account.role);
+  useEffect(() => {
+    setDisplayRole(account.role);
+  }, [account, setDisplayRole]);
+  
+  if (!account) {
+    return null;
+  }
 
   const getRoleStyle = (role: string) => {
     switch (role) {
@@ -41,11 +44,7 @@ export default function AccountItem({
     }
   };
 
-  const [displayRole, setDisplayRole] = useState<string>(account.role);
 
-  useEffect(() => {
-    setDisplayRole(account.role);
-  }, [account]);
 
   const lineView = (
     <div
@@ -120,7 +119,7 @@ export default function AccountItem({
         </div>
 
         <div className="mb-3 flex flex-col justify-center items-center">
-          <img
+          <Image
             src={Avatar.src || account.avatar}
             alt={account.name}
             className="w-24 h-24 rounded-full"

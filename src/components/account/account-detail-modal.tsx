@@ -1,10 +1,9 @@
 "use client";
 import Modal from "@/components/ui/modal";
 import { useAccount } from "@/hooks/use-account-service";
-import { accountService } from "@/services/account-service";
 import Avatar from "@/assets/icons/user.svg";
 import { useState, useEffect } from "react";
-
+import Image from "next/image";
 export default function AccountDetailModal({
   open,
   onClose,
@@ -52,7 +51,7 @@ export default function AccountDetailModal({
         ) : (
           <div className="space-y-3">
             <div className="flex items-center gap-4">
-              <img
+              <Image
                 src={account.avatar || Avatar.src}
                 alt={account.name}
                 className="w-20 h-20 rounded-full"

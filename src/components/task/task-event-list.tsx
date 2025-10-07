@@ -3,7 +3,6 @@ import { useEventService } from "@/hooks/use-event-service";
 import Loading from "../ui/loading";
 import TaskCard from "../ui/card-task";
 import { useTaskService } from "@/hooks/use-task-service";
-import Task from "./task";
 
 interface TaskEventListProps {
   status?: "ALL" | "ONGOING" | "UPCOMING" | "COMPLETED";
@@ -32,7 +31,7 @@ export default function TaskEventList({
   onTaskChanged,
 }: TaskEventListProps) {
   const { events, fetchEvents, loading: loadingEvents } = useEventService();
-  const { fetchTasksByEventID, loading, error } = useTaskService();
+  const { fetchTasksByEventID, loading } = useTaskService();
   const [eventTasks, setEventTasks] = useState<{ event: any; tasks: any[] }[]>([]);
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState<string>("");

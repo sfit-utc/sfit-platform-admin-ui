@@ -1,9 +1,8 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { useCourseService } from "@/hooks/use-course-service";
-import Line from "@/components/ui/line";
 import Modal from "@/components/ui/modal";
-import { CreateCourseRequest, CourseLevel } from "@/types/course";
+import { CreateCourseRequest} from "@/types/course";
 
 interface CreateCourseFormProps {
   state: boolean;
@@ -13,11 +12,11 @@ interface CreateCourseFormProps {
 }
 
 // Helper function to format date from YYYY-MM-DD to DD/MM/YYYY
-function formatDate(dateStr: string) {
-  if (!dateStr) return "";
-  const [year, month, day] = dateStr.split("-");
-  return `${day}/${month}/${year}`;
-}
+// function formatDate(dateStr: string) {
+//   if (!dateStr) return "";
+//   const [year, month, day] = dateStr.split("-");
+//   return `${day}/${month}/${year}`;
+// }
 
 export default function CreateClassForm({
   state,
@@ -57,7 +56,7 @@ export default function CreateClassForm({
     requires: [],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [dayDropdownOpen, setDayDropdownOpen] = useState(false);
+  // const [dayDropdownOpen, setDayDropdownOpen] = useState(false);
   const dayDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -66,22 +65,22 @@ export default function CreateClassForm({
         dayDropdownRef.current &&
         !dayDropdownRef.current.contains(event.target as Node)
       ) {
-        setDayDropdownOpen(false);
+        // setDayDropdownOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const daysOfWeek = [
-    "Thứ 2",
-    "Thứ 3",
-    "Thứ 4",
-    "Thứ 5",
-    "Thứ 6",
-    "Thứ 7",
-    "Chủ nhật",
-  ];
+  // const daysOfWeek = [
+  //   "Thứ 2",
+  //   "Thứ 3",
+  //   "Thứ 4",
+  //   "Thứ 5",
+  //   "Thứ 6",
+  //   "Thứ 7",
+  //   "Chủ nhật",
+  // ];
 
   const handleInputChange = (
     e: React.ChangeEvent<

@@ -33,31 +33,31 @@ export default function EventList({ status, searchTerm, onChange }: EventListPro
     setCurrentPage(1);
   }, [status]);
 
-  const handleRegister = async (eventId: string) => {
-    try {
-      // You would typically get userId from auth context
-      const userId = 1; // Replace with actual user ID
-      // await registerForEvent(eventId, userId);
-      alert("Đăng ký thành công!");
-    } catch (error) {
-      alert(
-        "Đăng ký thất bại: " +
-        (error instanceof Error ? error.message : "Unknown error")
-      );
-    }
-  };
+  // const handleRegister = async (eventId: string) => {
+  //   try {
+  //     // You would typically get userId from auth context
+  //     const userId = 1; // Replace with actual user ID
+  //     // await registerForEvent(eventId, userId);
+  //     alert("Đăng ký thành công!");
+  //   } catch (error) {
+  //     alert(
+  //       "Đăng ký thất bại: " +
+  //       (error instanceof Error ? error.message : "Unknown error")
+  //     );
+  //   }
+  // };
 
-  const handleInfo = (eventId: string) => {
-    // Navigate to event details or show modal
-  };
+  // const handleInfo = (eventId: string) => {
+  //   // Navigate to event details or show modal
+  // };
 
-  const handleAttendance = (eventId: string) => {
-    // Handle attendance logic
-  };
+  // const handleAttendance = (eventId: string) => {
+  //   // Handle attendance logic
+  // };
 
   // Filter events based on status and search term
   const filteredEvents = events.filter((event) => {
-    const matchesStatus = !status || event.status === status;
+    // const matchesStatus = !status || event.status === status;
     const matchesSearch =
       !searchTerm ||
       event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -89,9 +89,9 @@ export default function EventList({ status, searchTerm, onChange }: EventListPro
           key={event.id}
           event={event}
           status={status}
-          onRegister={handleRegister}
-          onInfo={handleInfo}
-          onAttendance={handleAttendance}
+          // onRegister={handleRegister}
+          // onInfo={handleInfo}
+          // onAttendance={handleAttendance}
           onChange={onChange}
         />
       ))}

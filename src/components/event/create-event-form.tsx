@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { useEventService } from "@/hooks/use-event-service";
-import Line from "@/components/ui/line";
 import Modal from "@/components/ui/modal";
 import { NewEventRequest } from "@/types/event";
 
@@ -48,7 +47,7 @@ export default function CreateEventForm({
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const [showCreateForm, setShowCreateForm] = useState(false);
+  // const [showCreateForm, setShowCreateForm] = useState(false);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -57,7 +56,7 @@ export default function CreateEventForm({
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => {
-      let updated = {
+      const updated = {
         ...prev,
         [name]:
           name === "max_people" || name === "priority"

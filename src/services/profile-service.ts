@@ -1,4 +1,4 @@
-import { UserProfile, ApiError } from "@/types/profile";
+import { UserProfile} from "@/types/profile";
 import apiClient from '@/libs/http';
 
 interface CreateProfileRequest {

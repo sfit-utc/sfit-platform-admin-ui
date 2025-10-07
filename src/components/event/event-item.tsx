@@ -18,7 +18,7 @@ interface EventItemProps {
 function EventDetailModal({
   event,
   onClose,
-  onEdit,
+  // onEdit,
   updateEvent,
   onChange,
 }: {
@@ -34,16 +34,16 @@ function EventDetailModal({
     if (event) {
       setForm({
         id: event.id,
-        title: event.Title,
-        type: event.Type,
-        description: event.Description,
-        priority: event.Priority,
-        location: event.Location ,
-        max_people: event.MaxPeople,
-        agency: event.Agency,
-        status: event.Status ,
-        begin_at: event.BeginAt ,
-        end_at: event.EndAt,
+        title:(event as any).Title,
+        type:(event as any).Type,
+        description:(event as any).Description,
+        priority:(event as any).Priority,
+        location:(event as any).Location ,
+        max_people:(event as any).MaxPeople,
+        agency:(event as any).Agency,
+        status:(event as any).Status ,
+        begin_at:(event as any).BeginAt ,
+        end_at:(event as any).EndAt,
       });
     }
   }, [event]);
@@ -58,7 +58,7 @@ function EventDetailModal({
       setEditMode(false);
       if (onChange) onChange(); 
       onClose();
-    } catch (e) {
+    } catch{
       alert("Cập nhật sự kiện thất bại!");
     }
   }
@@ -81,91 +81,91 @@ function EventDetailModal({
           {editMode ? (
             <input
               name="title"
-              value={form.title}
+              value={form?.title}
               onChange={handleChange}
               className="border px-2 py-1 w-full"
             />
           ) : (
-            event.Title || event.title
+            (event as any).Title || event.title
           )}
         </h2>
         <div>
           <b>Loại:</b>{" "}
           {editMode ? (
-            <input name="type" value={form.type} onChange={handleChange} className="border px-2 py-1 w-full" />
+            <input name="type" value={form?.type} onChange={handleChange} className="border px-2 py-1 w-full" />
           ) : (
-            event.Type || event.type
+            (event as any).Type || event.type
           )}
         </div>
         <div>
           <b>Mô tả:</b>{" "}
           {editMode ? (
-            <textarea name="description" value={form.description} onChange={handleChange} className="border px-2 py-1 w-full" />
+            <textarea name="description" value={form?.description} onChange={handleChange} className="border px-2 py-1 w-full" />
           ) : (
-            event.Description || event.description
+            (event as any).Description || event.description
           )}
         </div>
         <div>
           <b>Độ ưu tiên:</b>{" "}
           {editMode ? (
-            <input name="priority" type="number" value={form.priority} onChange={handleChange} className="border px-2 py-1 w-full" />
+            <input name="priority" type="number" value={form?.priority} onChange={handleChange} className="border px-2 py-1 w-full" />
           ) : (
-            event.Priority || event.priority
+            (event as any).Priority || event.priority
           )}
         </div>
         <div>
           <b>Địa điểm:</b>{" "}
           {editMode ? (
-            <input name="location" value={form.location} onChange={handleChange} className="border px-2 py-1 w-full" />
+            <input name="location" value={form?.location} onChange={handleChange} className="border px-2 py-1 w-full" />
           ) : (
-            event.Location || event.location
+            (event as any).Location || event.location
           )}
         </div>
         <div>
           <b>Số lượng tham dự:</b>{" "}
           {editMode ? (
-            <input name="max_people" type="number" value={form.max_people} onChange={handleChange} className="border px-2 py-1 w-full" />
+            <input name="max_people" type="number" value={form?.max_people} onChange={handleChange} className="border px-2 py-1 w-full" />
           ) : (
-            event.MaxPeople || event.max_people
+            (event as any).MaxPeople || event.max_people
           )}
         </div>
         <div>
           <b>Đơn vị tổ chức:</b>{" "}
           {editMode ? (
-            <input name="agency" value={form.agency} onChange={handleChange} className="border px-2 py-1 w-full" />
+            <input name="agency" value={form?.agency} onChange={handleChange} className="border px-2 py-1 w-full" />
           ) : (
-            event.Agency || event.agency
+            (event as any).Agency || event.agency
           )}
         </div>
         <div>
           <b>Trạng thái:</b>{" "}
           {editMode ? (
-            <input name="status" value={form.status} onChange={handleChange} className="border px-2 py-1 w-full" />
+            <input name="status" value={form?.status} onChange={handleChange} className="border px-2 py-1 w-full" />
           ) : (
-            event.Status || event.status
+            (event as any).Status || event.status
           )}
         </div>
         <div>
           <b>Bắt đầu:</b>{" "}
           {editMode ? (
-            <input name="begin_at" value={form.begin_at} onChange={handleChange} className="border px-2 py-1 w-full" />
+            <input name="begin_at" value={form?.begin_at} onChange={handleChange} className="border px-2 py-1 w-full" />
           ) : (
-            formatDateTime(event.BeginAt || event.begin_at)
+            formatDateTime((event as any).BeginAt || event.begin_at)
           )}
         </div>
         <div>
           <b>Kết thúc:</b>{" "}
           {editMode ? (
-            <input name="end_at" value={form.end_at} onChange={handleChange} className="border px-2 py-1 w-full" />
+            <input name="end_at" value={form?.end_at} onChange={handleChange} className="border px-2 py-1 w-full" />
           ) : (
-            formatDateTime(event.EndAt || event.endAt || event.end_at)
+            formatDateTime((event as any).EndAt || event.endAt || (event as any).end_at)
           )}
         </div>
         <div>
-          <b>Ngày tạo:</b> {formatDateTime(event.CreatedAt || event.created_at)}
+          <b>Ngày tạo:</b> {formatDateTime((event as any).CreatedAt || event.created_at)}
         </div>
         <div>
-          <b>Ngày cập nhật:</b> {formatDateTime(event.UpdatedAt || event.updated_at)}
+          <b>Ngày cập nhật:</b> {formatDateTime((event as any).UpdatedAt || event.updated_at)}
         </div>
         <div>
           <b>Tags:</b> {event.tags?.join(", ")}
@@ -235,9 +235,9 @@ export default function EventItem({
 }: EventItemProps) {
   const [showDetail, setShowDetail] = useState(false);
   const [detail, setDetail] = useState<EventDetailRp | null>(null);
-  const { events, deleteEvent, updateEvent, fetchEventDetail } = useEventService();
-  const { tasks, fetchTasksByEventID, deleteTask } = useTaskService();
-  const [loadingDetail, setLoadingDetail] = useState(false);
+  const {  deleteEvent, updateEvent, fetchEventDetail } = useEventService();
+  const { fetchTasksByEventID, deleteTask } = useTaskService();
+  // const [loadingDetail, setLoadingDetail] = useState(false);
 
 
   const handleRegister = () => {
@@ -246,7 +246,7 @@ export default function EventItem({
     }
   };
   const handleInfo = async () => {
-    setLoadingDetail(true);
+    // setLoadingDetail(true);
     try {
       const detailData = await fetchEventDetail(event.id);
       setDetail(detailData);
@@ -254,10 +254,10 @@ export default function EventItem({
       if (onInfo && event.id) {
         onInfo(event.id);
       }
-    } catch (e) {
+    } catch{
       alert("Không thể tải chi tiết sự kiện.");
     } finally {
-      setLoadingDetail(false);
+      // setLoadingDetail(false);
     }
   };
   const handleAttendance = () => {
@@ -267,11 +267,11 @@ export default function EventItem({
   };
 
 
-  const handleEdit = () => {
-    if (onEdit && event.id) {
-      onEdit(event.id);
-    }
-  };
+  // const handleEdit = () => {
+  //   if (onEdit && event.id) {
+  //     onEdit(event.id);
+  //   }
+  // };
 
   const handleDelete = async (eventId: string) => {
   if (window.confirm("Bạn có chắc chắn muốn xóa sự kiện này?")) {
@@ -281,7 +281,7 @@ export default function EventItem({
     console.log(taskList);
     if (taskList.length > 0) {
       for (const task of taskList) {
-        await deleteTask(task.ID);
+        await deleteTask((task as any).ID);
       }
     }
     await deleteEvent(eventId);

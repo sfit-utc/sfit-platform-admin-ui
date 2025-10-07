@@ -4,7 +4,7 @@ import { useMember } from "@/hooks/use-member-service";
 import { memberService } from "@/services/member-service";
 import Avatar from "@/assets/icons/user.svg";
 import { useState, useEffect } from "react";
-
+import Image from "next/image";
 export default function DetailModal({
   open,
   onClose,
@@ -75,7 +75,7 @@ export default function DetailModal({
         ) : (
           <div className="space-y-3">
             <div className="flex items-center gap-4">
-              <img
+              <Image
                 src={member.avatar || Avatar.src}
                 alt={member.name}
                 className="w-20 h-20 rounded-full"

@@ -38,28 +38,28 @@ function TaskInfoModal({ task, onClose }: { task: Task; onClose: () => void }) {
         </div>
         <div className="space-y-2 text-sm">
           <div>
-            <span className="font-semibold">Tên nhiệm vụ:</span> {task.Name}
+            <span className="font-semibold">Tên nhiệm vụ:</span> {(task as any).Name}
           </div>
           <div>
-            <span className="font-semibold">Mô tả:</span> {task.Description || "Không có"}
+            <span className="font-semibold">Mô tả:</span> {(task as any).Description || "Không có"}
           </div>
           <div>
-            <span className="font-semibold">Ngày bắt đầu:</span> {formatDateTime(task.StartDate)}
+            <span className="font-semibold">Ngày bắt đầu:</span> {formatDateTime((task as any).StartDate)}
           </div>
           <div>
-            <span className="font-semibold">Deadline:</span> {formatDateTime(task.Deadline)}
+            <span className="font-semibold">Deadline:</span> {formatDateTime((task as any).Deadline)}
           </div>
           <div>
-            <span className="font-semibold">Tiến độ:</span> {task.PercentComplete}%
+            <span className="font-semibold">Tiến độ:</span> {(task as any).PercentComplete}%
           </div>
           {/* <div>
             <span className="font-semibold">Người tạo:</span> {task.CreatedBy}
           </div> */}
           <div>
-            <span className="font-semibold">Ngày tạo:</span> {formatDateTime(task.CreatedAt)}
+            <span className="font-semibold">Ngày tạo:</span> {formatDateTime((task as any).CreatedAt)}
           </div>
           <div>
-            <span className="font-semibold">Ngày cập nhật:</span> {formatDateTime(task.UpdatedAt)}
+            <span className="font-semibold">Ngày cập nhật:</span> {formatDateTime((task as any).UpdatedAt)}
           </div>
         </div>
       </div>
@@ -71,11 +71,11 @@ export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdate
   const [editing, setEditing] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [form, setForm] = useState<UpdateTaskReq>({
-    name: task.Name,
-    description: task.Description || "",
-    percent_complete: task.PercentComplete,
-    start_date: formatDateTime(task.StartDate),
-    deadline: formatDateTime(task.Deadline),
+    name: (task as any).Name,
+    description: (task as any).Description || "",
+    percent_complete: (task as any).PercentComplete,
+    start_date: formatDateTime((task as any).StartDate),
+    deadline: formatDateTime((task as any).Deadline),
   });
   const handleEditClick = () => setEditing(true);
   const handleChange = (
@@ -366,7 +366,7 @@ export default function TaskCard({ task, onUpdated }: TaskCardProps & { onUpdate
               onClick={async () => {
                 if (window.confirm("Bạn có chắc muốn xóa task này?")) {
                   try {
-                    await deleteTask(task.ID);
+                    await deleteTask((task as any).ID);
                     if (onUpdated) onUpdated();
                   } catch (err) {
                     alert(

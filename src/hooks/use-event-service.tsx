@@ -1,6 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import {
-  Event,
   ListEventReq,
   NewEventRequest,
   UpdateEventRequest,
@@ -21,8 +20,8 @@ export const useEventService = () => {
     setError(null);
     try {
       const res = await eventService.getEvents(params);
-      setEvents(res.data.items);
-      setPagination(res.data);
+      setEvents((res as any).data.items);
+      setPagination((res as any).data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch events");
     } finally {
@@ -36,7 +35,7 @@ export const useEventService = () => {
     setError(null);
     try {
       const detail = await eventService.getEventDetail(eventId);
-      return detail.data;
+      return (detail as any).data;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch event detail");
       throw err;

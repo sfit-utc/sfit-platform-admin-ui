@@ -12,7 +12,6 @@ import {
   TeamMembersResponse,
   UserTeamsResponse,
   TeamMembersQuery,
-  TeamApiError
 } from '@/types/team';
 
 function extractItems(respData: any): any[] {

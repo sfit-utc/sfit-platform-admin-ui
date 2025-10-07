@@ -104,16 +104,16 @@ export default function MemberList({
     (val: string) => {
       setActiveStyle(val);
     },
-    [activeStyle]
+    [ setActiveStyle]
   );
-
+  //activeStyle
   const changeMembersPerPage = useCallback(
     (val: number) => {
       setMembersPerPage(val);
     },
-    [membersPerPage]
+    [setMembersPerPage]
   );
-
+  //membersPerPage,
   const MemberItemSkeleton = () => (
     <div className="flex justify-between items-center p-4 border-2 my-2 animate-pulse">
       <div className="h-6 w-1/12 bg-gray-300 rounded"></div>

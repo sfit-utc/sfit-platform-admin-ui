@@ -1,53 +1,45 @@
 "use client";
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback} from "react";
 import { useCourseService } from "@/hooks/use-course-service";
-import Loading from "@/components/ui/loading";
-import { Course, CourseDetailResponse } from "@/types/course";
+import { Course } from "@/types/course";
 import CourseItem from "./course-item";
 import { PageListResp } from "@/types/pagination";
-import LessonList from "../lesson/lesson-list";
 import { useLessonService } from "@/hooks/use-lesson-service";
-import { AddModuleToCourseRequest } from "@/types/course";
-import { LessonRequest } from "@/types/lesson";
-import Modal from "@/components/ui/modal";
 
 const classesPerPage = 9;
 
 export default function CourseList({ searchTerm }: { searchTerm: string }) {
-  const moduleTitleRef = useRef<HTMLInputElement>(null);
-  const lessonTitleRef = useRef<HTMLInputElement>(null);
-  const lessonDescRef = useRef<HTMLInputElement>(null);
+  // const moduleTitleRef = useRef<HTMLInputElement>(null);
+  // const lessonTitleRef = useRef<HTMLInputElement>(null);
+  // const lessonDescRef = useRef<HTMLInputElement>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedCourse, setSelectedCourse] = useState<CourseDetailResponse & { id: string } | null>(null);
-  type ModalType =
-    | { type: "addModule" }
-    | { type: "editModule", moduleId: string }
-    | { type: "deleteModule", moduleId: string }
-    | { type: "addLesson", moduleId: string }
-    | { type: "editLesson", moduleId: string, lessonId: string }
-    | { type: "deleteLesson", moduleId: string, lessonId: string }
-    | null;
-  const [modal, setModal] = useState<ModalType>(null);
+  // const [selectedCourse, setSelectedCourse] = useState<CourseDetailResponse & { id: string } | null>(null);
+  // type ModalType =
+  //   | { type: "addModule" }
+  //   | { type: "editModule", moduleId: string }
+  //   | { type: "deleteModule", moduleId: string }
+  //   | { type: "addLesson", moduleId: string }
+  //   | { type: "editLesson", moduleId: string, lessonId: string }
+  //   | { type: "deleteLesson", moduleId: string, lessonId: string }
+  //   | null;
+  // const [modal, setModal] = useState<ModalType>(null);
 
   // const [classesPerPage, setClassesPerPage] = useState(6); // Show 6 classes per page (2 rows of 3)
   const {
-    createLesson,
-    updateLesson,
-    deleteLesson
   } = useLessonService();
   const {
     loading,
     error,
     courses,
     getListCourse,
-    getCourseDetailByID,
-    addModuleToCourse,
-    updateCourse,
-    deleteCourse,
+    // getCourseDetailByID,
+    // addModuleToCourse,
+    // updateCourse,
+    // deleteCourse,
   } = useCourseService();
   const [totalItems, setTotalItems] = useState(0);
-  const [pageData, setPageData] = useState<Course[]>([]);
+  // const [pageData, setPageData] = useState<Course[]>([]);
   // async function fetchCourses() {
   //   const resp: PageListResp<Course[]> | undefined = await getListCourse({
   //     title: searchTerm || undefined,
@@ -69,10 +61,10 @@ export default function CourseList({ searchTerm }: { searchTerm: string }) {
       page_size: classesPerPage,
     });
     if (resp) {
-      setPageData(resp.items);
+      // setPageData(resp.items);
       setTotalItems(resp.total_count);
     } else {
-      setPageData([]);
+      // setPageData([]);
       setTotalItems(0);
     }
   }, [searchTerm, currentPage, getListCourse]);
@@ -94,15 +86,20 @@ export default function CourseList({ searchTerm }: { searchTerm: string }) {
   const totalPages = Math.ceil(totalItems / classesPerPage);
 
   // const totalPages = Math.ceil(totalItems / classesPerPage);
-  const currentPageData = courses?.items || [];
+  // const currentPageData = courses || [];
   // Reset to first page when search term changes
+
+  // Ensure currentPageData uses courses.items if available
+  const currentPageData = Array.isArray((courses as any)?.items)
+    ? (courses as any).items
+    : courses || [];
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
-  const handleShowLessons = useCallback(async (courseId: string) => {
-    const detail = await getCourseDetailByID(courseId);
-    if (detail) setSelectedCourse({ ...detail, id: courseId });
-  }, [getCourseDetailByID]);
+  // const handleShowLessons = useCallback(async (courseId: string) => {
+  //   const detail = await getCourseDetailByID(courseId);
+  //   if (detail) setSelectedCourse({ ...detail, id: courseId });
+  // }, [getCourseDetailByID]);
 
   const handlePreviousPage = useCallback(() => {
     if (currentPage > 1) {

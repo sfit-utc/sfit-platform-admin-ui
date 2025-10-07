@@ -12,11 +12,11 @@ interface CreateTaskFormProps {
   onSuccess: () => void;
 }
 
-const initialTags = [
-  { label: "Quan trọng", color: "#F87171", textColor: "#fff" },
-  { label: "Khẩn cấp", color: "#FBBF24", textColor: "#fff" },
-  { label: "Bình thường", color: "#34D399", textColor: "#fff" },
-];
+// const initialTags = [
+//   { label: "Quan trọng", color: "#F87171", textColor: "#fff" },
+//   { label: "Khẩn cấp", color: "#FBBF24", textColor: "#fff" },
+//   { label: "Bình thường", color: "#34D399", textColor: "#fff" },
+// ];
 
 export default function CreateTaskForm({
   state,
@@ -39,7 +39,7 @@ export default function CreateTaskForm({
   if (!events || events.length === 0) {
     fetchEvents({ page: 1, page_size: -1 });
   }
-}, []);
+}, [fetchEvents, events]);
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement

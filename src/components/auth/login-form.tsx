@@ -5,7 +5,6 @@ import Link from "next/link";
 import Facebook from "@/components/icons/facebook";
 import Google from "@/components/icons/google";
 import { LoaderCircle } from "lucide-react";
-import { authService } from "@/services/auth-service";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 

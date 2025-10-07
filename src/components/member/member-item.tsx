@@ -7,7 +7,7 @@ import { SquarePen, Trash, User } from "lucide-react";
 import DetailModal from "@/components/ui/detail-modal";
 import EditModal from "@/components/ui/edit-modal";
 import DeleteModal from "@/components/ui/delete-modal";
-
+import Image from "next/image";
 interface MemberItemProps {
   member: MemberListItem;
   style?: string;
@@ -19,30 +19,11 @@ export default function MemberItem({
   style,
   onMemberUpdated,
 }: MemberItemProps) {
-  // Early return if member is undefined
-  if (!member) {
-    return null;
-  }
-
   const [showTeamsDropdown, setShowTeamsDropdown] = useState(false);
   const [openView, setOpenView] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const getRoleStyle = (role: string) => {
-    switch (role) {
-      case "Trưởng ban":
-        return "text-purple-600 font-bold bg-purple-100";
-      case "Phó ban":
-        return "text-pink-500 font-semibold bg-pink-100";
-      case "Thành viên":
-        return "text-green-700 bg-green-100";
-      default:
-        return "text-gray-600 bg-gray-100";
-    }
-  };
-
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -64,7 +45,7 @@ export default function MemberItem({
     member?.teams?.[0] || ""
   );
   const [displayRole, setDisplayRole] = useState<string>(member.role);
-  const [teamRoles, setTeamRoles] = useState<Record<string, string>>({});
+  // const [teamRoles, setTeamRoles] = useState<Record<string, string>>({});
   const firstTeam = activeTeam;
   const hasMultipleTeams = member?.teams && member.teams.length > 1;
 
@@ -98,16 +79,32 @@ export default function MemberItem({
             member.userId || String(member.id)
           );
           roles[team] = role;
-        } catch (error) {
+        } catch {
           roles[team] = "Thành viên";
         }
       }
-      setTeamRoles(roles);
+      // setTeamRoles(roles);
     };
 
     loadAllTeamRoles();
   }, [member?.teams, member.userId, member.id]);
+  const getRoleStyle = (role: string) => {
+    switch (role) {
+      case "Trưởng ban":
+        return "text-purple-600 font-bold bg-purple-100";
+      case "Phó ban":
+        return "text-pink-500 font-semibold bg-pink-100";
+      case "Thành viên":
+        return "text-green-700 bg-green-100";
+      default:
+        return "text-gray-600 bg-gray-100";
+    }
+  };
 
+  // Early return if member is undefined
+  if (!member) {
+    return null;
+  }
   const lineView = (
     <div
       className="flex justify-between items-center py-4 border-2 my-2"
@@ -235,7 +232,7 @@ export default function MemberItem({
         </div>
 
         <div className="mb-3 flex flex-col justify-center items-center">
-          <img
+          <Image
             src={Avatar.src || member.avatar}
             alt={member.name}
             className="w-24 h-24 rounded-full"
@@ -275,9 +272,8 @@ export default function MemberItem({
                 (team, index) => (
                   <span
                     key={index}
-                    className={`bg-amber-100 text-amber-800 px-2 py-1 rounded text-sm cursor-pointer hover:bg-amber-200 transition-colors ${
-                      activeTeam === team ? "ring-2 ring-amber-300" : ""
-                    }`}
+                    className={`bg-amber-100 text-amber-800 px-2 py-1 rounded text-sm cursor-pointer hover:bg-amber-200 transition-colors ${activeTeam === team ? "ring-2 ring-amber-300" : ""
+                      }`}
                     onClick={async () => {
                       if (team !== "Chưa phân ban") {
                         setActiveTeam(team);
@@ -346,11 +342,11 @@ export default function MemberItem({
                   member.userId || String(member.id)
                 );
                 roles[team] = role;
-              } catch (error) {
+              } catch {
                 roles[team] = "Thành viên";
               }
             }
-            setTeamRoles(roles);
+            // setTeamRoles(roles);
           };
 
           loadAllTeamRoles();

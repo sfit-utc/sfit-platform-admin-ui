@@ -19,7 +19,7 @@ export default function MemberActions({
   compact = false,
 }: MemberActionsProps) {
   const [showAddToTeam, setShowAddToTeam] = useState(false);
-  const [showEditRole, setShowEditRole] = useState(false);
+  // const [showEditRole, setShowEditRole] = useState(false);
   const [showDeleteFromTeam, setShowDeleteFromTeam] = useState(false);
   const [showDeleteMember, setShowDeleteMember] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<string>("");
@@ -27,8 +27,8 @@ export default function MemberActions({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { teams, loading: teamsLoading } = useTeams();
-  const { userTeams, loading: userTeamsLoading } = useUserTeams(
+  const { teams} = useTeams();
+  const { userTeams} = useUserTeams(
     member.userId || String(member.id)
   );
 
@@ -116,7 +116,7 @@ export default function MemberActions({
 
         {/* Change Role */}
         <button
-          onClick={() => setShowEditRole(true)}
+          // onClick={() => setShowEditRole(true)}
           className="p-2 text-purple-600 hover:bg-purple-50 rounded-md"
           title="Change Role"
           disabled={
@@ -252,7 +252,7 @@ export default function MemberActions({
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg w-96">
               <h3 className="text-lg font-semibold mb-4 text-red-600">
-                Clear member's roles & teams
+                Clear member&apos;s roles & teams
               </h3>
               <p className="text-gray-600 mb-4">
                 This will remove {member.name} from all teams and clear roles.

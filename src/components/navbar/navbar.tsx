@@ -22,7 +22,9 @@ export default function NavBar({ activeTitle = "Trang chủ" }: NavBarProps) {
     setTheme(theme === "dark" ? "light" : "dark");
   }, [theme, setTheme]);
 
-  const handleSearch = useCallback((value: string) => {}, []);
+  // const handleSearch = useCallback((value: string) => {}, []);
+  const handleSearch = useCallback(() => {}, []);
+
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

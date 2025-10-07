@@ -105,16 +105,17 @@ export default function AccountList({
     (val: string) => {
       setActiveStyle(val);
     },
-    [activeStyle]
+    []
   );
+  //activeStyle
 
   const changeAccountsPerPage = useCallback(
     (val: number) => {
       setAccountsPerPage(val);
     },
-    [accountsPerPage]
+    []
   );
-
+  //accountsPerPage
   const AccountItemSkeleton = () => (
     <div className="flex justify-between items-center p-4 border-2 my-2 animate-pulse">
       <div className="h-6 w-1/12 bg-gray-300 rounded"></div>

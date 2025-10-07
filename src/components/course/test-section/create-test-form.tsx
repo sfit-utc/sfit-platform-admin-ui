@@ -1,7 +1,6 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
-import { useTestManagement } from "@/hooks/use-test-service";
-import Line from "@/components/ui/line";
+import { useState } from "react";
+// import { useTestManagement } from "@/hooks/use-test-service";
 import Modal from "@/components/ui/modal";
 
 interface CreateTestFormProps {
@@ -12,17 +11,17 @@ interface CreateTestFormProps {
 }
 
 // Helper function to format date from YYYY-MM-DD to DD/MM/YYYY
-function formatDate(dateStr: string) {
-  if (!dateStr) return "";
-  const [year, month, day] = dateStr.split("-");
-  return `${day}/${month}/${year}`;
-}
+// function formatDate(dateStr: string) {
+//   if (!dateStr) return "";
+//   const [year, month, day] = dateStr.split("-");
+//   return `${day}/${month}/${year}`;
+// }
 
 // Helper function to format time from HH:MM to HH:MM format
-function formatTime(timeStr: string) {
-  if (!timeStr) return "";
-  return timeStr;
-}
+// function formatTime(timeStr: string) {
+//   if (!timeStr) return "";
+//   return timeStr;
+// }
 
 export default function CreateTestForm({
   state,
@@ -30,7 +29,7 @@ export default function CreateTestForm({
   onCancel,
   onSuccess,
 }: CreateTestFormProps) {
-  const { createTest, loading } = useTestManagement();
+  // const { createTest} = useTestManagement();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -83,13 +82,13 @@ export default function CreateTestForm({
     e.preventDefault();
     if (!validateForm()) return;
     try {
-      await createTest({
-        ...formData,
-        date: `${formatTime(formData.time)} ${formatDate(
-          formData.date.split("T")[0]
-        )}`,
-        time: formData.duration,
-      });
+      // await createTest({
+      //   ...formData,
+      //   date: `${formatTime(formData.time)} ${formatDate(
+      //     formData.date.split("T")[0]
+      //   )}`,
+      //   time: formData.duration,
+      // });
       alert("Tạo bài kiểm tra thành công!");
       onSuccess();
     } catch (error) {

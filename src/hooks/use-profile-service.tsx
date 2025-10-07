@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { profileService } from "@/services/profile-service";
 import { UserProfile } from "@/types/profile";
 
@@ -14,7 +14,7 @@ export const useProfileService = (userId?: string): UseProfileServiceReturn => {
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
 
-  const fetchUserProfile = async () => {
+  const fetchUserProfile = useCallback(async () => {
     if (!userId) return;
 
     setProfileLoading(true);
@@ -29,11 +29,12 @@ export const useProfileService = (userId?: string): UseProfileServiceReturn => {
     } finally {
       setProfileLoading(false);
     }
-  };
+  }, [userId]); // Add userId as a dependency
+
 
   useEffect(() => {
     fetchUserProfile();
-  }, [userId]);
+  }, [userId, fetchUserProfile]);
 
   return {
     userProfile,

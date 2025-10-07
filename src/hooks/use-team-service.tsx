@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { teamService } from "@/services/team-service";
 import {
   Team,
@@ -17,19 +17,30 @@ export const useTeams = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchTeams = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await teamService.getAllTeams();
-      setTeams(data);
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch teams");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // const fetchTeams = async () => {
+  //   setLoading(true);
+  //   setError(null);
+  //   try {
+  //     const data = await teamService.getAllTeams();
+  //     setTeams(data);
+  //   } catch (err: any) {
+  //     setError(err.message || "Failed to fetch teams");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  const fetchTeams = useCallback(async () => {
+  setLoading(true);
+  setError(null);
+  try {
+    const data = await teamService.getAllTeams();
+    setTeams(data);
+  } catch (err: any) {
+    setError(err.message || "Failed to fetch teams");
+  } finally {
+    setLoading(false);
+  }
+}, []); 
   const createTeam = async (teamData: CreateTeamRequest) => {
     setLoading(true);
     setError(null);
@@ -74,7 +85,7 @@ export const useTeams = () => {
 
   useEffect(() => {
     fetchTeams();
-  }, []);
+  }, [fetchTeams]);
 
   return {
     teams,
@@ -93,7 +104,21 @@ export const useTeamMembers = (teamId: string, query?: TeamMembersQuery) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchMembers = async () => {
+  // const fetchMembers = async () => {
+  //   if (!teamId) return;
+
+  //   setLoading(true);
+  //   setError(null);
+  //   try {
+  //     const data = await teamService.getTeamMembers(teamId, query);
+  //     setMembers(data);
+  //   } catch (err: any) {
+  //     setError(err.message || "Failed to fetch team members");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  const fetchMembers = useCallback( async () => {
     if (!teamId) return;
 
     setLoading(true);
@@ -106,8 +131,7 @@ export const useTeamMembers = (teamId: string, query?: TeamMembersQuery) => {
     } finally {
       setLoading(false);
     }
-  };
-
+  },[teamId, query]);
   const addMember = async (
     userId: string,
     memberData: AddMemberToTeamRequest
@@ -158,7 +182,7 @@ export const useTeamMembers = (teamId: string, query?: TeamMembersQuery) => {
 
   useEffect(() => {
     fetchMembers();
-  }, [teamId, query?.page, query?.pageSize]);
+  }, [teamId, query?.page, query?.pageSize, fetchMembers]);
 
   return {
     members,
@@ -177,7 +201,21 @@ export const useUserTeams = (userId: string) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchUserTeams = async () => {
+  // const fetchUserTeams = async () => {
+  //   if (!userId) return;
+
+  //   setLoading(true);
+  //   setError(null);
+  //   try {
+  //     const data = await teamService.getUserTeams(userId);
+  //     setUserTeams(data);
+  //   } catch (err: any) {
+  //     setError(err.message || "Failed to fetch user teams");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  const fetchUserTeams = useCallback(async () => {
     if (!userId) return;
 
     setLoading(true);
@@ -190,11 +228,11 @@ export const useUserTeams = (userId: string) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]); // Add userId as a dependency
 
   useEffect(() => {
     fetchUserTeams();
-  }, [userId]);
+  }, [userId, fetchUserTeams]);
 
   return {
     userTeams,

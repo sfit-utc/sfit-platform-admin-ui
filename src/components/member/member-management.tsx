@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState} from "react";
 import {
   useTeams,
   useTeamMembers,
   useUserTeams,
 } from "@/hooks/use-team-service";
-import { Team, TeamRole, TeamMember } from "@/types/team";
+import { TeamRole} from "@/types/team";
 import { MemberListItem } from "@/types/member";
 import { memberService } from "@/services/member-service";
 import Loading from "@/components/ui/loading";
@@ -27,7 +27,7 @@ export default function MemberManagement({
   const [showDeleteFromTeam, setShowDeleteFromTeam] = useState(false);
   const [showDeleteMember, setShowDeleteMember] = useState(false);
   const [showViewDetails, setShowViewDetails] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<TeamRole>("member");
+  const [selectedRole, setSelectedRole] = useState<TeamRole>("member" as TeamRole);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,13 +41,13 @@ export default function MemberManagement({
 
   // Get team members for the selected team
   const {
-    members: teamMembers,
+    // members: teamMembers,
     updateMemberRole,
     removeMember,
   } = useTeamMembers(selectedTeam);
 
   // Available roles for teams
-  const availableRoles: TeamRole[] = ["head", "vice", "member"];
+  const availableRoles: TeamRole[] = ["HEADER", "VICE", "MEMBER"];
 
   // Function 1: Add member to team
   const handleAddToTeam = async () => {

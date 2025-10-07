@@ -1,6 +1,6 @@
 "use client";
 import TaskEventList from "./task-event-list";
-import { use, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CreateTaskForm from "./create-task-form";
 import { useTaskService } from "@/hooks/use-task-service";
 export default function Task() {
@@ -17,25 +17,34 @@ export default function Task() {
   const { fetchTasks, tasks } = useTaskService();
 
 
-  const reloadCounts = async () => {
+  // const reloadCounts = async () => {
+  //   await fetchTasks({ page: 1, page_size: -1 });
+  //   setCounts({
+  //     all: tasks.length,
+  //     ongoing: tasks.filter((t) => t.PercentComplete > 0 && t.PercentComplete < 100).length,
+  //     upcoming: tasks.filter((t) => t.PercentComplete === 0).length,
+  //     done: tasks.filter((t) => t.PercentComplete === 100).length,
+  //   });
+  // };
+  const reloadCounts = useCallback(async () => {
     await fetchTasks({ page: 1, page_size: -1 });
     setCounts({
       all: tasks.length,
-      ongoing: tasks.filter((t) => t.PercentComplete > 0 && t.PercentComplete < 100).length,
-      upcoming: tasks.filter((t) => t.PercentComplete === 0).length,
-      done: tasks.filter((t) => t.PercentComplete === 100).length,
+      ongoing: tasks.filter((t) => (t as any).PercentComplete > 0 && (t as any).PercentComplete < 100).length,
+      upcoming: tasks.filter((t) => (t as any).PercentComplete === 0).length,
+      done: tasks.filter((t) => (t as any).PercentComplete === 100).length,
     });
-  };
+  }, [fetchTasks, tasks]); // Add fetchTasks and tasks as dependencies
 
   useEffect(() => {
     reloadCounts();
-  }, []);
+  }, [reloadCounts]);
   useEffect(() => {
     setCounts({
       all: tasks.length,
-      ongoing: tasks.filter((t) => t.PercentComplete > 0 && t.PercentComplete < 100).length,
-      upcoming: tasks.filter((t) => t.PercentComplete === 0).length,
-      done: tasks.filter((t) => t.PercentComplete === 100).length,
+      ongoing: tasks.filter((t) => (t as any).PercentComplete > 0 && (t as any).PercentComplete < 100).length,
+      upcoming: tasks.filter((t) => (t as any).PercentComplete === 0).length,
+      done: tasks.filter((t) => (t as any).PercentComplete === 100).length,
     });
   }, [tasks]);
 

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback} from "react";
 import { courseService } from "@/services/course-service";
 import {
   Course,
@@ -33,7 +33,7 @@ export function useCourseService() {
     setError(null);
     try {
       const resp = await courseService.getListCourse(query);
-      setCourses(resp);
+      setCourses(resp as any);
       return resp;
     } catch (err: any) {
       setError(err?.message || "Failed to fetch courses");

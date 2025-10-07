@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback} from "react";
 import {
   Task,
   CreateTaskReq,
@@ -207,18 +207,18 @@ export const useTaskService = () => {
     []
   );
   // Delete task
-  const deleteTaskWithClient = useCallback(async (taskId: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      await taskService.deleteTask(taskId);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete task");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // const deleteTaskWithClient = useCallback(async (taskId: string) => {
+  //   setLoading(true);
+  //   setError(null);
+  //   try {
+  //     await taskService.deleteTask(taskId);
+  //   } catch (err) {
+  //     setError(err instanceof Error ? err.message : "Failed to delete task");
+  //     throw err;
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, []);
 
   // Gán nhiệm vụ cho user
   const assignTaskToUser = useCallback(

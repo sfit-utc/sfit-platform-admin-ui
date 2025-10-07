@@ -8,9 +8,9 @@ import TeamIcon from "@/assets/icons/team.svg";
 import EventIcon from "@/assets/icons/event.svg";
 import ClassIcon from "@/assets/icons/class.svg";
 import TaskIcon from "@/assets/icons/task.svg";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { usePathname } from "next/navigation";
-
+import Image from "next/image";
 interface SideBarProps {
   onActiveItemChange?: (itemName: string) => void;
 }
@@ -19,33 +19,60 @@ export default function SideBar({ onActiveItemChange }: SideBarProps) {
   const pathname = usePathname();
   const [activeItem, setActiveItem] = useState("home");
 
-  const navDisplayNames: { [key: string]: string } = {
-    home: "Trang chủ",
-    account: "Quản lí thành viên",
-    team: "Quản lí ban",
-    event: "Quản lí sự kiện",
-    class: "Quản lí lớp học",
-    task: "Quản lí nhiệm vụ",
-  };
-
+  // const navDisplayNames: { [key: string]: string } = {
+  //   home: "Trang chủ",
+  //   account: "Quản lí thành viên",
+  //   team: "Quản lí ban",
+  //   event: "Quản lí sự kiện",
+  //   class: "Quản lí lớp học",
+  //   task: "Quản lí nhiệm vụ",
+  // };
+  const navDisplayNames = useMemo(
+    () => ({
+      home: "Trang chủ",
+      account: "Quản lí thành viên",
+      team: "Quản lí ban",
+      event: "Quản lí sự kiện",
+      class: "Quản lí lớp học",
+      task: "Quản lí nhiệm vụ",
+    }),
+    []
+  );
   // Sync active item with current route
+  // useEffect(() => {
+  //   const currentPath = pathname.split("/")[1] || "home"; // Get the first segment of the path
+  //   setActiveItem(currentPath);
+
+  //   if (onActiveItemChange) {
+  //     onActiveItemChange(navDisplayNames[currentPath] || navDisplayNames.home);
+  //   }
+  // }, [pathname, onActiveItemChange, navDisplayNames]);
+
+  // const handleItemClick = (nav: string) => {
+  //   setActiveItem(nav);
+
+  //   if (onActiveItemChange) {
+  //     onActiveItemChange(navDisplayNames[nav] || nav);
+  //   }
+  // };
+  const handleItemClick = (nav: string) => {
+    setActiveItem(nav);
+
+    if (onActiveItemChange) {
+      onActiveItemChange(navDisplayNames[nav as keyof typeof navDisplayNames] || nav);
+    }
+  };
   useEffect(() => {
     const currentPath = pathname.split("/")[1] || "home"; // Get the first segment of the path
     setActiveItem(currentPath);
 
     if (onActiveItemChange) {
-      onActiveItemChange(navDisplayNames[currentPath] || navDisplayNames.home);
+      onActiveItemChange(
+        navDisplayNames[currentPath as keyof typeof navDisplayNames] ||
+        navDisplayNames.home
+      );
     }
-  }, [pathname, onActiveItemChange]);
-
-  const handleItemClick = (nav: string) => {
-    setActiveItem(nav);
-
-    if (onActiveItemChange) {
-      onActiveItemChange(navDisplayNames[nav] || nav);
-    }
-  };
-
+  }, [pathname, onActiveItemChange, navDisplayNames]);
   return (
     <div
       className="xl:pl-4 xl:min-w-1/6 min-h-full rounded-[3px] flex flex-col fixed top-0 left-0 z-50"
@@ -55,7 +82,7 @@ export default function SideBar({ onActiveItemChange }: SideBarProps) {
       }}
     >
       <div className="flex items-center p-5">
-        <img src={logo.src} alt="logo" className="w-10 h-10" />
+        <Image src={logo.src} alt="logo" className="w-10 h-10" />
         <div
           className="hidden xl:block ml-4 text-center text-3xl font-bold font-['Oswald']"
           style={{ color: "var(--sidebar-text)" }}

@@ -1,7 +1,7 @@
-import { LoginRequest, RegisterRequest, AuthResponse, ApiError, User, ChangePasswordRequest } from '@/types/auth'
+import { LoginRequest, RegisterRequest, AuthResponse,  User, ChangePasswordRequest } from '@/types/auth'
 import apiClient from '@/libs/http'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api'
+// const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api'
 
 class AuthService {
   private extractAccessToken(resp: any): string | null {
