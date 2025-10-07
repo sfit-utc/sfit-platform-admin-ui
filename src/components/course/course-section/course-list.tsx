@@ -1,29 +1,86 @@
 "use client";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useCourseService } from "@/hooks/use-course-service";
 import Loading from "@/components/ui/loading";
-import { Course } from "@/types/course";
+import { Course, CourseDetailResponse } from "@/types/course";
 import CourseItem from "./course-item";
+import { PageListResp } from "@/types/pagination";
+import LessonList from "../lesson/lesson-list";
+import { useLessonService } from "@/hooks/use-lesson-service";
+import { AddModuleToCourseRequest } from "@/types/course";
+import { LessonRequest } from "@/types/lesson";
+import Modal from "@/components/ui/modal";
 
-const classesPerPage = 6;
+const classesPerPage = 9;
 
 export default function CourseList({ searchTerm }: { searchTerm: string }) {
+  const moduleTitleRef = useRef<HTMLInputElement>(null);
+  const lessonTitleRef = useRef<HTMLInputElement>(null);
+  const lessonDescRef = useRef<HTMLInputElement>(null);
+
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCourse, setSelectedCourse] = useState<CourseDetailResponse & { id: string } | null>(null);
+  type ModalType =
+    | { type: "addModule" }
+    | { type: "editModule", moduleId: string }
+    | { type: "deleteModule", moduleId: string }
+    | { type: "addLesson", moduleId: string }
+    | { type: "editLesson", moduleId: string, lessonId: string }
+    | { type: "deleteLesson", moduleId: string, lessonId: string }
+    | null;
+  const [modal, setModal] = useState<ModalType>(null);
+
   // const [classesPerPage, setClassesPerPage] = useState(6); // Show 6 classes per page (2 rows of 3)
+  const {
+    createLesson,
+    updateLesson,
+    deleteLesson
+  } = useLessonService();
   const {
     loading,
     error,
     courses,
     getListCourse,
+    getCourseDetailByID,
+    addModuleToCourse,
+    updateCourse,
+    deleteCourse,
   } = useCourseService();
-  useEffect(() => {
-    getListCourse({
+  const [totalItems, setTotalItems] = useState(0);
+  const [pageData, setPageData] = useState<Course[]>([]);
+  // async function fetchCourses() {
+  //   const resp: PageListResp<Course[]> | undefined = await getListCourse({
+  //     title: searchTerm || undefined,
+  //     page: currentPage,
+  //     page_size: classesPerPage,
+  //   });
+  //   if (resp) {
+  //     setPageData(resp.items);
+  //     setTotalItems(resp.total_count);
+  //   } else {
+  //     setPageData([]);
+  //     setTotalItems(0);
+  //   }
+  // }
+    const fetchCourses = useCallback(async () => {
+    const resp: PageListResp<Course[]> | undefined = await getListCourse({
       title: searchTerm || undefined,
       page: currentPage,
       page_size: classesPerPage,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm, currentPage]);
+    if (resp) {
+      setPageData(resp.items);
+      setTotalItems(resp.total_count);
+    } else {
+      setPageData([]);
+      setTotalItems(0);
+    }
+  }, [searchTerm, currentPage, getListCourse]);
+
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
+
 
   // Use the hook to get classes with search
   // const { data: classes, loading, error } = useClasses(searchTerm);
@@ -33,13 +90,19 @@ export default function CourseList({ searchTerm }: { searchTerm: string }) {
   // const startIdx = (currentPage - 1) * classesPerPage;
   // const endIdx = startIdx + classesPerPage;
   // const currentPageData = classes.slice(startIdx, endIdx);
-  const totalItems = courses && Array.isArray(courses.items) ? courses.items.length : 0;
+  // const totalItems = courses && Array.isArray(courses.items) ? courses.items.length : 0;
   const totalPages = Math.ceil(totalItems / classesPerPage);
+
+  // const totalPages = Math.ceil(totalItems / classesPerPage);
   const currentPageData = courses?.items || [];
   // Reset to first page when search term changes
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
+  const handleShowLessons = useCallback(async (courseId: string) => {
+    const detail = await getCourseDetailByID(courseId);
+    if (detail) setSelectedCourse({ ...detail, id: courseId });
+  }, [getCourseDetailByID]);
 
   const handlePreviousPage = useCallback(() => {
     if (currentPage > 1) {
@@ -90,7 +153,15 @@ export default function CourseList({ searchTerm }: { searchTerm: string }) {
       </div>
     );
   }
+  // if (selectedCourse) {
+  //   return (
+  //     <LessonList
+  //       selectedCourse={selectedCourse}
+  //       onBack={() => setSelectedCourse(null)}
+  //     />
 
+  //   );
+  // }
   return (
     <div className="space-y-6">
       {/* Classes Grid */}
@@ -108,8 +179,13 @@ export default function CourseList({ searchTerm }: { searchTerm: string }) {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {currentPageData.map((classItem) => (
-            <CourseItem key={classItem.id} course={classItem} />
+          {currentPageData.map((classItem: Course) => (
+            <CourseItem
+              key={classItem.id}
+              course={classItem}
+              onCourseDeleted={fetchCourses}
+              // onShowLessons={handleShowLessons}
+            />
           ))}
         </div>
       )}

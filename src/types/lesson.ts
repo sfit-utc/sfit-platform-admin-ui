@@ -6,11 +6,12 @@ export type LessonType = "Quiz" | "Online" | "Offline" | "Reading";
 export interface Quiz {
   question: string;
   answers: string[];
-  correct_answers: number[];
+  correctAnswers: number[];
 }
 
+
 export interface OnlineContentStruct {
-  video_url: string;
+  videoUrl: string;
 }
 
 export interface OfflineContentStruct {
@@ -18,26 +19,29 @@ export interface OfflineContentStruct {
   date: string; 
 }
 
+export interface QuizContentStruct {
+  quiz: Quiz[];
+}
 export interface ReadingContentStruct {
   content: string;
 }
 
 export interface Lesson {
-  id: string; 
+  id: string;
   type: LessonType;
   title: string;
-  module_id: string; 
-  course_id: string; 
+  moduleId: string;
+  courseId: string;
   description: string;
   duration: number;
-  quiz_content?: Quiz[];
-  online_content?: OnlineContentStruct;
-  offline_content?: OfflineContentStruct;
-  reading_content?: ReadingContentStruct;
-  created_at: string; 
-  updated_at: string; 
+  quizContent?: Quiz[];
+  onlineContent?: OnlineContentStruct;
+  offlineContent?: OfflineContentStruct;
+  readingContent?: ReadingContentStruct;
+  createdAt: string;
+  updatedAt: string;
+  position: number;
 }
-
 // Attendance Status
 export type LessonAttendanceStatus =
   | "present"
@@ -63,14 +67,15 @@ export interface LessonAttendance {
 
 export interface LessonRequest {
   title: string;
-  description: string;
+  description?: string;
   duration: number;
   type: LessonType;
-  quiz_content?: Quiz[];
-  video_url?: string;
+  quizContent?: Quiz[];
+  videoUrl?: string;
   location?: string;
-  date?: string; 
-  reading_content?: string;
+  date?: string;
+  readingContent?: string;
+  position?: number;
 }
 
 export interface UpdateStatusLessonAttendanceReq {
@@ -79,6 +84,12 @@ export interface UpdateStatusLessonAttendanceReq {
   duration: number;
   answer: number[][];
 }
+// export interface UpdateStatusLessonAttendanceReq {
+//   status: string; 
+//   deviceId: string;
+//   duration: number;
+//   answer: number[][];
+// }
 
 export interface GetUserAttendanceLessonReq {
   page: number;
@@ -87,12 +98,12 @@ export interface GetUserAttendanceLessonReq {
 }
 
 export interface GetUserAttendanceLessonRp {
-  id: string; // user_id
+  userId: string;
   username: string;
   email: string;
   status: string;
-  quiz_point?: number;
+  quizPoint?: number;
   duration?: number;
-  device_id?: string;
-  moderator_id: string;
+  deviceId?: string;
+  moderatorId: string;
 }

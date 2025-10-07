@@ -25,7 +25,6 @@ export default function CreateClassForm({
   onCancel,
   onSuccess,
 }: CreateCourseFormProps) {
-  const { createCourse, loading } = useCourseService();
   // const [formData, setFormData] = useState({
   //   title: "",
   //   description: "",
@@ -38,23 +37,24 @@ export default function CreateClassForm({
   //   address: "",
   //   status: "upcoming" as "ongoing" | "upcoming" | "past",
   // });
-  const [formData, setFormData] = useState({
+  const { createCourse, loading } = useCourseService();
+  const [rawInputs, setRawInputs] = useState<Record<string, string>>({
+    teachers: "",
+    tags: "",
+    targets: "",
+    requires: "",
+  });
+  const [formData, setFormData] = useState<CreateCourseRequest>({
     title: "",
     description: "",
-    teachers: "",
-    startDate: "",
-    endDate: "",
-    scheduleStartTime: "",
-    scheduleEndTime: "",
-    scheduleDays: [] as string[],
-    address: "",
-    level: "Beginner" as CourseLevel,
+    type: "offline",
+    teachers: [],
     language: "Vietnamese",
-    type: "",
     certificate: false,
-    tags: "",
-    target: "",
-    require: "",
+    level: "Beginner",
+    tags: [],
+    targets: [],
+    requires: [],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [dayDropdownOpen, setDayDropdownOpen] = useState(false);
@@ -98,19 +98,25 @@ export default function CreateClassForm({
     }
   };
 
-  const handleDayCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, checked } = e.target;
+  const handleArrayInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    fieldName: keyof CreateCourseRequest
+  ) => {
+    const { value } = e.target;
+    setRawInputs((prev) => ({
+      ...prev,
+      [fieldName]: value, // Lưu giá trị thô
+    }));
+  };
+  const handleArrayInputBlur = (fieldName: keyof CreateCourseRequest) => {
     setFormData((prev) => ({
       ...prev,
-      scheduleDays: checked
-        ? [...prev.scheduleDays, value]
-        : prev.scheduleDays.filter((day) => day !== value),
+      [fieldName]: rawInputs[fieldName]
+        .split(",") // Tách chuỗi bằng dấu phẩy
+        .map((item) => item.trim()) // Loại bỏ khoảng trắng thừa ở đầu và cuối
+        .filter((item) => item), // Loại bỏ các chuỗi rỗng
     }));
-    if (errors.scheduleDays) {
-      setErrors((prev) => ({ ...prev, scheduleDays: "" }));
-    }
   };
-
   // const validateForm = () => {
   //   const newErrors: Record<string, string> = {};
   //   if (!formData.title.trim()) newErrors.title = "Tên lớp là bắt buộc";
@@ -139,23 +145,7 @@ export default function CreateClassForm({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.title.trim()) newErrors.title = "Tên lớp là bắt buộc";
-    if (!formData.teachers.trim()) newErrors.teachers = "Giảng viên là bắt buộc";
-    if (!formData.startDate) newErrors.startDate = "Ngày bắt đầu là bắt buộc";
-    if (!formData.endDate) newErrors.endDate = "Ngày kết thúc là bắt buộc";
-    if (
-      formData.startDate &&
-      formData.endDate &&
-      formData.endDate < formData.startDate
-    ) {
-      newErrors.endDate = "Ngày kết thúc phải sau ngày bắt đầu";
-    }
-    if (!formData.scheduleStartTime)
-      newErrors.scheduleStartTime = "Giờ bắt đầu là bắt buộc";
-    if (!formData.scheduleEndTime)
-      newErrors.scheduleEndTime = "Giờ kết thúc là bắt buộc";
-    if (!formData.scheduleDays.length)
-      newErrors.scheduleDays = "Chọn ít nhất một ngày học";
-    if (!formData.address.trim()) newErrors.address = "Địa điểm là bắt buộc";
+    if (!formData.teachers?.length) newErrors.teachers = "Giảng viên là bắt buộc";
     if (!formData.description.trim())
       newErrors.description = "Mô tả là bắt buộc";
     setErrors(newErrors);
@@ -164,30 +154,9 @@ export default function CreateClassForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-    // Chuẩn hóa dữ liệu cho API (JSON)
-    const req: CreateCourseRequest = {
-      title: formData.title,
-      description: formData.description,
-      type: formData.type || "offline",
-      teachers: formData.teachers
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean),
-      language: formData.language,
-      certificate: formData.certificate,
-      level: formData.level,
-      tags: formData.tags
-        ? formData.tags.split(",").map((t) => t.trim()).filter(Boolean)
-        : [],
-      target: formData.target
-        ? formData.target.split(",").map((t) => t.trim()).filter(Boolean)
-        : [],
-      require: formData.require
-        ? formData.require.split(",").map((t) => t.trim()).filter(Boolean)
-        : [],
-    };
+
     try {
-      await createCourse(req);
+      await createCourse(formData);
       alert("Tạo lớp học thành công!");
       onSuccess();
     } catch (error) {
@@ -224,384 +193,344 @@ export default function CreateClassForm({
     <Modal
       state={state}
       funcClickToBack={funcClickToBack}
-      className="max-w-2xl w-4/5"
+      className="max-w-2xl w-4/5 overflow-y-auto max-h-[80vh]"
     >
       <div style={{ color: "var(--foreground)" }}>
-        <div className="flex ">
-          <span
-            className="px-2 text-xl font-bold border-r"
-            style={{
-              color: "var(--foreground)",
-              borderColor: "var(--sfit-gray-200)",
-            }}
-          >
-            Thông tin cơ bản
-          </span>
-          <span
-            className="px-2 text-xl font-bold"
-            style={{ color: "var(--foreground)" }}
-          >
-            Nhiệm vụ chung
-          </span>
-        </div>
-        <div className="py-5 *:m-2">
-          <form
-            id="create-class-form"
-            onSubmit={handleSubmit}
-            className="grid grid-cols-2 gap-5"
-            style={{ color: "var(--foreground)" }}
-          >
-            {/* Row 1: Tên lớp học | Giờ bắt đầu */}
-            <div>
-              <label
-                htmlFor="title"
-                className="block text-xl font-medium mb-2"
-                style={{ color: "var(--foreground)" }}
+        <form
+          id="create-course-form"
+          onSubmit={handleSubmit}
+          className="grid grid-cols-2 gap-5"
+          style={{ color: "var(--foreground)" }}
+        >
+          {/* Title */}
+          <div>
+            <label
+              htmlFor="title"
+              className="block text-xl font-medium mb-2"
+              style={{ color: "var(--foreground)" }}
+            >
+              Tên lớp học *
+            </label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              style={{
+                backgroundColor: "var(--background)",
+                color: "var(--foreground)",
+                borderColor: errors.title
+                  ? "var(--sfit-red-500)"
+                  : "var(--sfit-gray-200)",
+              }}
+              placeholder="Nhập tiêu đề sự kiện"
+            />
+            {errors.title && (
+              <p
+                className="mt-1 text-sm"
+                style={{ color: "var(--sfit-red-500)" }}
               >
-                Tên lớp học *
-              </label>
-              <input
-                type="text"
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                style={{
-                  backgroundColor: "var(--background)",
-                  color: "var(--foreground)",
-                  borderColor: errors.title
-                    ? "var(--sfit-red-500)"
-                    : "var(--sfit-gray-200)",
-                }}
-                placeholder="Nhập tiêu đề sự kiện"
-              />
-              {errors.title && (
-                <p
-                  className="mt-1 text-sm"
-                  style={{ color: "var(--sfit-red-500)" }}
-                >
-                  {errors.title}
-                </p>
-              )}
-            </div>
-            <div>
-              <label
-                htmlFor="scheduleStartTime"
-                className="block text-sm font-medium mb-2"
-                style={{ color: "var(--foreground)" }}
-              >
-                Giờ bắt đầu *
-              </label>
-              <input
-                type="time"
-                id="scheduleStartTime"
-                name="scheduleStartTime"
-                value={formData.scheduleStartTime}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                style={{
-                  backgroundColor: "var(--background)",
-                  color: "var(--foreground)",
-                  borderColor: errors.scheduleStartTime
-                    ? "var(--sfit-red-500)"
-                    : "var(--sfit-gray-200)",
-                }}
-                required
-              />
-              {errors.scheduleStartTime && (
-                <p
-                  className="mt-1 text-sm"
-                  style={{ color: "var(--sfit-red-500)" }}
-                >
-                  {errors.scheduleStartTime}
-                </p>
-              )}
-            </div>
+                {errors.title}
+              </p>
+            )}
+          </div>
 
-            {/* Row 2: Chi tiết về lớp học | Giờ kết thúc */}
-            <div>
-              <label
-                htmlFor="description"
-                className="block text-sm font-medium mb-2"
-                style={{ color: "var(--foreground)" }}
+          {/* Description */}
+          <div className="col-span-2">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium mb-2"
+              style={{ color: "var(--foreground)" }}
+            >
+              Mô tả lớp học *
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              rows={4}
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              style={{
+                backgroundColor: "var(--background)",
+                color: "var(--foreground)",
+                borderColor: errors.description
+                  ? "var(--sfit-red-500)"
+                  : "var(--sfit-gray-200)",
+              }}
+              placeholder="Nhập mô tả lớp học"
+            />
+            {errors.description && (
+              <p
+                className="mt-1 text-sm"
+                style={{ color: "var(--sfit-red-500)" }}
               >
-                Chi tiết về lớp học
-              </label>
-              <textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                rows={4}
-                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                style={{
-                  backgroundColor: "var(--background)",
-                  color: "var(--foreground)",
-                  borderColor: "var(--sfit-gray-200)",
-                }}
-                placeholder="Nhập các yêu cầu, lưu ý cho người tham dự..."
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="scheduleEndTime"
-                className="block text-sm font-medium mb-2"
-                style={{ color: "var(--foreground)" }}
-              >
-                Giờ kết thúc *
-              </label>
-              <input
-                type="time"
-                id="scheduleEndTime"
-                name="scheduleEndTime"
-                value={formData.scheduleEndTime}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                style={{
-                  backgroundColor: "var(--background)",
-                  color: "var(--foreground)",
-                  borderColor: errors.scheduleEndTime
-                    ? "var(--sfit-red-500)"
-                    : "var(--sfit-gray-200)",
-                }}
-                required
-              />
-              {errors.scheduleEndTime && (
-                <p
-                  className="mt-1 text-sm"
-                  style={{ color: "var(--sfit-red-500)" }}
-                >
-                  {errors.scheduleEndTime}
-                </p>
-              )}
-            </div>
+                {errors.description}
+              </p>
+            )}
+          </div>
 
-            {/* Row 3: Giảng viên | Ngày trong tuần */}
-            <div>
-              <label
-                htmlFor="teacher"
-                className="block text-sm font-medium mb-2"
-                style={{ color: "var(--foreground)" }}
+          {/* Type */}
+          <div>
+            <label
+              htmlFor="type"
+              className="block text-sm font-medium mb-2"
+              style={{ color: "var(--foreground)" }}
+            >
+              Loại khóa học *
+            </label>
+            <input
+              type="text"
+              id="type"
+              name="type"
+              value={formData.type}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              style={{
+                backgroundColor: "var(--background)",
+                color: "var(--foreground)",
+                borderColor: errors.type
+                  ? "var(--sfit-red-500)"
+                  : "var(--sfit-gray-200)",
+              }}
+              placeholder="Nhập loại khóa học (ví dụ: Web Development)"
+            />
+            {errors.type && (
+              <p
+                className="mt-1 text-sm"
+                style={{ color: "var(--sfit-red-500)" }}
               >
-                Giảng viên *
-              </label>
-              <input
-                type="text"
-                id="teacher"
-                name="teacher"
-                value={formData.teachers}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                style={{
-                  backgroundColor: "var(--background)",
-                  color: "var(--foreground)",
-                  borderColor: errors.teacher
-                    ? "var(--sfit-red-500)"
-                    : "var(--sfit-gray-200)",
-                }}
-                placeholder="Nhập tên giảng viên"
-                required
-              />
-              {errors.teacher && (
-                <p
-                  className="mt-1 text-sm"
-                  style={{ color: "var(--sfit-red-500)" }}
-                >
-                  {errors.teacher}
-                </p>
-              )}
-            </div>
-            <div>
-              <label
-                className="block text-sm font-medium mb-2"
-                style={{ color: "var(--foreground)" }}
-              >
-                Ngày trong tuần *
-              </label>
-              <div
-                className="w-full px-4 py-3 border rounded-lg bg-white cursor-pointer"
-                onClick={() => setDayDropdownOpen((open) => !open)}
-                style={{
-                  backgroundColor: "var(--background)",
-                  color: "var(--foreground)",
-                  borderColor: "var(--sfit-gray-200)",
-                }}
-              >
-                {formData.scheduleDays.length
-                  ? formData.scheduleDays.join(", ")
-                  : "Chọn ngày"}
-              </div>
-              {dayDropdownOpen && (
-                <div
-                  className="absolute w-44 z-10 mt-1 border rounded shadow p-2"
-                  style={{
-                    backgroundColor: "var(--search-bg)",
-                  }}
-                >
-                  {daysOfWeek.map((day) => (
-                    <label
-                      key={day}
-                      className="flex items-center gap-2 py-1 px-2 hover:bg-gray-100 rounded"
-                      style={{ color: "var(--foreground)" }}
-                    >
-                      <input
-                        type="checkbox"
-                        value={day}
-                        checked={formData.scheduleDays.includes(day)}
-                        onChange={handleDayCheckboxChange}
-                        className="accent-green-600"
-                      />
-                      {day}
-                    </label>
-                  ))}
-                </div>
-              )}
-              {errors.scheduleDays && (
-                <p
-                  className="mt-1 text-sm"
-                  style={{ color: "var(--sfit-red-500)" }}
-                >
-                  {errors.scheduleDays}
-                </p>
-              )}
-            </div>
+                {errors.type}
+              </p>
+            )}
+          </div>
 
-            {/* Row 4: Khoảng thời gian học | Địa điểm */}
-            <div>
-              <label
-                className="block text-sm font-medium mb-2"
-                style={{ color: "var(--foreground)" }}
+          {/* Teachers */}
+          <div>
+            <label
+              htmlFor="teachers"
+              className="block text-sm font-medium mb-2"
+              style={{ color: "var(--foreground)" }}
+            >
+              Giảng viên *
+            </label>
+            <input
+              type="text"
+              id="teachers"
+              name="teachers"
+              value={rawInputs.teachers} // Hiển thị giá trị thô
+              onChange={(e) => handleArrayInputChange(e, "teachers")}
+              onBlur={() => handleArrayInputBlur("teachers")} // Xử lý khi rời khỏi input
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              style={{
+                backgroundColor: "var(--background)",
+                color: "var(--foreground)",
+                borderColor: errors.teachers
+                  ? "var(--sfit-red-500)"
+                  : "var(--sfit-gray-200)",
+              }}
+              placeholder="Nhập tên giảng viên (cách nhau bởi dấu phẩy)"
+            />
+            {errors.teachers && (
+              <p
+                className="mt-1 text-sm"
+                style={{ color: "var(--sfit-red-500)" }}
               >
-                Khoảng thời gian học *
-              </label>
-              <div className="flex flex-col  gap-4">
-                <div className="flex items-center">
-                  <span
-                    className="text-base mx-2"
-                    style={{ color: "var(--foreground)" }}
-                  >
-                    Từ
-                  </span>
-                  <input
-                    type="date"
-                    id="startDate"
-                    name="startDate"
-                    value={formData.startDate}
-                    onChange={handleInputChange}
-                    className="px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    style={{
-                      backgroundColor: "var(--background)",
-                      color: "var(--foreground)",
-                      borderColor: errors.startDate
-                        ? "var(--sfit-red-500)"
-                        : "var(--sfit-gray-200)",
-                    }}
-                    required
-                  />
-                </div>
-                <div className="flex items-center">
-                  <span
-                    className="text-base mx-2"
-                    style={{ color: "var(--foreground)" }}
-                  >
-                    Đến
-                  </span>
-                  <input
-                    type="date"
-                    id="endDate"
-                    name="endDate"
-                    value={formData.endDate}
-                    onChange={handleInputChange}
-                    className="px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    style={{
-                      backgroundColor: "var(--background)",
-                      color: "var(--foreground)",
-                      borderColor: errors.endDate
-                        ? "var(--sfit-red-500)"
-                        : "var(--sfit-gray-200)",
-                    }}
-                    required
-                  />
-                </div>
-              </div>
-              {errors.startDate && (
-                <p
-                  className="mt-1 text-sm"
-                  style={{ color: "var(--sfit-red-500)" }}
-                >
-                  {errors.startDate}
-                </p>
-              )}
-              {errors.endDate && (
-                <p
-                  className="mt-1 text-sm"
-                  style={{ color: "var(--sfit-red-500)" }}
-                >
-                  {errors.endDate}
-                </p>
-              )}
-            </div>
-            <div>
-              <label
-                htmlFor="address"
-                className="block text-sm font-medium mb-2"
-                style={{ color: "var(--foreground)" }}
-              >
-                Địa điểm *
-              </label>
-              <input
-                type="text"
-                id="address"
-                name="address"
-                value={formData.address}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                style={{
-                  backgroundColor: "var(--background)",
-                  color: "var(--foreground)",
-                  borderColor: errors.address
-                    ? "var(--sfit-red-500)"
-                    : "var(--sfit-gray-200)",
-                }}
-                placeholder="Nhập địa điểm diễn ra sự kiện"
-              />
-              {errors.address && (
-                <p
-                  className="mt-1 text-sm"
-                  style={{ color: "var(--sfit-red-500)" }}
-                >
-                  {errors.address}
-                </p>
-              )}
-            </div>
-          </form>
-        </div>
-        <div className="col-span-2 flex justify-end space-x-4 pt-6">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="text-sm px-4 py-2 border rounded-lg font-medium transition-colors"
-            style={{
-              borderColor: "var(--sfit-gray-200)",
-              color: "var(--foreground)",
-              backgroundColor: "var(--background)",
-            }}
-          >
-            Hủy
-          </button>
-          <button
-            type="submit"
-            form="create-class-form"
-            className="text-sm px-4 py-2 font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              backgroundColor: "var(--sfit-green)",
-              color: "var(--background)",
-            }}
-          >
-            Tạo lớp học
-          </button>
-        </div>
+                {errors.teachers}
+              </p>
+            )}
+          </div>
+
+          {/* Targets */}
+          <div className="col-span-2">
+            <label
+              htmlFor="targets"
+              className="block text-sm font-medium mb-2"
+              style={{ color: "var(--foreground)" }}
+            >
+              Mục tiêu khóa học
+            </label>
+            <input
+              type="text"
+              id="targets"
+              name="targets"
+              value={rawInputs.targets}
+              onChange={(e) => handleArrayInputChange(e, "targets")}
+              onBlur={() => handleArrayInputBlur("targets")}
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              style={{
+                backgroundColor: "var(--background)",
+                color: "var(--foreground)",
+                borderColor: "var(--sfit-gray-200)",
+              }}
+              placeholder="Nhập mục tiêu khóa học (phân cách bằng dấu phẩy)"
+            />
+          </div>
+
+          {/* Requires */}
+          <div className="col-span-2">
+            <label
+              htmlFor="requires"
+              className="block text-sm font-medium mb-2"
+              style={{ color: "var(--foreground)" }}
+            >
+              Yêu cầu đầu vào
+            </label>
+            <input
+              type="text"
+              id="requires"
+              name="requires"
+              value={rawInputs.requires}
+              onChange={(e) => handleArrayInputChange(e, "requires")}
+              onBlur={() => handleArrayInputBlur("requires")}
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              style={{
+                backgroundColor: "var(--background)",
+                color: "var(--foreground)",
+                borderColor: "var(--sfit-gray-200)",
+              }}
+              placeholder="Nhập yêu cầu đầu vào (phân cách bằng dấu phẩy)"
+            />
+          </div>
+
+          {/* Language */}
+          <div>
+            <label
+              htmlFor="language"
+              className="block text-sm font-medium mb-2"
+              style={{ color: "var(--foreground)" }}
+            >
+              Ngôn ngữ *
+            </label>
+            <select
+              id="language"
+              name="language"
+              value={formData.language}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              style={{
+                backgroundColor: "var(--background)",
+                color: "var(--foreground)",
+                borderColor: "var(--sfit-gray-200)",
+              }}
+            >
+              <option value="Vietnamese">Tiếng Việt</option>
+              <option value="English">Tiếng Anh</option>
+            </select>
+          </div>
+
+          {/* Level */}
+          <div>
+            <label
+              htmlFor="level"
+              className="block text-sm font-medium mb-2"
+              style={{ color: "var(--foreground)" }}
+            >
+              Cấp độ *
+            </label>
+            <select
+              id="level"
+              name="level"
+              value={formData.level}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              style={{
+                backgroundColor: "var(--background)",
+                color: "var(--foreground)",
+                borderColor: "var(--sfit-gray-200)",
+              }}
+            >
+              <option value="Beginner">Cơ bản</option>
+              <option value="Intermediate">Trung cấp</option>
+              <option value="Advanced">Nâng cao</option>
+            </select>
+          </div>
+
+          {/* Certificate */}
+          <div>
+            <label
+              htmlFor="certificate"
+              className="block text-sm font-medium mb-2"
+              style={{ color: "var(--foreground)" }}
+            >
+              Chứng chỉ
+            </label>
+            <input
+              type="checkbox"
+              id="certificate"
+              name="certificate"
+              checked={formData.certificate}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  certificate: e.target.checked,
+                }))
+              }
+              className="w-4 h-4 border rounded focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              style={{
+                backgroundColor: "var(--background)",
+                color: "var(--foreground)",
+                borderColor: "var(--sfit-gray-200)",
+              }}
+            />
+          </div>
+
+          {/* Tags */}
+          <div className="col-span-2">
+            <label
+              htmlFor="tags"
+              className="block text-sm font-medium mb-2"
+              style={{ color: "var(--foreground)" }}
+            >
+              Tags
+            </label>
+            <input
+              type="text"
+              id="tags"
+              name="tags"
+              value={rawInputs.tags} // Hiển thị giá trị thô
+              onChange={(e) => handleArrayInputChange(e, "tags")}
+              onBlur={() => handleArrayInputBlur("tags")} // Xử lý khi rời khỏi input
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              style={{
+                backgroundColor: "var(--background)",
+                color: "var(--foreground)",
+                borderColor: "var(--sfit-gray-200)",
+              }}
+              placeholder="Nhập tags (phân cách bằng dấu phẩy)"
+            />
+          </div>
+
+          {/* Submit Buttons */}
+          <div className="col-span-2 flex justify-end space-x-4 pt-6">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="text-sm px-4 py-2 border rounded-lg font-medium transition-colors"
+              style={{
+                borderColor: "var(--sfit-gray-200)",
+                color: "var(--foreground)",
+                backgroundColor: "var(--background)",
+              }}
+            >
+              Hủy
+            </button>
+            <button
+              type="submit"
+              form="create-course-form"
+              className="text-sm px-4 py-2 font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                backgroundColor: "var(--sfit-green)",
+                color: "var(--background)",
+              }}
+              disabled={loading}
+            >
+              {loading ? "Đang tạo..." : "Tạo lớp học"}
+            </button>
+          </div>
+        </form>
       </div>
     </Modal>
   );
