@@ -48,6 +48,8 @@ export default function SideItem({
         <Image
           src={icon}
           alt="logo"
+          width={24} // Specify a default width
+          height={24} // Specify a default height
           className={`w-6 h-6 ${isActive ? "w-8 h-8" : ""}`}
           style={{
             filter: isActive ? "brightness(0)" : undefined,

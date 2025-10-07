@@ -17,6 +17,7 @@ interface SideBarProps {
 
 export default function SideBar({ onActiveItemChange }: SideBarProps) {
   const pathname = usePathname();
+  
   const [activeItem, setActiveItem] = useState("home");
 
   // const navDisplayNames: { [key: string]: string } = {
@@ -82,7 +83,13 @@ export default function SideBar({ onActiveItemChange }: SideBarProps) {
       }}
     >
       <div className="flex items-center p-5">
-        <Image src={logo.src} alt="logo" className="w-10 h-10" />
+        <Image
+          src={logo.src}
+          alt="logo"
+          width={40} 
+          height={40} 
+          className="w-10 h-10"
+        />
         <div
           className="hidden xl:block ml-4 text-center text-3xl font-bold font-['Oswald']"
           style={{ color: "var(--sidebar-text)" }}
