@@ -235,6 +235,8 @@ export default function MemberItem({
           <Image
             src={Avatar.src || member.avatar}
             alt={member.name}
+            width={96}
+            height={96}
             className="w-24 h-24 rounded-full"
           />
           <h3 className="text-lg font-semibold mt-2 text-center">
@@ -272,8 +274,9 @@ export default function MemberItem({
                 (team, index) => (
                   <span
                     key={index}
-                    className={`bg-amber-100 text-amber-800 px-2 py-1 rounded text-sm cursor-pointer hover:bg-amber-200 transition-colors ${activeTeam === team ? "ring-2 ring-amber-300" : ""
-                      }`}
+                    className={`bg-amber-100 text-amber-800 px-2 py-1 rounded text-sm cursor-pointer hover:bg-amber-200 transition-colors ${
+                      activeTeam === team ? "ring-2 ring-amber-300" : ""
+                    }`}
                     onClick={async () => {
                       if (team !== "Chưa phân ban") {
                         setActiveTeam(team);

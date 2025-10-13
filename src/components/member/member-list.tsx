@@ -104,7 +104,7 @@ export default function MemberList({
     (val: string) => {
       setActiveStyle(val);
     },
-    [ setActiveStyle]
+    [setActiveStyle]
   );
   //activeStyle
   const changeMembersPerPage = useCallback(

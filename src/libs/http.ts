@@ -29,9 +29,21 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor to handle 401 errors
+// Response interceptor to handle 401 errors and JSON parsing errors
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Check if response data is valid JSON
+    try {
+      if (response.data && typeof response.data === 'string') {
+        JSON.parse(response.data);
+      }
+    } catch (jsonError) {
+      console.error('Invalid JSON response from server:', jsonError);
+      // Return a clean error response
+      return Promise.reject(new Error('Server returned invalid JSON response'));
+    }
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
     
@@ -66,6 +78,8 @@ apiClient.interceptors.response.use(
       error.message = 'Lỗi server. Vui lòng thử lại sau';
     } else if (error.message.includes('Network Error')) {
       error.message = 'Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng';
+    } else if (error.message.includes('JSON')) {
+      error.message = 'Lỗi định dạng dữ liệu từ server';
     }
     
     return Promise.reject(error);

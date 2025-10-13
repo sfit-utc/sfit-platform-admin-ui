@@ -1,6 +1,6 @@
 "use client";
 import { AccountListItem } from "@/types/account";
-import { useState,  useEffect } from "react";
+import { useState, useEffect } from "react";
 import Avatar from "@/assets/icons/user.svg";
 import { SquarePen, Trash, User } from "lucide-react";
 import AccountDetailModal from "@/components/account/account-detail-modal";
@@ -28,7 +28,7 @@ export default function AccountItem({
   useEffect(() => {
     setDisplayRole(account.role);
   }, [account, setDisplayRole]);
-  
+
   if (!account) {
     return null;
   }
@@ -43,8 +43,6 @@ export default function AccountItem({
         return "text-gray-600 bg-gray-100";
     }
   };
-
-
 
   const lineView = (
     <div
@@ -122,6 +120,8 @@ export default function AccountItem({
           <Image
             src={Avatar.src || account.avatar}
             alt={account.name}
+            width={96}
+            height={96}
             className="w-24 h-24 rounded-full"
           />
           <h3 className="text-lg font-semibold mt-2 text-center">

@@ -78,6 +78,8 @@ export default function DetailModal({
               <Image
                 src={member.avatar || Avatar.src}
                 alt={member.name}
+                width={80}
+                height={80}
                 className="w-20 h-20 rounded-full"
               />
               <div>

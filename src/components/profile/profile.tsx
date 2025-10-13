@@ -496,6 +496,8 @@ export default function Profile() {
               <Image
                 src={user.avatar || AvatarIcon.src}
                 alt={displayName}
+                width={96}
+                height={96}
                 className="w-24 h-24 rounded-full border"
                 style={{ borderColor: "var(--sfit-gray-200)" }}
               />

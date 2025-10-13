@@ -19,20 +19,6 @@ export default function EditModal({
 }) {
   const { data: member, loading } = useMember(memberId);
   const { loading: saving } = useMemberManagement();
-  const teamList = [
-    "Học tập",
-    "Hậu cần",
-    "Đối ngoại",
-    "Truyền thông",
-    "Kỹ thuật",
-    "Data & AI",
-    "IOT",
-    "Game",
-    "Web App",
-    "Chuyên môn",
-    "Cán sự",
-    "Chủ nhiệm",
-  ];
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -45,10 +31,23 @@ export default function EditModal({
   >([]);
   const [error, setError] = useState<string | null>(null);
 
+  // Use available teams from API instead of hardcoded list
+  const teamList = availableTeams.map((team) => team.name);
+
   // Current user permissions
   const { user } = useAuth();
   const currentUserId = user?.id || "";
   const { userTeams: myTeams } = useUserTeams(currentUserId);
+
+  // Check if current user is admin
+  const isAdmin = useMemo(() => {
+    return user?.role === "admin";
+  }, [user]);
+
+  // Check if admin is editing their own profile
+  const isEditingSelf = useMemo(() => {
+    return isAdmin && user?.id === (member?.userId || String(memberId));
+  }, [isAdmin, user?.id, member?.userId, memberId]);
 
   const isCNAdmin = useMemo(() => {
     // User is HEADER or VICE in team "Chủ nhiệm"
@@ -62,7 +61,11 @@ export default function EditModal({
   }, [myTeams]);
 
   const canEditTeamByName = (teamName: string) => {
+    // Admin can edit any team
+    if (isAdmin) return true;
+    // Chủ nhiệm/Phó CN can edit any team
     if (isCNAdmin) return true;
+    // Check if user is HEADER of the specific team
     const t = myTeams.find(
       (x: any) => (x?.name || "").toLowerCase() === teamName.toLowerCase()
     );
@@ -153,7 +156,9 @@ export default function EditModal({
     const loadTeams = async () => {
       if (open) {
         try {
+          console.log("Loading available teams...");
           const teams = await memberService.getAvailableTeams();
+          console.log("Available teams loaded:", teams);
           setAvailableTeams(teams);
         } catch (error) {
           console.error("Error loading teams:", error);
@@ -166,7 +171,7 @@ export default function EditModal({
   const toggleTeam = (team: string) => {
     if (!canEditTeamByName(team)) {
       setError(
-        "Bạn không có quyền chỉnh sửa ban này. Chỉ Chủ nhiệm/Phó CN hoặc Chủ nhiệm của chính ban đó mới được phép."
+        "Bạn không có quyền chỉnh sửa ban này. Chỉ Admin, Chủ nhiệm/Phó CN hoặc Chủ nhiệm của chính ban đó mới được phép."
       );
       return;
     }
@@ -193,6 +198,46 @@ export default function EditModal({
       const userId = member.userId || String(memberId);
       const originalTeams = member.teams || [];
 
+      // Check if admin is trying to change their own role
+      if (isAdmin && user?.id === userId) {
+        // Check if admin is trying to remove themselves from all teams
+        if (teams.length === 0) {
+          setError(
+            "Admin không thể rời khỏi tất cả các ban. Vui lòng liên hệ quản trị viên khác."
+          );
+          return;
+        }
+
+        // Check if admin is trying to remove themselves from important teams
+        const hasImportantTeam = teams.some(
+          (team: string) =>
+            team.toLowerCase().includes("chủ nhiệm") ||
+            team.toLowerCase().includes("admin")
+        );
+
+        if (
+          !hasImportantTeam &&
+          originalTeams.some(
+            (team: string) =>
+              team.toLowerCase().includes("chủ nhiệm") ||
+              team.toLowerCase().includes("admin")
+          )
+        ) {
+          setError(
+            "Admin không thể rời khỏi ban quan trọng. Vui lòng liên hệ quản trị viên khác."
+          );
+          return;
+        }
+      }
+
+      console.log("Saving member changes:", {
+        userId,
+        originalTeams,
+        newTeams: teams,
+        teamRoles,
+        member,
+      });
+
       // Find teams to add, remove, and update
       const teamsToAdd = teams.filter((team) => !originalTeams.includes(team));
       const teamsToRemove = originalTeams.filter(
@@ -205,13 +250,21 @@ export default function EditModal({
           teamRoles[team] !== (member.teamRoles?.[team] || "Thành viên")
       );
 
+      console.log("Team changes:", {
+        teamsToAdd,
+        teamsToRemove,
+        teamsToUpdate,
+      });
+
       // Permission checks: ensure user can modify each target team
       const allTouchedTeams = Array.from(
         new Set([...teamsToAdd, ...teamsToUpdate])
       );
       for (const teamName of allTouchedTeams) {
         if (!canEditTeamByName(teamName)) {
-          throw new Error(`Bạn không có quyền cập nhật ban "${teamName}".`);
+          throw new Error(
+            `Bạn không có quyền cập nhật ban "${teamName}". Chỉ Admin, Chủ nhiệm/Phó CN hoặc Chủ nhiệm của chính ban đó mới được phép.`
+          );
         }
       }
 
@@ -221,7 +274,15 @@ export default function EditModal({
         const team = availableTeams.find((t) => t.name === teamName);
         if (team) {
           const role = teamRoles[teamName] || "Thành viên";
+          console.log(`Adding user to team ${teamName} with role ${role}:`, {
+            teamId: team.id,
+            userId,
+            role,
+          });
           await memberService.addUserToTeam(team.id, userId, role);
+          console.log(`Successfully added user to team ${teamName}`);
+        } else {
+          console.warn(`Team not found in available teams: ${teamName}`);
         }
       }
 
@@ -231,7 +292,15 @@ export default function EditModal({
         const team = availableTeams.find((t) => t.name === teamName);
         if (team) {
           const newRole = teamRoles[teamName];
+          console.log(`Updating user role in team ${teamName} to ${newRole}:`, {
+            teamId: team.id,
+            userId,
+            newRole,
+          });
           await memberService.addUserToTeam(team.id, userId, newRole);
+          console.log(`Successfully updated user role in team ${teamName}`);
+        } else {
+          console.warn(`Team not found in available teams: ${teamName}`);
         }
       }
 
@@ -241,7 +310,12 @@ export default function EditModal({
         const team = availableTeams.find((t) => t.name === teamName);
         if (team) {
           try {
+            console.log(`Removing user from team ${teamName}:`, {
+              teamId: team.id,
+              userId,
+            });
             await teamService.removeMemberFromTeam(team.id, userId);
+            console.log(`Successfully removed user from team ${teamName}`);
           } catch (error) {
             console.error(
               `Failed to remove user from team ${teamName}:`,
@@ -249,10 +323,15 @@ export default function EditModal({
             );
             // Continue with other operations even if one removal fails
           }
+        } else {
+          console.warn(`Team not found in available teams: ${teamName}`);
         }
       }
 
+      console.log("All team operations completed successfully");
+
       if (onSaved) {
+        console.log("Calling onSaved callback");
         onSaved();
       }
       onClose();
@@ -275,6 +354,12 @@ export default function EditModal({
         >
           Chỉnh sửa thành viên
         </h2>
+        {isEditingSelf && (
+          <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-md text-sm">
+            <strong>Lưu ý:</strong> Bạn đang chỉnh sửa hồ sơ của chính mình. Một
+            số thay đổi có thể bị hạn chế để bảo vệ quyền admin.
+          </div>
+        )}
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
             {error}
@@ -336,44 +421,65 @@ export default function EditModal({
                   borderColor: "var(--sfit-gray-200)",
                 }}
               >
-                {teamList.map((team) => (
-                  <div
-                    key={team}
-                    className="flex items-center gap-2 text-sm opacity-100"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={teams.includes(team)}
-                      onChange={() => toggleTeam(team)}
-                      disabled={!canEditTeamByName(team)}
-                    />
-                    <span className="min-w-[100px] { !canEditTeamByName(team) ? 'text-gray-400' : '' }">
-                      {team}
-                    </span>
-                    {teams.includes(team) && (
-                      <select
-                        value={teamRoles[team] || role}
-                        onChange={(e) =>
-                          setTeamRoles((prev) => ({
-                            ...prev,
-                            [team]: e.target.value,
-                          }))
+                {teamList.map((team) => {
+                  const isProtectedForAdmin =
+                    isEditingSelf &&
+                    (team.toLowerCase().includes("chủ nhiệm") ||
+                      team.toLowerCase().includes("admin"));
+
+                  return (
+                    <div
+                      key={team}
+                      className="flex items-center gap-2 text-sm opacity-100"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={teams.includes(team)}
+                        onChange={() => toggleTeam(team)}
+                        disabled={
+                          !canEditTeamByName(team) ||
+                          (isEditingSelf &&
+                            isProtectedForAdmin &&
+                            !teams.includes(team))
                         }
-                        className="ml-auto p-1 border rounded"
-                        disabled={!canEditTeamByName(team)}
-                        style={{
-                          backgroundColor: "var(--background)",
-                          color: "var(--foreground)",
-                          borderColor: "var(--sfit-gray-200)",
-                        }}
+                      />
+                      <span
+                        className={`min-w-[100px] ${
+                          !canEditTeamByName(team) ? "text-gray-400" : ""
+                        } ${
+                          isProtectedForAdmin
+                            ? "text-blue-600 font-semibold"
+                            : ""
+                        }`}
                       >
-                        <option value="Trưởng ban">Trưởng ban</option>
-                        <option value="Phó ban">Phó ban</option>
-                        <option value="Thành viên">Thành viên</option>
-                      </select>
-                    )}
-                  </div>
-                ))}
+                        {team}
+                        {isProtectedForAdmin && " (Bảo vệ)"}
+                      </span>
+                      {teams.includes(team) && (
+                        <select
+                          value={teamRoles[team] || role}
+                          onChange={(e) =>
+                            setTeamRoles((prev) => ({
+                              ...prev,
+                              [team]: e.target.value,
+                            }))
+                          }
+                          className="ml-auto p-1 border rounded"
+                          disabled={!canEditTeamByName(team)}
+                          style={{
+                            backgroundColor: "var(--background)",
+                            color: "var(--foreground)",
+                            borderColor: "var(--sfit-gray-200)",
+                          }}
+                        >
+                          <option value="Trưởng ban">Trưởng ban</option>
+                          <option value="Phó ban">Phó ban</option>
+                          <option value="Thành viên">Thành viên</option>
+                        </select>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

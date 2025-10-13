@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback} from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useCourseService } from "@/hooks/use-course-service";
 import { Course } from "@/types/course";
 import CourseItem from "./course-item";
@@ -26,8 +26,7 @@ export default function CourseList({ searchTerm }: { searchTerm: string }) {
   // const [modal, setModal] = useState<ModalType>(null);
 
   // const [classesPerPage, setClassesPerPage] = useState(6); // Show 6 classes per page (2 rows of 3)
-  const {
-  } = useLessonService();
+  const {} = useLessonService();
   const {
     loading,
     error,
@@ -54,7 +53,7 @@ export default function CourseList({ searchTerm }: { searchTerm: string }) {
   //     setTotalItems(0);
   //   }
   // }
-    const fetchCourses = useCallback(async () => {
+  const fetchCourses = useCallback(async () => {
     const resp: PageListResp<Course[]> | undefined = await getListCourse({
       title: searchTerm || undefined,
       page: currentPage,
@@ -73,7 +72,6 @@ export default function CourseList({ searchTerm }: { searchTerm: string }) {
     fetchCourses();
   }, [fetchCourses]);
 
-
   // Use the hook to get classes with search
   // const { data: classes, loading, error } = useClasses(searchTerm);
   // Calculate pagination
@@ -89,10 +87,8 @@ export default function CourseList({ searchTerm }: { searchTerm: string }) {
   // const currentPageData = courses || [];
   // Reset to first page when search term changes
 
-  // Ensure currentPageData uses courses.items if available
-  const currentPageData = Array.isArray((courses as any)?.items)
-    ? (courses as any).items
-    : courses || [];
+  // courses is now guaranteed to be an array from the hook
+  const currentPageData = courses || [];
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
@@ -144,11 +140,7 @@ export default function CourseList({ searchTerm }: { searchTerm: string }) {
   );
 
   if (error) {
-    return (
-      <div className="text-red-500 text-center py-8">
-        Error: {error}
-      </div>
-    );
+    return <div className="text-red-500 text-center py-8">Error: {error}</div>;
   }
   // if (selectedCourse) {
   //   return (

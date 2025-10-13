@@ -54,6 +54,8 @@ export default function AccountDetailModal({
               <Image
                 src={account.avatar || Avatar.src}
                 alt={account.name}
+                width={80}
+                height={80}
                 className="w-20 h-20 rounded-full"
               />
               <div>
