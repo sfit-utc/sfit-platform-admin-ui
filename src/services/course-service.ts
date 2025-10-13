@@ -55,7 +55,7 @@ class CourseService {
   async deleteCourse(course_id: string): Promise<void> {
     await apiClient.delete(`/courses/${course_id}`);
   }
-  
+
   // POST /courses/favourite/:course_id
   async markCourseAsFavourite(course_id: string): Promise<void> {
     await apiClient.post(`/courses/favourite/${course_id}`);
@@ -64,8 +64,6 @@ class CourseService {
   async deleteModule(moduleId: string): Promise<void> {
     await apiClient.delete(`/courses/modules/${moduleId}`);
   }
-  
-
 
   // DELETE /courses/favourite/:course_id
   async unmarkCourseAsFavourite(course_id: string): Promise<void> {
@@ -102,10 +100,11 @@ class CourseService {
   async getRegisteredUsers(
     course_id: string,
     page = 1,
-    pageSize = 10
+    pageSize = 10,
+    complete = true // Thêm tham số `complete` mặc định là `true`
   ): Promise<RegisteredUsersResponse> {
-    const res = await apiClient.get(`/courses/${course_id}/registered-users`, {
-      params: { page, pageSize },
+    const res = await apiClient.get(`/courses/${course_id}/users`, {
+      params: { page, pageSize, complete }, // Sử dụng đúng tham số
     });
     return res.data.data;
   }

@@ -5,7 +5,7 @@ import Loading from "@/components/ui/loading";
 import { Course, CourseDetailResponse } from "@/types/course";
 import CourseItem from "./course-item";
 import { PageListResp } from "@/types/pagination";
-import LessonList from "../lesson/lesson-list";
+import LessonList from "../lesson-section/lesson-list";
 import { useLessonService } from "@/hooks/use-lesson-service";
 import { AddModuleToCourseRequest } from "@/types/course";
 import { LessonRequest } from "@/types/lesson";

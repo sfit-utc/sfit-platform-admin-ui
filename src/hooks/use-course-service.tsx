@@ -157,19 +157,27 @@ export function useCourseService() {
   }, []);
 
   // Get registered users
-  const getRegisteredUsers = useCallback(async (course_id: string, page = 1, pageSize = 10): Promise<RegisteredUsersResponse | undefined> => {
-    setLoading(true);
-    setError(null);
-    try {
-      const resp = await courseService.getRegisteredUsers(course_id, page, pageSize);
-      // setRegisteredUsers(resp);
-      return resp;
-    } catch (err: any) {
-      setError(err?.message || "Failed to fetch registered users");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const getRegisteredUsers = useCallback(
+    async (
+      course_id: string,
+      page = 1,
+      pageSize = 10,
+      complete = true
+    ): Promise<RegisteredUsersResponse | undefined> => {
+      setLoading(true);
+      setError(null);
+      try {
+        const resp = await courseService.getRegisteredUsers(course_id, page, pageSize, complete);
+        return resp;
+      } catch (err: any) {
+        setError(err?.message || "Failed to fetch registered users");
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
 
   // Register user to course
   const registerUserToCourse = useCallback(async (req: CourseRegisterRequest): Promise<boolean> => {

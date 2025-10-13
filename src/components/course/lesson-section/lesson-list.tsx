@@ -7,7 +7,9 @@ import { useParams } from "next/navigation";
 import CreateLessonForm from "./create-lesson-form";
 import { AddModuleToCourseRequest, AddModuleToCourseResponse } from "@/types/course";
 import AddModuleForm from "./create-module-form";
-
+import EditLessonForm from "./edit-lesson-form";
+import { UserIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const AddLessonIcon = ({ onClick }: { onClick: () => void }) => (
     <button
@@ -34,6 +36,7 @@ const AddLessonIcon = ({ onClick }: { onClick: () => void }) => (
         Thêm bài giảng
     </button>
 );
+
 const EditIcon = () => (
     <div className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full">
         <svg
@@ -114,12 +117,57 @@ export default function LessonList({
     selectedCourse,
     onBack,
 }: LessonListProps) {
-    const { addModuleToCourse, updateCourse, deleteCourse, getCourseDetailByID, deleteModule } = useCourseService();
-    const { createLesson, updateLesson, deleteLesson } = useLessonService();
+    const router = useRouter();
+    const { addModuleToCourse, getCourseDetailByID, deleteModule } = useCourseService();
+    const [isEditLessonModalOpen, setEditLessonModalOpen] = useState(false);
+    const [editingLesson, setEditingLesson] = useState<LessonRequest | null>(null);
+    const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
+
+    const { createLesson, updateLesson, deleteLesson, getLessonById } = useLessonService();
     const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
     const [isLessonModalOpen, setLessonModalOpen] = useState(false);
     const [isModuleModalOpen, setModuleModalOpen] = useState(false);
     const { id } = useParams<{ id: string }>();
+    const handleEditLesson = async (moduleId: string, lessonId: string) => {
+        try {
+            const lesson = await getLessonById(lessonId, moduleId);
+            console.log(lesson);
+            if (lesson) {
+                setEditingLessonId(lessonId);
+                setEditingLesson({
+                    title: lesson.Title,
+                    description: lesson.Description,
+                    position: lesson.Position,
+                    duration: lesson.Duration,
+                    type: lesson.Type,
+                    videoUrl: lesson.OnlineContent.Data.video_url,
+                    location: lesson.OfflineContent.Data.location,
+                    date: lesson.OfflineContent.Data.date
+                        ? new Date(lesson.OfflineContent.Data.date).toISOString().slice(0, 16) : "",
+                    readingContent: lesson.ReadingContent.Data.content,
+                    quizContent: lesson.QuizContent,
+                });
+                setEditLessonModalOpen(true);
+            }
+        } catch (error) {
+            alert("Không thể tải dữ liệu bài giảng: " + (error instanceof Error ? error.message : "Unknown error"));
+        }
+    };
+    const handleUpdateLesson = async (updatedLesson: LessonRequest) => {
+        if (!editingLesson || !selectedModuleId || !editingLessonId) return;
+        try {
+            await updateLesson(selectedModuleId, editingLessonId, updatedLesson);
+            setEditLessonModalOpen(false);
+
+            const updatedCourse = await getCourseDetailByID(id);
+            if (updatedCourse) {
+                selectedCourse.course_content = updatedCourse.course_content;
+            }
+        } catch (error) {
+            alert("Không thể cập nhật bài giảng: " + (error instanceof Error ? error.message : "Unknown error"));
+        }
+    };
+
     const handleDeleteModule = async (moduleId: string) => {
         if (!id) {
             alert("Không tìm thấy course ID!");
@@ -259,11 +307,11 @@ export default function LessonList({
                                 </button>
                                 <span>
                                     <AddLessonIcon onClick=
-                                    {() => {
-                                        setSelectedModuleId(module.id);
-                                        setLessonModalOpen(true)
+                                        {() => {
+                                            setSelectedModuleId(module.id);
+                                            setLessonModalOpen(true)
                                         }
-                                    }
+                                        }
                                     />
 
                                 </span>
@@ -276,23 +324,37 @@ export default function LessonList({
                                 {module.lessons.map((lesson, idx) => (
                                     <li
                                         key={lesson.id}
-                                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50 transition-colors group"
+                                        className="flex items-center gap-4 px-4 py-3 rounded-lg bg-white shadow-sm hover:shadow-md hover:bg-green-50 transition-all group"
                                     >
-                                        <span className="text-green-500 font-medium">{idx + 1}.</span>
-                                        <span className="text-gray-800 group-hover:text-green-700 flex-1">{lesson.title}</span>
-                                        <button
-                                            className="p-1 rounded hover:bg-blue-100"
-                                            title="Sửa bài giảng"
-                                        >
-                                            <EditIcon />
-                                        </button>
-                                        <button
-                                            className="p-1 rounded hover:bg-red-100"
-                                            title="Xóa bài giảng"
-                                            onClick={() => handleDeleteLesson(module.id, lesson.id)}
-                                        >
-                                            <DeleteIcon />
-                                        </button>
+                                        <span className="text-green-600 font-semibold">{idx + 1}.</span>
+                                        <div className="flex-1">
+                                            <p className="text-gray-900 font-medium group-hover:text-green-700">{lesson.title}</p>
+                                            <p className="text-sm text-gray-500 group-hover:text-gray-700">{lesson.type}</p>
+                                        </div>
+                                        <span className="text-sm text-gray-500 group-hover:text-gray-700">{lesson.study_time}</span>
+                                        <div className="flex gap-2">
+                                            <button
+                                                className="p-2 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+                                                title="Hiển thị tất cả học viên"
+                                                onClick={() => router.push(`/course/${id}/lessons/${lesson.id}`)}
+                                            >
+                                                <UserIcon />
+                                            </button>
+                                            <button
+                                                className="p-2 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition-colors"
+                                                title="Sửa bài giảng"
+                                                onClick={() => handleEditLesson(module.id, lesson.id)}
+                                            >
+                                                <EditIcon />
+                                            </button>
+                                            <button
+                                                className="p-2 rounded-full bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 transition-colors"
+                                                title="Xóa bài giảng"
+                                                onClick={() => handleDeleteLesson(module.id, lesson.id)}
+                                            >
+                                                <DeleteIcon />
+                                            </button>
+                                        </div>
                                     </li>
                                 ))}
                             </ul>
@@ -310,7 +372,12 @@ export default function LessonList({
                 onClose={() => setModuleModalOpen(false)}
                 onSubmit={handleAddModule}
             />
-
+            <EditLessonForm
+                open={isEditLessonModalOpen}
+                onClose={() => setEditLessonModalOpen(false)}
+                onSubmit={handleUpdateLesson}
+                lessonData={editingLesson}
+            />
         </div>
     );
 }
