@@ -398,6 +398,21 @@ export default function CourseItem({ course, onCourseDeleted }: CourseItemProps 
           </div>
         </div>
       </div>
+      <div className="mt-4 hover:grayscale-50">
+        <div
+          style={{
+            backgroundColor: "var(--search-bg)",
+          }}
+          onClick={() => router.push(`/course/${course.id}/registers`)}
+          className=" w-full cursor-pointer p-2.5 bg-slate-50 rounded-[5px]  outline-1 outline-offset-[-1px] outline-yellow-600 inline-flex justify-center items-center gap-2.5"
+        >
+          <div
+            className="text-center justify-center text-yellow-600 text-base font-normal font-inter"
+          >
+            Thông tin đăng ký
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

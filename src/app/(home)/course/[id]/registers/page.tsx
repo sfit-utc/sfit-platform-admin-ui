@@ -1,14 +1,13 @@
-"use client"
-import LessonList from "@/components/course/lesson-section/lesson-list";
+"use client";
+import UserRegisterList from "@/components/course/register-section/user-register-list";
 import { useCourseService } from "@/hooks/use-course-service";
-import { CourseDetailResponse } from "@/types/course";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function LessonsPage() {
+export default function RegisterPage() {
   const { id } = useParams();
   const { getCourseDetailByID } = useCourseService();
-  const [courseDetail, setCourseDetail] = useState<CourseDetailResponse | undefined>(undefined);
+  const [courseDetail, setCourseDetail] = useState(null);
 
   useEffect(() => {
     async function fetchDetail() {
@@ -19,11 +18,11 @@ export default function LessonsPage() {
     }
     fetchDetail();
   }, [id, getCourseDetailByID]);
-  console.log(id);
+
   if (!courseDetail) return <div>Đang tải...</div>;
 
   return (
-    <LessonList
+    <UserRegisterList
       selectedCourse={courseDetail}
       onBack={() => window.history.back()}
     />

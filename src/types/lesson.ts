@@ -4,7 +4,7 @@ export type LessonType = "Quiz" | "Online" | "Offline" | "Reading";
 
 // Quiz Content
 export interface Quiz {
-  question: string;
+  questions: string;
   answers: string[];
   correctAnswers: number[];
 }

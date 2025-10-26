@@ -213,17 +213,13 @@ export function useCourseService() {
     async (
       course_id: string,
       page = 1,
-      pageSize = 10
+      pageSize = 10,
+      status?: string
     ): Promise<RegisteredUsersResponse | undefined> => {
       setLoading(true);
       setError(null);
       try {
-        const resp = await courseService.getRegisteredUsers(
-          course_id,
-          page,
-          pageSize
-        );
-        // setRegisteredUsers(resp);
+        const resp = await courseService.getRegisteredUsers(course_id, page, pageSize, status);
         return resp;
       } catch (err: any) {
         setError(err?.message || "Failed to fetch registered users");

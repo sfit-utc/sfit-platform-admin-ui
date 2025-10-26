@@ -4,6 +4,7 @@ import { useCourseService } from "@/hooks/use-course-service";
 import { Course } from "@/types/course";
 import CourseItem from "./course-item";
 import { PageListResp } from "@/types/pagination";
+import LessonList from "../lesson-section/lesson-list";
 import { useLessonService } from "@/hooks/use-lesson-service";
 
 const classesPerPage = 9;
