@@ -162,12 +162,12 @@ export function useCourseService() {
       course_id: string,
       page = 1,
       pageSize = 10,
-      complete = true
+      status?: string
     ): Promise<RegisteredUsersResponse | undefined> => {
       setLoading(true);
       setError(null);
       try {
-        const resp = await courseService.getRegisteredUsers(course_id, page, pageSize, complete);
+        const resp = await courseService.getRegisteredUsers(course_id, page, pageSize, status);
         return resp;
       } catch (err: any) {
         setError(err?.message || "Failed to fetch registered users");

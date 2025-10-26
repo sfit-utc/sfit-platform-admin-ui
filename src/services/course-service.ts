@@ -97,21 +97,37 @@ class CourseService {
   }
 
   // GET /courses/:course_id/registered-users
+  // async getRegisteredUsers(
+  //   course_id: string,
+  //   page = 1,
+  //   pageSize = 10,
+  //   status?: string
+  // ): Promise<RegisteredUsersResponse> {
+  //   const res = await apiClient.get(`/courses/${course_id}/users`, {
+  //     params: { page, pageSize, status },
+  //   });
+  //   return res.data.data;
+  // }
+    // GET /courses/:course_id/registered-users
   async getRegisteredUsers(
     course_id: string,
     page = 1,
     pageSize = 10,
-    complete = true // Thêm tham số `complete` mặc định là `true`
+    status?: string // Made status optional
   ): Promise<RegisteredUsersResponse> {
+    const params: any = { page, page_size: pageSize };
+    if (status) {
+      params.status = status; // Add status only if provided
+    }
     const res = await apiClient.get(`/courses/${course_id}/users`, {
-      params: { page, pageSize, complete }, // Sử dụng đúng tham số
+      params,
     });
     return res.data.data;
   }
 
   // POST /courses/register
   async registerUserToCourse(req: CourseRegisterRequest): Promise<void> {
-    await apiClient.post("/courses/register", req);
+    await apiClient.put("/users/courses", req);
   }
 
   // GET /users/:user_id/registered-courses

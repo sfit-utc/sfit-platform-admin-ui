@@ -1,6 +1,8 @@
 import { useLessonService } from "@/hooks/use-lesson-service";
 import { useState, useEffect } from "react";
 import Modal from "@/components/ui/modal";
+import { LessonAttendanceStatus } from "@/types/lesson";
+
 interface LessonAttendentListProps {
     lessonId: string;
     moduleId: string;
@@ -18,6 +20,7 @@ export default function LessonAttendentList({
     const [error, setError] = useState<string | null>(null);
     const [selectedAttendee, setSelectedAttendee] = useState<any | null>(null);
     const [isModalOpen, setModalOpen] = useState(false);
+
     useEffect(() => {
         async function fetchAttendees() {
             try {
@@ -25,7 +28,6 @@ export default function LessonAttendentList({
                     page: 1,
                     page_size: -1,
                 });
-                console.log(response);
                 if (response && response.items) {
                     setAttendees(response.items);
                 }
@@ -40,10 +42,30 @@ export default function LessonAttendentList({
 
     if (loading) return <div>Đang tải danh sách học viên...</div>;
     if (error) return <div className="text-red-500">{error}</div>;
+
     const handleEditAttendee = (attendee: any) => {
         setSelectedAttendee(attendee);
         setModalOpen(true);
     };
+
+    const handleUpdateStatus = async (attendee: any, newStatus: LessonAttendanceStatus) => {
+        try {
+            await updateStatusLessonAttendance(attendee.id, lessonId, {
+                status: newStatus,
+                device_id: attendee.device_id || "",
+                duration: attendee.duration || 0,
+                answer: attendee.answer || [],
+            });
+            setAttendees((prev) =>
+                prev.map((item) =>
+                    item.userId === attendee.userId ? { ...item, status: newStatus } : item
+                )
+            );
+        } catch (err) {
+            alert("Không thể cập nhật trạng thái học viên.");
+        }
+    };
+
     const handleUpdateAttendee = async (updatedData: any) => {
         if (!selectedAttendee) return;
 
@@ -83,8 +105,7 @@ export default function LessonAttendentList({
                     {attendees.map((attendee, idx) => (
                         <li
                             key={attendee.userId || idx}
-                            className="flex items-center gap-4 px-4 py-3 rounded-lg bg-white shadow-sm hover:shadow-md hover:bg-green-50 transition-all cursor-pointer"
-                            onClick={() => handleEditAttendee(attendee)}
+                            className="flex items-center gap-4 px-4 py-3 rounded-lg bg-white shadow-sm hover:shadow-md transition-all"
                         >
                             <span className="text-green-600 font-semibold">{idx + 1}.</span>
                             <div className="flex-1">
@@ -92,19 +113,27 @@ export default function LessonAttendentList({
                                 <p className="text-sm text-gray-500">{attendee.email}</p>
                             </div>
                             <div className="flex-1">
-                                <p className="text-gray-900 font-medium">Điểm:{attendee.quiz_point}</p>
+                                <p className="text-gray-900 font-medium">Điểm: {attendee.quiz_point}</p>
                             </div>
                             <div className="flex-1">
-                                <p className="text-gray-900 font-medium">Thời gian học:{attendee.duration}</p>
+                                <p className="text-gray-900 font-medium">Thời gian học: {attendee.duration}</p>
                             </div>
-                            <span
-                                className={`px-3 py-1 text-sm rounded-full ${attendee.status === "present"
-                                    ? "bg-green-100 text-green-600"
-                                    : "bg-red-100 text-red-600"
-                                    }`}
+                            <select
+                                value={attendee.status}
+                                onChange={(e) => handleUpdateStatus(attendee, e.target.value as LessonAttendanceStatus)}
+                                className="px-3 py-1 text-sm rounded-full border border-gray-300"
                             >
-                                {attendee.status === "present" ? "Có mặt" : "Vắng mặt"}
-                            </span>
+                                <option value="present">Có mặt</option>
+                                <option value="absent_excused">Vắng mặt (có lý do)</option>
+                                <option value="absent_unexcused">Vắng mặt (không lý do)</option>
+                                <option value="late">Đi trễ</option>
+                            </select>
+                            <button
+                                onClick={() => handleEditAttendee(attendee)}
+                                className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                            >
+                                Edit
+                            </button>
                         </li>
                     ))}
                 </ul>
@@ -129,27 +158,6 @@ export default function LessonAttendentList({
                         }}
                         className="grid grid-cols-1 gap-4"
                     >
-                        {/* Trạng thái */}
-                        <div>
-                            <label
-                                htmlFor="status"
-                                className="block text-sm font-medium text-gray-700"
-                            >
-                                Trạng thái
-                            </label>
-                            <select
-                                id="status"
-                                name="status"
-                                defaultValue={selectedAttendee?.status}
-                                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-                            >
-                                <option value="present">Có mặt</option>
-                                <option value="absent_excused">Vắng mặt (có lý do)</option>
-                                <option value="absent_unexcused">Vắng mặt (không lý do)</option>
-                                <option value="late">Đi trễ</option>
-                            </select>
-                        </div>
-
                         {/* Thiết bị */}
                         <div>
                             <label
