@@ -135,17 +135,17 @@ export default function LessonList({
             if (lesson) {
                 setEditingLessonId(lessonId);
                 setEditingLesson({
-                    title: lesson.Title,
-                    description: lesson.Description,
-                    position: lesson.Position,
-                    duration: lesson.Duration,
-                    type: lesson.Type,
-                    videoUrl: lesson.OnlineContent.Data.video_url,
-                    location: lesson.OfflineContent.Data.location,
-                    date: lesson.OfflineContent.Data.date
-                        ? new Date(lesson.OfflineContent.Data.date).toISOString().slice(0, 16) : "",
-                    readingContent: lesson.ReadingContent.Data.content,
-                    quizContent: lesson.QuizContent,
+                    title: (lesson as any).Title ,
+                    description: (lesson as any).Description,
+                    position: (lesson as any).Position,
+                    duration: (lesson as any).Duration,
+                    type: (lesson as any).Type,
+                    videoUrl: (lesson as any).OnlineContent.Data.video_url,
+                    location: (lesson as any).OfflineContent.Data.location,
+                    date: (lesson as any).OfflineContent.Data.date
+                        ? new Date((lesson as any).OfflineContent.Data.date).toISOString().slice(0, 16) : "",
+                    readingContent: (lesson as any).ReadingContent.Data.content,
+                    quizContent: (lesson as any).QuizContent,
                 });
                 setEditLessonModalOpen(true);
             }

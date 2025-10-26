@@ -13,7 +13,7 @@ export default function RegisterPage() {
     async function fetchDetail() {
       if (id) {
         const detail = await getCourseDetailByID(id as string);
-        setCourseDetail(detail);
+        setCourseDetail(detail as any);
       }
     }
     fetchDetail();

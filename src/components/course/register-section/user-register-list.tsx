@@ -1,12 +1,9 @@
 import { useCourseService } from "@/hooks/use-course-service";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { DeleteIcon } from "lucide-react";
-import { PenIcon } from "lucide-react";
 import { UploadIcon } from "lucide-react";
 import { useAccounts } from "@/hooks/use-account-service";
 import Modal from "@/components/ui/modal";
-import { readExcelFile } from "@/services/excel-service";
 import { useExcelService } from "@/hooks/use-excel-service";
 
 interface UserRegisterListProps {
@@ -31,8 +28,6 @@ export default function UserRegisterList({
 
   const {
     columnAData,
-    loading: excelLoading,
-    error: excelError,
     handleReadColumnA,
   } = useExcelService();
 

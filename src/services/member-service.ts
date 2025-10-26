@@ -69,7 +69,7 @@ class MemberService {
             try {
               const profileResponse = await apiClient.get<any>(`/user-profiles/${user.id}`);
               profile = profileResponse.data.data || profileResponse.data;
-            } catch (profileError) {
+            } catch {
               console.warn(`Profile not found for user ${user.id}, using basic info`);
               // Continue with basic user data
             }
@@ -79,7 +79,7 @@ class MemberService {
             try {
               const teamsResponse = await apiClient.get<any>(`/users/${user.id}/teams`);
               teams = teamsResponse.data.data || teamsResponse.data || [];
-            } catch (teamsError) {
+            } catch {
               console.warn(`Teams not found for user ${user.id}`);
               // Continue with empty teams
             }
@@ -300,7 +300,7 @@ class MemberService {
       try {
         const profileResponse = await apiClient.get<any>(`/user-profiles/${userId}`);
         profile = profileResponse.data.data || profileResponse.data;
-      } catch (profileError) {
+      } catch  {
         console.warn(`Profile not found for user ${userId}, using basic info`);
         // Continue without profile data
       }
@@ -310,7 +310,7 @@ class MemberService {
       try {
         const teamsResponse = await apiClient.get<any>(`/users/${userId}/teams`);
         teams = teamsResponse.data.data || teamsResponse.data || [];
-      } catch (teamsError) {
+      } catch {
         console.warn(`Teams not found for user ${userId}`);
         // Continue with empty teams
       }

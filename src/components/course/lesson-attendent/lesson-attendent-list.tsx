@@ -11,7 +11,6 @@ interface LessonAttendentListProps {
 
 export default function LessonAttendentList({
     lessonId,
-    moduleId,
     onBack,
 }: LessonAttendentListProps) {
     const { getUsersByLessonId, updateStatusLessonAttendance } = useLessonService();
@@ -31,7 +30,7 @@ export default function LessonAttendentList({
                 if (response && response.items) {
                     setAttendees(response.items);
                 }
-            } catch (err) {
+            } catch {
                 setError("Không thể tải danh sách học viên.");
             } finally {
                 setLoading(false);
@@ -61,7 +60,7 @@ export default function LessonAttendentList({
                     item.userId === attendee.userId ? { ...item, status: newStatus } : item
                 )
             );
-        } catch (err) {
+        } catch {
             alert("Không thể cập nhật trạng thái học viên.");
         }
     };
@@ -82,7 +81,7 @@ export default function LessonAttendentList({
                 )
             );
             setModalOpen(false);
-        } catch (err) {
+        } catch {
             alert("Không thể cập nhật thông tin học viên.");
         }
     };

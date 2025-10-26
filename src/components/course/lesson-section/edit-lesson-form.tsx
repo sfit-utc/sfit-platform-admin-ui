@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Modal from "@/components/ui/modal";
-import { LessonRequest, LessonType, Quiz } from "@/types/lesson";
+import { LessonRequest, LessonType} from "@/types/lesson";
 
 interface EditLessonFormProps {
     open: boolean;
