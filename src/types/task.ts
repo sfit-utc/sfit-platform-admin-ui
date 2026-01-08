@@ -2,8 +2,8 @@ export interface CreateTaskReq {
   name: string;
   description: string;
   event_id?: string;
-  startTime: string;   
-  dateline: string;     
+  start_date: string;   
+  deadline: string;     
 }
 
 export interface UpdateTaskReq {

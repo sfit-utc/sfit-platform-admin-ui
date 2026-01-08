@@ -30,16 +30,16 @@ export default function CreateTaskForm({
     name: "",
     description: "",
     event_id: "",
-    startTime: "",
-    dateline: "",
+    start_date: "",
+    deadline: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   // const [loading, setLoading] = useState(false);
   useEffect(() => {
-  if (!events || events.length === 0) {
-    fetchEvents({ page: 1, page_size: -1 });
-  }
-}, [fetchEvents, events]);
+    if (!events || events.length === 0) {
+      fetchEvents({ page: 1, page_size: -1 });
+    }
+  }, [fetchEvents, events]);
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -58,8 +58,8 @@ export default function CreateTaskForm({
     if (!createTaskReq.event_id) newErrors.event_id = "Vui lòng chọn sự kiện";
     if (!createTaskReq.name.trim())
       newErrors.name = "Tiêu đề nhiệm vụ là bắt buộc";
-    if (!createTaskReq.startTime) newErrors.startTime = "Ngày bắt đầu là bắt buộc";
-    if (!createTaskReq.dateline) newErrors.dateline = "Hạn chót là bắt buộc";
+    if (!createTaskReq.start_date) newErrors.start_date = "Ngày bắt đầu là bắt buộc";
+    if (!createTaskReq.deadline) newErrors.deadline = "Hạn chót là bắt buộc";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -68,13 +68,14 @@ export default function CreateTaskForm({
     e.preventDefault();
     if (!validateForm()) return;
     try {
-      // Chỉ truyền đúng các trường cần thiết cho API
+      const formattedStartTime = new Date(createTaskReq.start_date).toISOString();
+      const formattedDeadline = new Date(createTaskReq.deadline).toISOString();
       await createTask({
         name: createTaskReq.name,
         description: createTaskReq.description,
         event_id: createTaskReq.event_id,
-        startTime: createTaskReq.startTime,
-        dateline: createTaskReq.dateline,
+        start_date: formattedStartTime,
+        deadline: formattedDeadline,
       });
       alert("Tạo nhiệm vụ thành công!");
       onSuccess();
@@ -228,7 +229,7 @@ export default function CreateTaskForm({
                   {/* Start Date */}
                   <div>
                     <label
-                      htmlFor="startTime"
+                      htmlFor="start_date"
                       className="block text-sm font-medium mb-2"
                       style={{ color: "var(--foreground)" }}
                     >
@@ -236,32 +237,32 @@ export default function CreateTaskForm({
                     </label>
                     <input
                       type="datetime-local"
-                      id="startTime"
-                      name="startTime"
-                      value={createTaskReq.startTime}
+                      id="start_date"
+                      name="start_date"
+                      value={createTaskReq.start_date}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       style={{
                         backgroundColor: "var(--background)",
                         color: "var(--foreground)",
-                        borderColor: errors.startTime
+                        borderColor: errors.start_date
                           ? "var(--sfit-red-500)"
                           : "var(--sfit-gray-200)",
                       }}
                     />
-                    {errors.startTime && (
+                    {errors.start_date && (
                       <p
                         className="mt-1 text-sm"
                         style={{ color: "var(--sfit-red-500)" }}
                       >
-                        {errors.startTime}
+                        {errors.start_date}
                       </p>
                     )}
                   </div>
-                  {/* dateline */}
+                  {/* deadline */}
                   <div>
                     <label
-                      htmlFor="dateline"
+                      htmlFor="deadline"
                       className="block text-sm font-medium mb-2"
                       style={{ color: "var(--foreground)" }}
                     >
@@ -269,25 +270,25 @@ export default function CreateTaskForm({
                     </label>
                     <input
                       type="datetime-local"
-                      id="dateline"
-                      name="dateline"
-                      value={createTaskReq.dateline}
+                      id="deadline"
+                      name="deadline"
+                      value={createTaskReq.deadline}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       style={{
                         backgroundColor: "var(--background)",
                         color: "var(--foreground)",
-                        borderColor: errors.dateline
+                        borderColor: errors.deadline
                           ? "var(--sfit-red-500)"
                           : "var(--sfit-gray-200)",
                       }}
                     />
-                    {errors.dateline && (
+                    {errors.deadline && (
                       <p
                         className="mt-1 text-sm"
                         style={{ color: "var(--sfit-red-500)" }}
                       >
-                        {errors.dateline}
+                        {errors.deadline}
                       </p>
                     )}
                   </div>
@@ -318,13 +319,13 @@ export default function CreateTaskForm({
               <div className="text-sm my-1">
                 Ngày bắt đầu:{" "}
                 <span style={{ color: "var(--sfit-green)" }}>
-                  {createTaskReq.startTime}
+                  {createTaskReq.start_date}
                 </span>
               </div>
               <div className="text-sm my-1">
                 Hạn chót:{" "}
                 <span style={{ color: "var(--sfit-green)" }}>
-                  {createTaskReq.dateline}
+                  {createTaskReq.deadline}
                 </span>
               </div>
               <div className="text-sm my-1">

@@ -36,9 +36,9 @@ export default function Task() {
     });
   }, [fetchTasks, tasks]); // Add fetchTasks and tasks as dependencies
 
-  useEffect(() => {
-    reloadCounts();
-  }, [reloadCounts]);
+  // useEffect(() => {
+  //   reloadCounts();
+  // }, [counts]);
   useEffect(() => {
     setCounts({
       all: tasks.length,
