@@ -34,11 +34,11 @@ export default function Task() {
       upcoming: tasks.filter((t) => (t as any).PercentComplete === 0).length,
       done: tasks.filter((t) => (t as any).PercentComplete === 100).length,
     });
-  }, [fetchTasks, tasks]); // Add fetchTasks and tasks as dependencies
+  }, [fetchTasks]);
+  useEffect(() => {
+    reloadCounts();
+  }, [reloadCounts]);
 
-  // useEffect(() => {
-  //   reloadCounts();
-  // }, [counts]);
   useEffect(() => {
     setCounts({
       all: tasks.length,
